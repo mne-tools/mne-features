@@ -19,6 +19,7 @@ def test_univariate():
         X = func(data)
         assert_equal(X.shape, (N, C))
 
+
 if __name__ == '__main__':
 
     test_univariate()

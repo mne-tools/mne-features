@@ -14,6 +14,7 @@ def test_shape_output():
     Xnew = extract_features(X, 256., ['mean', 'variance', 'kurtosis'])
     assert_equal(Xnew.shape, (5, 30))
 
+
 if __name__ == '__main__':
 
     test_shape_output()

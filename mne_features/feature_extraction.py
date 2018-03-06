@@ -65,7 +65,8 @@ def extract_features(X, sfreq, selected_funcs):
         raise ValueError('Sampling rate `sfreq` must be positive.')
     univariate_funcs = get_univariate_funcs()
     bivariate_funcs = get_bivariate_funcs(sfreq)
-    feature_funcs = {**univariate_funcs, **bivariate_funcs}
+    feature_funcs = univariate_funcs.copy()
+    feature_funcs.update(bivariate_funcs)
     sel_funcs = _check_func_names(selected_funcs, feature_funcs.keys())
 
     # Feature extraction

@@ -8,10 +8,10 @@ from scipy import stats
 
 
 def get_univariate_funcs():
-    """ Returns a dictionary of univariate feature functions. For each feature 
-    function, the corresponding key in the dictionary is an alias for the 
+    """ Returns a dictionary of univariate feature functions. For each feature
+    function, the corresponding key in the dictionary is an alias for the
     function.
-    
+
     Returns
     -------
     univariate_funcs : dict

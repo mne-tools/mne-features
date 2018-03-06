@@ -10,15 +10,15 @@ from functools import partial
 
 
 def get_bivariate_funcs(sfreq):
-    """ Returns a dictionary of bivariate feature functions. For each feature 
-    function, the corresponding key in the dictionary is an alias for the 
+    """ Returns a dictionary of bivariate feature functions. For each feature
+    function, the corresponding key in the dictionary is an alias for the
     function.
-    
+
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-    
+
     Returns
     -------
     bivariate_funcs : dict
@@ -31,9 +31,9 @@ def get_bivariate_funcs(sfreq):
 
 @nb.jit(nb.float64(nb.float64[:], nb.float64[:], nb.int64))
 def _cross_correlation(x, y, tau):
-    """ Computes the cross-correlation between two univariate time series 
-    x and y, with a delay tau. The function assumes that the time series x and 
-    y have the same length. The parameter tau must be strictly less than the 
+    """ Computes the cross-correlation between two univariate time series
+    x and y, with a delay tau. The function assumes that the time series x and
+    y have the same length. The parameter tau must be strictly less than the
     length of the time series.
 
     Parameters
@@ -79,8 +79,8 @@ def _cross_correlation(x, y, tau):
 
 @nb.jit(nb.float64(nb.float64[:], nb.float64[:], nb.int64[:]))
 def _max_cross_corr(x, y, taus):
-    """ Computes the maximum cross-correlation between two univariate time 
-    series using a range of possible time delays. 
+    """ Computes the maximum cross-correlation between two univariate time
+    series using a range of possible time delays.
 
     Parameters
     ----------

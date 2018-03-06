@@ -14,6 +14,7 @@ def test_max_cross_corr():
     Xnew = compute_max_cross_correlation(256., X)
     assert_equal(Xnew.shape, (55,))
 
+
 if __name__ == '__main__':
 
     test_max_cross_corr()
