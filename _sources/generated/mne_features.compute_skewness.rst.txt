@@ -1,0 +1,6 @@
+mne\_features\.compute\_skewness
+================================
+
+.. currentmodule:: mne_features
+
+.. autofunction:: compute_skewness

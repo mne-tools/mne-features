@@ -1,0 +1,6 @@
+mne\_features\.compute\_variance
+================================
+
+.. currentmodule:: mne_features
+
+.. autofunction:: compute_variance

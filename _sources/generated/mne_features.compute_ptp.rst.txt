@@ -1,0 +1,6 @@
+mne\_features\.compute\_ptp
+===========================
+
+.. currentmodule:: mne_features
+
+.. autofunction:: compute_ptp
