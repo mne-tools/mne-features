@@ -1,0 +1,19 @@
+include *.rst
+include LICENSE
+include mne_features/__init__.py
+
+recursive-include examples *.py
+recursive-include examples *.txt
+
+recursive-include mne_features *.py
+
+### Exclude
+
+exclude Makefile
+exclude .coveragerc
+exclude *.yml
+exclude dictionary.txt
+exclude .mailmap
+recursive-exclude mne_features *.pyc
+
+recursive-exclude doc *
