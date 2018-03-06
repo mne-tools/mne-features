@@ -41,8 +41,6 @@ Cite
 
 If you use this code in your project, please cite::
 
-    Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
-    Slim ESSID, Alexandre GRAMFORT,
-    "An ensemble learning approach to detect epileptic seizures from long
-    intracranial EEG recordings"
+    Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN, Slim ESSID, Alexandre GRAMFORT,
+    "An ensemble learning approach to detect epileptic seizures from long intracranial EEG recordings"
     Proc. IEEE ICASSP Conf. 2018
