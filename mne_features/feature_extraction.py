@@ -7,6 +7,7 @@ import warnings
 import numpy as np
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.externals import joblib
 from mne_features.bivariate import get_bivariate_funcs
 from mne_features.univariate import get_univariate_funcs
 
@@ -40,7 +41,7 @@ def _check_func_names(selected, feature_funcs_names):
         return valid_func_names
 
 
-def extract_features(X, sfreq, selected_funcs):
+def extract_features(X, sfreq, selected_funcs, n_jobs=1):
     """ Extraction of temporal or spectral features from epoched EEG signals.
 
     Parameters
@@ -62,6 +63,10 @@ def extract_features(X, sfreq, selected_funcs):
             - 'skewness'
             - 'variance'
 
+    n_jobs : int (default: 1)
+        Number of CPU cores used when parallelizing the feature extraction.
+        If given a value of -1, all cores are used.
+
     Returns
     -------
     ndarray, shape (n_epochs, n_features)
@@ -76,11 +81,9 @@ def extract_features(X, sfreq, selected_funcs):
 
     # Feature extraction
     n_epochs = X.shape[0]
-    Xnew = list()
     _tr = [(n, FunctionTransformer(func=feature_funcs[n])) for n in sel_funcs]
     extractor = FeatureUnion(transformer_list=_tr)
-    for j in range(n_epochs):
-        features_epoch = extractor.fit_transform(X[j, :, :])
-        Xnew.append(features_epoch)
-    Xnew = np.vstack(Xnew)
+    res = joblib.Parallel(n_jobs=n_jobs)(joblib.delayed(
+        extractor.fit_transform)(X[j, :, :]) for j in range(n_epochs))
+    Xnew = np.vstack(res)
     return Xnew
