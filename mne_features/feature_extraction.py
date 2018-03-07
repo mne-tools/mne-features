@@ -1,9 +1,14 @@
+# Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
+#         Alexandre Gramfort <alexandre.gramfort@inria.fr>
+# License: BSD 3 clause
+
+
 import warnings
 import numpy as np
-from mne_features.univariate import get_univariate_funcs
-from mne_features.bivariate import get_bivariate_funcs
-from sklearn.preprocessing import FunctionTransformer
 from sklearn.pipeline import FeatureUnion
+from sklearn.preprocessing import FunctionTransformer
+from mne_features.bivariate import get_bivariate_funcs
+from mne_features.univariate import get_univariate_funcs
 
 
 def _check_func_names(selected, feature_funcs_names):
@@ -29,7 +34,7 @@ def _check_func_names(selected, feature_funcs_names):
         else:
             warnings.warn('The name ``%s`` is not a valid feature function. '
                           'This name was ignored.' % f)
-    if len(valid_func_names) == 0:
+    if not valid_func_names:
         raise ValueError('No valid feature function names given.')
     else:
         return valid_func_names

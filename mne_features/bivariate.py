@@ -3,10 +3,10 @@
 # License: BSD 3 clause
 
 
+from functools import partial
+from math import sqrt
 import numba as nb
 import numpy as np
-from math import sqrt
-from functools import partial
 
 
 def get_bivariate_funcs(sfreq):
@@ -21,7 +21,7 @@ def get_bivariate_funcs(sfreq):
 
     Returns
     -------
-    bivariate_funcs : dict
+    bivariate_funcs : dict of feature functions
     """
     bivariate_funcs = dict()
     bivariate_funcs['max_cross_corr'] = partial(compute_max_cross_correlation,
