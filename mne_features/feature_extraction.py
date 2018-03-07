@@ -8,8 +8,8 @@ import numpy as np
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.externals import joblib
-from mne_features.bivariate import get_bivariate_funcs
-from mne_features.univariate import get_univariate_funcs
+from .bivariate import get_bivariate_funcs
+from .univariate import get_univariate_funcs
 
 
 def _apply_extractor(extractor, X):
