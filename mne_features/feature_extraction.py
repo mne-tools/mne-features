@@ -12,6 +12,22 @@ from mne_features.bivariate import get_bivariate_funcs
 from mne_features.univariate import get_univariate_funcs
 
 
+def _apply_extractor(extractor, X):
+    """ Utility function to apply features extractor to ndarray X.
+
+    Parameters
+    ----------
+    extractor : Instance of sklearn.pipeline.FeatureUnion or sklearn.pipeline
+
+    X : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    ndarray, shape (n_features,)
+    """
+    return extractor.fit_transform(X)
+
+
 def _check_func_names(selected, feature_funcs_names):
     """ Checks if the names of selected feature functions match the available
     feature functions.
@@ -83,7 +99,7 @@ def extract_features(X, sfreq, selected_funcs, n_jobs=1):
     n_epochs = X.shape[0]
     _tr = [(n, FunctionTransformer(func=feature_funcs[n])) for n in sel_funcs]
     extractor = FeatureUnion(transformer_list=_tr)
-    res = joblib.Parallel(n_jobs=n_jobs)(joblib.delayed(
-        extractor.fit_transform)(X[j, :, :]) for j in range(n_epochs))
+    res = joblib.Parallel(n_jobs=n_jobs)(joblib.delayed(_apply_extractor)(
+        extractor, X[j, :, :]) for j in range(n_epochs))
     Xnew = np.vstack(res)
     return Xnew
