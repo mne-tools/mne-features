@@ -16,7 +16,7 @@ install:
     - conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19
     - |
       if [[ "${USE_NUMBA}" == "ON" ]]; then
-        conda install numba
+        conda install --yes --quiet numba
       fi
     - conda install --yes --quiet nose coverage
     - pip install flake8 check-manifest

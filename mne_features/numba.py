@@ -4,7 +4,7 @@ from warnings import warn
 
 try:
     import numba as nb
-except ImportError:
+except ImportError as _:
     warn('numba not found. Your code will be slow')
 
     class Bunch(dict):
@@ -13,7 +13,6 @@ except ImportError:
         def __init__(self, **kwargs):  # noqa: D102
             dict.__init__(self, kwargs)
             self.__dict__ = self
-
 
     class MockType(object):
         def __getitem__(self, slice):

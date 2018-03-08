@@ -5,9 +5,11 @@
 
 import warnings
 import numpy as np
+
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.externals import joblib
+
 from .bivariate import get_bivariate_funcs
 from .univariate import get_univariate_funcs
 
