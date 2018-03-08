@@ -24,4 +24,15 @@ pip-log.txt
 mne_features.egg-info/
 .tags
 tags
+
+# Unit test / coverage reports
+cover/**
+htmlcov/
+.tox/
 .coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.hypothesis/

@@ -5,7 +5,7 @@ from warnings import warn
 try:
     import numba as nb
 except ImportError as _:
-    warn('numba not found. Your code will be slow')
+    warn('Numba not found. Your code will be slower.')
 
     class Bunch(dict):
         """Dictionnary-like object thatexposes its keys as attributes."""

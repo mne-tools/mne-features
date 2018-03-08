@@ -6,8 +6,7 @@
 from functools import partial
 from math import sqrt
 import numpy as np
-
-from .numba import nb
+from .mock_numba import nb
 
 
 def get_bivariate_funcs(sfreq):
