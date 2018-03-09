@@ -26,4 +26,4 @@ script:
     - make
     - flake8 --count mne_features
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) -e USE_NUMBA=OFF
