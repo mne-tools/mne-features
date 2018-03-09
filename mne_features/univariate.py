@@ -7,6 +7,24 @@ import numpy as np
 from scipy import stats
 
 
+def get_univariate_funcs():
+    """ Returns a dictionary of univariate feature functions. For each feature
+    function, the corresponding key in the dictionary is an alias for the
+    function.
+
+    Returns
+    -------
+    univariate_funcs : dict
+    """
+    univariate_funcs = dict()
+    univariate_funcs['mean'] = compute_mean
+    univariate_funcs['variance'] = compute_variance
+    univariate_funcs['ptp_amplitude'] = compute_ptp
+    univariate_funcs['skewness'] = compute_skewness
+    univariate_funcs['kurtosis'] = compute_kurtosis
+    return univariate_funcs
+
+
 def compute_mean(data):
     """ Computes the mean of the data. """
 
