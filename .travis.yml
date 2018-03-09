@@ -13,7 +13,7 @@ before_install:
 install:
     - conda create -n testenv --yes pip python=2.7
     - source activate testenv
-    - conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19
+    - conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn
     - |
       if [[ "${USE_NUMBA}" == "ON" ]]; then
         conda install --yes --quiet numba
@@ -21,7 +21,7 @@ install:
     - conda install --yes --quiet nose coverage
     - pip install flake8 check-manifest
     - pip install coverage coveralls
-    - python setup.py install
+    - python setup.py install --no-deps
 script:
     - make
     - flake8 --count mne_features
