@@ -21,7 +21,7 @@ install:
     - conda install --yes --quiet nose coverage
     - pip install flake8 check-manifest
     - pip install coverage coveralls
-    - python setup.py install --no-deps
+    - python setup.py develop --no-deps
 script:
     - make
     - flake8 --count mne_features
