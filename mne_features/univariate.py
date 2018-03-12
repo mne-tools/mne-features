@@ -3,10 +3,12 @@
 # License: BSD 3 clause
 
 
-import numpy as np
-from .mock_numba import nb
 from math import sqrt
+
+import numpy as np
 from scipy import stats, signal
+
+from .mock_numba import nb
 
 
 def get_univariate_funcs():
