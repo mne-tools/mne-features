@@ -5,7 +5,9 @@
 
 from functools import partial
 from math import sqrt
+
 import numpy as np
+
 from .mock_numba import nb
 
 
@@ -31,19 +33,19 @@ def get_bivariate_funcs(sfreq):
 
 @nb.jit(nb.float64(nb.float64[:], nb.float64[:], nb.int64))
 def _cross_correlation(x, y, tau):
-    """ Computes the cross-correlation between two univariate time series
-    x and y, with a delay tau. The function assumes that the time series x and
-    y have the same length. The parameter tau must be strictly less than the
-    length of the time series.
+    """ Computes the linear cross-correlation between two univariate time
+    series x and y, with a delay tau. The function assumes that the time series
+    x and y have the same length. The parameter tau must be strictly less than
+    the length of the time series.
 
     Parameters
     ----------
-    x : array-like, shape (n_times,)
+    x : ndarray, shape (n_times,)
 
-    y : array-like, shape (n_times,)
+    y : ndarray, shape (n_times,)
 
     tau : int
-        Delay (number of samples)
+        Delay (number of samples).
 
     Returns
     -------
@@ -84,11 +86,11 @@ def _max_cross_corr(x, y, taus):
 
     Parameters
     ----------
-    x : array-like, shape (n_times,)
+    x : ndarray, shape (n_times,)
 
-    y : array-like, shape (n_times,)
+    y : ndarray, shape (n_times,)
 
-    taus : array-like, shape (n_tau,)
+    taus : ndarray, shape (n_tau,)
 
     Returns
     -------
@@ -102,7 +104,29 @@ def _max_cross_corr(x, y, taus):
 
 
 def compute_max_cross_correlation(s_freq, data):
-    """ Computes max cross-correlation for pairs of channels. """
+    """ Maximum linear cross-correlation [1, 2].
+
+    Parameters
+    ----------
+    s_freq : float
+        Sampling rate of the data.
+
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    max_cc : ndarray, shape (n_channels * (n_channels + 1) // 2,)
+
+    References
+    ----------
+    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and winding 
+           road. Brain, 130(2), 314-333.
+
+    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
+           networks for epileptic seizure prediction from intracranial EEG.
+           Machine Learning for Signal Processing, 2008.
+           IEEE Workshop on (pp. 244-249). IEEE.
+    """
 
     n_channels = data.shape[0]
     n_tau = int(0.5 * s_freq)
