@@ -244,7 +244,8 @@ def compute_hurst_exponent(data):
     return hurst_exponent.ravel()
 
 
-@nb.jit([nb.float64(nb.float64[:]), nb.float32(nb.float32[:])], nopython=True)
+@nb.jit([nb.float64[:](nb.float64[:, :]), nb.float32[:](nb.float32[:, :])],
+        nopython=True)
 def compute_app_entropy(data):
     """ Approximate Entropy (AppEn, per channel) [1].
 
@@ -263,7 +264,7 @@ def compute_app_entropy(data):
            Neuroscience Methods, 200(2), 257-271.
     """
     n_channels, n_times = data.shape
-    appen = np.empty((n_channels,))
+    appen = np.empty((n_channels,), dtype=data.dtype)
     for t in range(n_channels):
         s = 0
         for j in range(n_times):
@@ -294,6 +295,8 @@ def compute_app_entropy(data):
     return appen
 
 
+@nb.jit([nb.float64[:](nb.float64[:, :]), nb.float32[:](nb.float32[:, :])],
+        nopython=True)
 def compute_samp_entropy(data):
     """ Sample Entropy (SampEn, per channel) [1].
 
@@ -312,7 +315,7 @@ def compute_samp_entropy(data):
            Neuroscience Methods, 200(2), 257-271.
     """
     n_channels, n_times = data.shape
-    sampen = np.empty((n_channels,))
+    sampen = np.empty((n_channels,), dtype=data.dtype)
     for t in range(n_channels):
         m = 0
         s = 0
@@ -325,12 +328,12 @@ def compute_samp_entropy(data):
         x_new = np.zeros(n_times)
         for j in range(n_times):
             x_new[j] = (data[t, j] - m) / s
-        m = 3
+        mm = 3
         r = 0.2
         lastrun = np.zeros((n_times,))
         run = np.zeros((n_times,))
-        a = np.zeros((m,))
-        b = np.zeros((m,))
+        a = np.zeros((mm,))
+        b = np.zeros((mm,))
         for i in range(n_times - 1):
             nj = n_times - i - 1
             y1 = x_new[i]
@@ -338,16 +341,16 @@ def compute_samp_entropy(data):
                 j = jj + i + 1
                 if abs(x_new[j] - y1) < r:
                     run[jj] = lastrun[jj] + 1
-                    m1 = int(min((m, run[jj])))
-                    for mm in range(m1):
-                        a[mm] += 1
+                    m1 = int(min((mm, run[jj])))
+                    for k in range(m1):
+                        a[k] += 1
                         if j < (n_times - 1):
-                            b[mm] += 1
+                            b[k] += 1
                 else:
                     run[jj] = 0
             for jj in range(nj):
                 lastrun[jj] = run[jj]
-        sampen[t] = -log(a[-1] / b[m - 2])
+        sampen[t] = -log(a[-1] / b[mm - 2])
     return sampen
 
 
@@ -583,8 +586,8 @@ def compute_hjorth_complexity(data):
     return complexity
 
 
-@nb.jit([nb.float64(nb.float64[:], nb.optional(nb.int64)),
-         nb.float32(nb.float32[:], nb.optional(nb.int32))], nopython=True)
+@nb.jit([nb.float64[:](nb.float64[:, :], nb.optional(nb.int64)),
+         nb.float32[:](nb.float32[:, :], nb.optional(nb.int32))])
 def compute_higuchi_fd(data, kmax=10):
     """ Higuchi Fractal Dimension (per channel) [1, 2].
 
@@ -610,7 +613,7 @@ def compute_higuchi_fd(data, kmax=10):
            151-159.
     """
     n_channels, n_times = data.shape
-    higuchi = np.empty((n_channels,))
+    higuchi = np.empty((n_channels,), dtype=data.dtype)
     for s in range(n_channels):
         lk = np.empty((kmax,))
         x_reg = np.empty((kmax,))

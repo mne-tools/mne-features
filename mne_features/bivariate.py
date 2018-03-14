@@ -151,12 +151,12 @@ def compute_phase_locking_value(data):
     return plv
 
 
-@nb.jit([nb.float64(nb.float64[:, :], nb.optional(nb.int64),
-                    nb.optional(nb.int64), nb.optional(nb.int64),
-                    nb.optional(nb.int64)),
-         nb.float32(nb.float32[:, :], nb.optional(nb.int32),
-                    nb.optional(nb.int32), nb.optional(nb.int32),
-                    nb.optional(nb.int32))], nopython=True)
+@nb.jit([nb.float64[:](nb.float64[:, :], nb.optional(nb.int64),
+                       nb.optional(nb.int64), nb.optional(nb.int64),
+                       nb.optional(nb.int64)),
+         nb.float32[:](nb.float32[:, :], nb.optional(nb.int32),
+                       nb.optional(nb.int32), nb.optional(nb.int32),
+                       nb.optional(nb.int32))])
 def compute_nonlinear_interdep(data, tau=2, emb=10, theiler=50, nn=10):
     """ Measure of nonlinear interdependence [1, 2, 3].
 
