@@ -3,11 +3,12 @@
 # License: BSD 3 clause
 
 
+import os.path as op
+
 import mne
 import numpy as np
-import os.path as op
 from numpy.testing import assert_equal, assert_almost_equal
-from scipy import signal
+
 from mne_features.univariate import (_slope_lstsq, compute_mean,
                                      compute_variance, compute_std,
                                      compute_ptp, compute_skewness,
@@ -20,7 +21,6 @@ from mne_features.univariate import (_slope_lstsq, compute_mean,
                                      compute_hjorth_mobility,
                                      compute_hjorth_complexity,
                                      compute_higuchi_fd, compute_katz_fd)
-
 
 path_data = op.join(op.dirname(__file__), 'data', 'test_data_chbmit-epo.fif')
 epochs = mne.read_epochs(path_data)
@@ -66,9 +66,9 @@ def test_shape_output_power_spectrum_freq_bands():
 
 
 def test_power_spectrum():
-    for j in range(n_epochs):
-        ps, freqs = power_spectrum(sfreq, data[j, :, :], return_db=False)
-        assert_almost_equal(np.mean(data[j, :, :] ** 2), np.sum(ps))
+    x = rng.standard_normal((1, 2048))
+    ps, freqs = power_spectrum(1024., x, return_db=False)
+    assert_almost_equal(np.mean(x ** 2), np.sum(ps))
 
 
 def test_shape_output_spect_hjorth_mobility():
