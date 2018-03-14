@@ -19,7 +19,7 @@ install:
         conda install --yes --quiet numba
       fi
     - conda install --yes --quiet nose coverage
-    - pip install flake8 check-manifest
+    - pip install flake8 mne check-manifest
     - pip install coverage coveralls
     - python setup.py develop --no-deps
 script:
