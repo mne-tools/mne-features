@@ -421,8 +421,11 @@ def power_spectrum(sfreq, data, return_db=True):
     spect = np.fft.rfft(data, n_times)
     mag = np.abs(spect)
     freqs = np.fft.rfftfreq(n_times, 1. / sfreq)
-    ps = np.power(mag, 2) / (sfreq * n_times)
-    ps[1:] *= 2
+    ps = np.power(mag, 2) / (n_times ** 2)
+    ps *= 2.
+    ps[:, 0] /= 2.
+    if n_times % 2 == 0:
+        ps[:, -1] /= 2.
     if return_db:
         return 10. * np.log10(ps), freqs
     else:

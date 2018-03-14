@@ -136,7 +136,7 @@ def compute_phase_locking_value(data):
     ----------
     .. [1] http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf
     """
-    n_channels, n_times = data.shape[0]
+    n_channels, n_times = data.shape
     n_coefs = n_channels * (n_channels + 1) / 2
     plv = np.empty((n_coefs,))
     for s, i, j in _triu_idx(n_channels):

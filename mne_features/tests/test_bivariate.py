@@ -25,11 +25,12 @@ rng = np.random.RandomState(42)
 
 def test_shape_output_max_cross_corr():
     feat = compute_max_cross_correlation(sfreq, data[0, :, :])
-    assert_equal(feat.shape, (n_channels * (n_channels + 1) / 2,))
+    n_coefs = (n_channels * (n_channels + 1)) // 2
+    assert_equal(feat.shape, (n_coefs,))
 
 
 def test_shape_output_nonlinear_interdep():
-    feat = compute_nonlinear_interdep(sfreq, data[0, :, :])
+    feat = compute_nonlinear_interdep(data[0, :, :])
     n_coefs = (n_channels * (n_channels + 1)) // 2
     assert_equal(feat.shape, (n_coefs,))
 
