@@ -13,7 +13,7 @@ before_install:
 install:
     - conda create -n testenv --yes pip python=2.7
     - source activate testenv
-    - conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn
+    - conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn mne
     - |
       if [[ "${USE_NUMBA}" == "ON" ]]; then
         conda install --yes --quiet numba
