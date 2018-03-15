@@ -1,31 +1,21 @@
-# Function to mock numba and let the code work on any system
+# Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
+#         Alexandre Gramfort <alexandre.gramfort@inria.fr>
+# License: BSD 3 clause
 
+"""Utility file to mock Numba and let the code work on any system."""
+
+import sys
 from warnings import warn
+
+from mock import MagicMock
 
 try:
     import numba as nb
 except ImportError as _:
     warn('Numba not found. Your code will be slower.')
 
-    class Bunch(dict):
-        """Dictionnary-like object thatexposes its keys as attributes."""
-
-        def __init__(self, **kwargs):  # noqa: D102
-            dict.__init__(self, kwargs)
-            self.__dict__ = self
-
-    class MockType(object):
-        def __getitem__(self, slice):
-            return
-
-        def __call__(self, *args, **kwargs):
-            return
-
-    nb = Bunch()
-    nb.int32 = MockType()
-    nb.int64 = MockType()
-    nb.float32 = MockType()
-    nb.float64 = MockType()
+    sys.modules['numba'] = MagicMock()
+    import numba as nb
 
     def jit(*args, **kwargs):
         def identity(ob):

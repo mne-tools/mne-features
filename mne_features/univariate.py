@@ -626,6 +626,7 @@ def compute_higuchi_fd(data, kmax=10):
             for m in range(k):
                 ll = 0
                 n_max = floor((n_times - m - 1) / k)
+                n_max = int(n_max)
                 for j in range(1, n_max):
                     ll += abs(data[s, m + j * k] - data[s, m + (j - 1) * k])
                 ll /= k
