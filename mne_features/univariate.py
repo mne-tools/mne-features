@@ -131,7 +131,7 @@ def compute_mean(data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
     """
     return np.mean(data, axis=-1)
 
@@ -145,7 +145,7 @@ def compute_variance(data):
 
      Returns
      -------
-     ndarray, shape (n_channels,)
+     output : ndarray, shape (n_channels,)
      """
     return np.var(data, axis=-1, ddof=1)
 
@@ -159,7 +159,7 @@ def compute_std(data):
 
     Returns
     -------
-    ndarray, shape (n_channels)
+    output : ndarray, shape (n_channels)
     """
     return np.std(data, axis=-1, ddof=1)
 
@@ -173,7 +173,7 @@ def compute_ptp(data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
     """
     return np.ptp(data, axis=-1)
 
@@ -187,7 +187,7 @@ def compute_skewness(data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
     """
 
     ndim = data.ndim
@@ -203,7 +203,7 @@ def compute_kurtosis(data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
     """
 
     ndim = data.ndim
@@ -219,7 +219,7 @@ def compute_hurst_exponent(data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
@@ -255,7 +255,7 @@ def compute_app_entropy(data):
 
     Returns
     -------
-    ndarray, shape (n_channels)
+    output : ndarray, shape (n_channels)
 
     References
     ----------
@@ -306,7 +306,7 @@ def compute_samp_entropy(data):
 
     Returns
     -------
-    ndarray, shape (n_channels)
+    output : ndarray, shape (n_channels)
 
     References
     ----------
@@ -366,7 +366,7 @@ def compute_decorr_time(sfreq, data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
@@ -452,7 +452,7 @@ def compute_power_spectrum_freq_bands(sfreq, freq_bands, data, db=True):
 
     Returns
     -------
-    ndarray, shape (n_channels * (n_freqs - 1),)
+    output : ndarray, shape (n_channels * (n_freqs - 1),)
 
     References
     ----------
@@ -486,7 +486,7 @@ def compute_spect_hjorth_mobility(sfreq, data, normalize=False):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
@@ -520,7 +520,7 @@ def compute_spect_hjorth_complexity(sfreq, data, normalize=False):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
@@ -548,7 +548,7 @@ def compute_hjorth_mobility(data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
@@ -573,7 +573,7 @@ def compute_hjorth_complexity(data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
@@ -603,7 +603,7 @@ def compute_higuchi_fd(data, kmax=10):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
@@ -653,7 +653,7 @@ def compute_katz_fd(data):
 
     Returns
     -------
-    ndarray, shape (n_channels,)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------

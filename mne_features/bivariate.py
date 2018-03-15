@@ -284,7 +284,7 @@ def compute_time_corr_coefs(data, with_eigenvalues=True):
 
     Returns
     -------
-    ndarray, shape (n_out,)
+    output : ndarray, shape (n_out,)
         If `with_eigenvalues` is True, n_out = n_coefs + n_channels (with:
         n_coefs = n_channels * (n_channels + 1) // 2). Otherwise,
         n_out = n_coefs.
@@ -327,7 +327,7 @@ def compute_spect_corr_coefs(sfreq, data, db=True, with_eigenvalues=True):
 
     Returns
     -------
-    ndarray, shape (n_out,)
+    output : ndarray, shape (n_out,)
         If `with_eigenvalues` is True, n_out = n_coefs + n_channels. Otherwise,
         n_out = n_coefs. With, n_coefs = n_channels * (n_channels + 1) // 2.
 
