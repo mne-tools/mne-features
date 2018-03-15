@@ -13,8 +13,8 @@ from mne_features.bivariate import (compute_max_cross_correlation,
                                     compute_time_corr_coefs)
 
 rng = np.random.RandomState(42)
-sfreq = 256.
-data = rng.standard_normal((10, 20, int(sfreq)))
+sfreq = 64.
+data = rng.standard_normal((3, 5, int(sfreq)))
 n_epochs, n_channels = data.shape[:2]
 
 

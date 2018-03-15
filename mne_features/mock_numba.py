@@ -16,7 +16,7 @@ except ImportError as _:
 
     class MockType(object):
         def __getitem__(self, slice):
-            return
+            return self
 
         def __call__(self, *args, **kwargs):
             return
@@ -26,6 +26,7 @@ except ImportError as _:
     nb.int64 = MockType()
     nb.float32 = MockType()
     nb.float64 = MockType()
+    nb.optional = MockType()
 
     def jit(*args, **kwargs):
         def identity(ob):

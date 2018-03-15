@@ -137,7 +137,7 @@ def compute_phase_locking_value(data):
     .. [1] http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf
     """
     n_channels, n_times = data.shape
-    n_coefs = n_channels * (n_channels + 1) / 2
+    n_coefs = n_channels * (n_channels + 1) // 2
     plv = np.empty((n_coefs,))
     for s, i, j in _triu_idx(n_channels):
         if i == j:
@@ -193,7 +193,7 @@ def compute_nonlinear_interdep(data, tau=2, emb=10, theiler=50, nn=10):
            In Machine Learning for Signal Processing. IEEE. pp. 244-249.
     """
     n_channels, n_times = data.shape
-    n_coefs = n_channels * (n_channels + 1) / 2
+    n_coefs = n_channels * (n_channels + 1) // 2
     nlinterdep = np.empty((n_coefs,))
     for s, u, v in _triu_idx(n_channels):
         aux_x = np.zeros((nn + 1,))
@@ -286,7 +286,7 @@ def compute_time_corr_coefs(data, with_eigenvalues=True):
     -------
     ndarray, shape (n_out,)
         If `with_eigenvalues` is True, n_out = n_coefs + n_channels (with:
-        n_coefs = n_channels * (n_channels + 1) / 2). Otherwise,
+        n_coefs = n_channels * (n_channels + 1) // 2). Otherwise,
         n_out = n_coefs.
 
     References
@@ -329,7 +329,7 @@ def compute_spect_corr_coefs(sfreq, data, db=True, with_eigenvalues=True):
     -------
     ndarray, shape (n_out,)
         If `with_eigenvalues` is True, n_out = n_coefs + n_channels. Otherwise,
-        n_out = n_coefs. With, n_coefs = n_channels * (n_channels + 1) / 2.
+        n_out = n_coefs. With, n_coefs = n_channels * (n_channels + 1) // 2.
 
     References
     ----------
