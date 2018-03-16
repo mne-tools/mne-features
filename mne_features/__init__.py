@@ -18,5 +18,4 @@
 
 __version__ = '0.1.dev0'
 
-from .univariate import (compute_kurtosis, compute_mean, compute_ptp,
-                         compute_skewness, compute_variance)  # noqa
+from . import univariate, bivariate

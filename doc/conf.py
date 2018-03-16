@@ -60,7 +60,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'mne_features'
-copyright = u'2018, Jean-Baptiste SCHIRATTI'
+copyright = u'2018, MNE-Features developers'
 author = u'Jean-Baptiste SCHIRATTI'
 
 # The version info for the project you're documenting, acts as replacement for
