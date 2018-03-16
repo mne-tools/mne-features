@@ -77,35 +77,8 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1):
     selected_funcs : list of str
         The elements of `selected_features` are the names of the feature
         functions which will be used to extract features from the data.
-        The available feature functions are :
-            - 'mean'
-            - 'variance'
-            - 'std'
-            - 'ptp_amplitude' : peak-to-peak amplitude of the signal
-            - 'skewness'
-            - 'kurtosis'
-            - 'hurst_exp' : Hurst exponent
-            - 'decorr_time' : Decorrelation time
-            - 'hjorth_mobility_spect' : Hjorth mobility (computed from the the
-               power spectrum of the data)
-            - 'hjorth_complexity_spect' : Hjorth complexity (computed from the
-               power spectrum of the signal)
-            - 'app_entropy' : Approximate Entropy
-            - 'samp_entropy' : Sample Entropy
-            - 'hjorth_mobility' : Hjorth mobility (computed in the time domain)
-            - 'hjorth_complexity' : Hjorth complexity (computed in the time
-               domain)
-            - 'higuchi_fd' : Higuchi fractal dimension
-            - 'katz_fd' : Katz fractal dimension
-            - 'pow_freq_bands' : (Averaged) power spectrum in different
-               frequency bands
-            - 'max_cross_corr' : Maximum cross-correlation
-            - 'plv' : Phase Locking Value
-            - 'nonlin_interdep' : Measure of nonlinear interdependence
-            - 'time_corr' : Correlation coefficients (computed in the time
-               domain)
-            - 'spect_corr' : Correlation coefficients (computed from the power
-               spectrum of the signal).
+        (See `mne_features` documentation for a complete list of available
+        feature functions).
 
     n_jobs : int (default: 1)
         Number of CPU cores used when parallelizing the feature extraction.
