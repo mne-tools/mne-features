@@ -10,8 +10,8 @@ from mne_features.univariate import (_slope_lstsq, compute_mean,
                                      compute_variance, compute_std,
                                      compute_ptp, compute_skewness,
                                      compute_kurtosis, compute_hurst_exponent,
-                                     compute_app_entropy, power_spectrum,
-                                     compute_samp_entropy, compute_decorr_time,
+                                     compute_app_entropy, compute_samp_entropy,
+                                     compute_decorr_time,
                                      compute_power_spectrum_freq_bands,
                                      compute_spect_hjorth_mobility,
                                      compute_spect_hjorth_complexity,
@@ -60,12 +60,6 @@ def test_shape_output_power_spectrum_freq_bands():
         assert_equal(feat.shape, (n_channels * (n_freqs - 1),))
 
 
-def test_power_spectrum():
-    x = rng.standard_normal((1, 2048))
-    ps, freqs = power_spectrum(1024., x, return_db=False)
-    assert_almost_equal(np.mean(x ** 2), np.sum(ps))
-
-
 def test_shape_output_spect_hjorth_mobility():
     for j in range(n_epochs):
         feat = compute_spect_hjorth_mobility(sfreq, data[j, :, :])
@@ -84,4 +78,3 @@ if __name__ == '__main__':
     test_shape_output()
     test_shape_output_decorr_time()
     test_shape_output_power_spectrum_freq_bands()
-    test_power_spectrum()
