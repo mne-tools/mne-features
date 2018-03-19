@@ -34,12 +34,12 @@ def triu_idx(n):
 
 
 def embed(x, d, tau):
-    """ Utility function to compute the time-delay embedding of a univariate
-    time series x.
+    """ Utility function to compute the time-delay embedding of a [univariate
+    or multivariate] time series x.
 
     Parameters
     ----------
-    x : ndarray, shape (n_times,)
+    x : ndarray, shape (n_channels, n_times)
 
     d : int
         Embedding dimension.
@@ -52,9 +52,10 @@ def embed(x, d, tau):
 
     Returns
     -------
-    ndarray, shape (n_times - 1 - (d - 1) * tau, d)
+    output : ndarray, shape (n_channels, n_times - 1 - (d - 1) * tau, d)
     """
-    n_times = x.shape[0]
+    n_times = x.shape[-1]
+    ndim = x.ndim
     tau_max = floor((n_times - 1) / (d - 1))
     if tau > tau_max:
         warn('The given value (%s) for the parameter `tau` exceeds '
@@ -62,7 +63,8 @@ def embed(x, d, tau):
              'instead.' % tau)
         tau = tau_max
     idx = tau * np.arange(d)
-    return np.vstack([x[j + idx] for j in range(n_times - 1 - (d - 1) * tau)])
+    return np.concatenate([x[..., None, j + idx] for j in
+                           range(n_times - 1 - (d - 1) * tau)], axis=ndim - 1)
 
 
 def power_spectrum(sfreq, data, return_db=True):
