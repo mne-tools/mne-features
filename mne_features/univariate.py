@@ -8,9 +8,10 @@ from math import sqrt, log, floor
 
 import numpy as np
 from scipy import stats, signal
+from scipy.ndimage import convolve1d
 
 from .mock_numba import nb
-from .utils import power_spectrum
+from .utils import power_spectrum, embed, filt
 
 
 def get_univariate_funcs(sfreq, freq_bands):
@@ -52,6 +53,11 @@ def get_univariate_funcs(sfreq, freq_bands):
     univariate_funcs['katz_fd'] = compute_katz_fd
     univariate_funcs['pow_freq_bands'] = partial(
         compute_power_spectrum_freq_bands, sfreq, freq_bands)
+    univariate_funcs['zero_cross'] = compute_zero_crossings
+    univariate_funcs['line_len'] = compute_line_length
+    univariate_funcs['spect_entropy'] = partial(compute_spect_entropy, sfreq)
+    univariate_funcs['svd_entropy'] = compute_svd_entropy
+    univariate_funcs['svd_fisher_info'] = compute_svd_fisher_info
     return univariate_funcs
 
 
@@ -424,7 +430,7 @@ def compute_power_spectrum_freq_bands(sfreq, freq_bands, data, db=True):
     pow_freq_bands = np.empty((n_channels, n_freqs - 1))
     for j in range(1, n_freqs):
         ps_band = ps[:, idx_freq_bands == j]
-        pow_freq_bands[:, j - 1] = np.mean(ps_band, axis=-1)
+        pow_freq_bands[:, j - 1] = np.sum(ps_band, axis=-1)
     return pow_freq_bands.ravel()
 
 
@@ -626,3 +632,164 @@ def compute_katz_fd(data):
     d = np.max(np.abs(aux_d[:, 1:]), axis=-1)
     katz = np.divide(ln, np.add(ln, np.log10(np.divide(d, ll))))
     return katz
+
+
+def compute_zero_crossings(data):
+    """ Number of zero crossings (per channel).
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+    """
+    return np.sum(np.diff(np.sign(data), axis=-1) != 0, axis=-1)
+
+
+def compute_line_length(data):
+    """ Line length (per channel) [1].
+
+    Paramters
+    ---------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Esteller, R. et al. (2001). Line length: an efficient feature for
+           seizure onset detection. In Engineering in Medicine and Biology
+           Society, 2001. Proceedings of the 23rd Annual International
+           Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
+    """
+    return np.sum(np.abs(np.diff(data, axis=-1)), axis=-1)
+
+
+def compute_spect_entropy(sfreq, data):
+    """ Spectral Entropy (Shannon entropy of the power spectrum,
+    per channel) [1].
+
+    Parameters
+    ----------
+    sfreq : float
+        Sampling rate of the data
+
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Inouye, T. et al. (1991). Quantification of EEG irregularity by
+           use of the entropy of the power spectrum. Electroencephalography
+           and clinical neurophysiology, 79(3), 204-210.
+    """
+    ps, _ = power_spectrum(sfreq, data, return_db=False)
+    m = np.sum(ps, axis=-1)
+    ps_norm = np.divide(ps, m[:, None])
+    return -np.sum(np.multiply(ps_norm, np.log2(ps_norm)), axis=-1)
+
+
+def compute_svd_entropy(data, tau=2, emb=10):
+    """ SVD entropy (per channel) [1].
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    tau : int (default: 2)
+        Delay (number of samples).
+
+    emb : int (default: 10)
+        Embedding dimension.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Roberts, S. J. et al. Temporal and spatial complexity measures for
+           electroencephalogram based brain-computer interfacing. Medical &
+           biological engineering & computing, 37(1), 93-98.
+    """
+    _, sv, _ = np.linalg.svd(embed(data, d=emb, tau=tau))
+    m = np.sum(sv, axis=-1)
+    sv_norm = np.divide(sv, m[:, None])
+    return -np.sum(np.multiply(sv_norm, np.log2(sv_norm)), axis=-1)
+
+
+def compute_svd_fisher_info(data, tau=2, emb=10):
+    """ SVD Fisher Information (per channel) [1].
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    tau : int (default: 2)
+        Delay (number of samples).
+
+    emb : int (default: 10)
+        Embedding dimension.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Roberts, S. J. et al. Temporal and spatial complexity measures for
+           electroencephalogram based brain-computer interfacing. Medical &
+           biological engineering & computing, 37(1), 93-98.
+    """
+    _, sv, _ = np.linalg.svd(embed(data, d=emb, tau=tau))
+    m = np.sum(sv, axis=-1)
+    sv_norm = np.divide(sv, m[:, None])
+    aux = np.divide(np.diff(sv_norm, axis=-1) ** 2, sv_norm[:, :-1])
+    return np.sum(aux, axis=-1)
+
+
+def compute_energy_freq_bands(sfreq, freq_bands, data, deriv_filt=True):
+    """ Energy (of the signal, filtered by frequency bands ; per channel) [1].
+
+    Parameters
+    ----------
+    sfreq : float
+        Sampling rate of the data.
+
+    freq_bands : ndarray, shape (n_freqs,)
+        Array defining the frequency bands. The j-th frequency band is defined
+        as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
+
+    data : ndarray, shape (n_channels, n_times)
+
+    deriv_filt : bool (default: False)
+        If True, a derivative filter is applied to the input data before
+        filtering (see Notes).
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels * (n_freqs - 1),)
+
+    References
+    ----------
+    .. [1] Kharbouch, A. et al. (2011). An algorithm for seizure onset
+           detection using intracranial EEG. Epilepsy & Behavior, 22, S29-S35.
+    """
+    n_freqs = freq_bands.shape[0]
+    n_channels = data.shape[0]
+    band_energy = np.empty((n_channels, n_freqs - 1))
+    if deriv_filt:
+        _data = convolve1d(data, [1., 0., -1.], axis=-1, mode='nearest')
+    else:
+        _data = data
+    for j in range(1, n_freqs):
+        filtered_data = filt(sfreq, _data, freq_bands[(j - 1):(j + 1)])
+        band_energy[:, j - 1] = np.mean(filtered_data ** 2, axis=-1)
+    return band_energy.ravel()
