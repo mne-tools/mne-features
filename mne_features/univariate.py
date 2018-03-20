@@ -6,8 +6,8 @@
 from functools import partial
 from math import sqrt, log, floor
 
-import pywt
 import numpy as np
+import pywt
 from scipy import stats, signal
 from scipy.ndimage import convolve1d
 
