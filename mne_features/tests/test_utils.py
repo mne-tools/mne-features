@@ -16,18 +16,18 @@ data = rng.standard_normal((20, int(sfreq)))
 
 def test_power_spectrum():
     ps, freqs = power_spectrum(sfreq, data, return_db=False)
-    assert_almost_equal(np.mean(data ** 2, axis=-1), np.sum(ps, axis=-1))
+    _data = data - np.mean(data, axis=-1)[:, None]
+    assert_almost_equal(np.mean(_data ** 2, axis=-1), np.sum(ps, axis=-1))
 
 
 def test_psd():
-    x0 = data - np.mean(data, axis=-1)[:, None]
+    n_times = data.shape[-1]
     freqs, pxx = signal.welch(data, sfreq,
-                              window=signal.get_window('boxcar',
-                                                       data.shape[-1]),
+                              window=signal.get_window('boxcar', n_times),
                               return_onesided=True, scaling='spectrum')
-    ps, freqs2 = power_spectrum(sfreq, x0, return_db=False)
+    ps, freqs2 = power_spectrum(sfreq, data, return_db=False)
     assert_almost_equal(freqs, freqs2)
-    assert_almost_equal(10. * np.log10(pxx), 10. * np.log10(ps))
+    assert_almost_equal(pxx, ps)
 
 
 def test_triu_idx():

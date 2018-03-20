@@ -69,7 +69,7 @@ def embed(x, d, tau):
                            range(n_times - 1 - (d - 1) * tau)], axis=ndim - 1)
 
 
-def power_spectrum(sfreq, data, return_db=True):
+def power_spectrum(sfreq, data, return_db=False):
     """ Utility function to compute the [one sided] Power Spectrum [1, 2].
 
     Parameters
@@ -79,7 +79,7 @@ def power_spectrum(sfreq, data, return_db=True):
 
     data : ndarray, shape (n_channels, n_times)
 
-    return_db : bool
+    return_db : bool (default: False)
         If True, the result is returned in dB/Hz.
 
     Returns
@@ -99,7 +99,9 @@ def power_spectrum(sfreq, data, return_db=True):
            estimates-using-fft.html
     """
     n_times = data.shape[1]
-    spect = np.fft.rfft(data, n_times)
+    m = np.mean(data, axis=-1)
+    _data = data - m[:, None]
+    spect = np.fft.rfft(_data, n_times)
     mag = np.abs(spect)
     freqs = np.fft.rfftfreq(n_times, 1. / sfreq)
     ps = np.power(mag, 2) / (n_times ** 2)
