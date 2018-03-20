@@ -114,32 +114,32 @@ def power_spectrum(sfreq, data, return_db=True):
 
 
 def filt(sfreq, data, filter_freqs, verbose=False):
-    """ Utility function to filter data. 
+    """ Utility function to filter data.
     Wrapper function for `mne.filter.filter_data` [1].
-    
+
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-        
+
     data : ndarray, shape (n_channels, n_times)
-    
+
     filter_freqs : array-like, shape (2,)
-        Array of cutoff frequencies. If `filter_freqs[0]` is None, a low-pass 
-        filter is used. If `filter_freqs[1]` is None, a high-pass filter is 
-        used. If both `filter_freqs[0]`, `filter_freqs[1]` are not None and 
-        `filter_freqs[0] < filter_freqs[1]`, a band-pass filter is used. 
-        Eventually, if both `filter_freqs[0]`, `filter_freqs[1]` are not None 
+        Array of cutoff frequencies. If `filter_freqs[0]` is None, a low-pass
+        filter is used. If `filter_freqs[1]` is None, a high-pass filter is
+        used. If both `filter_freqs[0]`, `filter_freqs[1]` are not None and
+        `filter_freqs[0] < filter_freqs[1]`, a band-pass filter is used.
+        Eventually, if both `filter_freqs[0]`, `filter_freqs[1]` are not None
         and `filter_freqs[0] > filter_freqs[1]`, a band-stop filter is used.
-         
+
     verbose : bool (default: False)
-        Verbosity parameter. If True, info and warnings related to 
-        `mne.filter.filter_data` are printed. 
-        
+        Verbosity parameter. If True, info and warnings related to
+        `mne.filter.filter_data` are printed.
+
     Returns
     -------
     output : ndarray, shape (n_channels, n_times)
-    
+
     References
     ----------
     .. [1] https://mne-tools.github.io/stable/ (see doc for `filter_data`).
