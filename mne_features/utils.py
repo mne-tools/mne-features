@@ -8,7 +8,9 @@ functions."""
 
 from math import floor
 from warnings import warn
+
 import numpy as np
+from mne.filter import filter_data
 
 from .mock_numba import nb
 
@@ -34,12 +36,12 @@ def triu_idx(n):
 
 
 def embed(x, d, tau):
-    """ Utility function to compute the time-delay embedding of a univariate
-    time series x.
+    """ Utility function to compute the time-delay embedding of a [univariate
+    or multivariate] time series x.
 
     Parameters
     ----------
-    x : ndarray, shape (n_times,)
+    x : ndarray, shape (n_channels, n_times)
 
     d : int
         Embedding dimension.
@@ -52,9 +54,10 @@ def embed(x, d, tau):
 
     Returns
     -------
-    ndarray, shape (n_times - 1 - (d - 1) * tau, d)
+    output : ndarray, shape (n_channels, n_times - 1 - (d - 1) * tau, d)
     """
-    n_times = x.shape[0]
+    n_times = x.shape[-1]
+    ndim = x.ndim
     tau_max = floor((n_times - 1) / (d - 1))
     if tau > tau_max:
         warn('The given value (%s) for the parameter `tau` exceeds '
@@ -62,10 +65,11 @@ def embed(x, d, tau):
              'instead.' % tau)
         tau = tau_max
     idx = tau * np.arange(d)
-    return np.vstack([x[j + idx] for j in range(n_times - 1 - (d - 1) * tau)])
+    return np.concatenate([x[..., None, j + idx] for j in
+                           range(n_times - 1 - (d - 1) * tau)], axis=ndim - 1)
 
 
-def power_spectrum(sfreq, data, return_db=True):
+def power_spectrum(sfreq, data, return_db=False):
     """ Utility function to compute the [one sided] Power Spectrum [1, 2].
 
     Parameters
@@ -75,7 +79,7 @@ def power_spectrum(sfreq, data, return_db=True):
 
     data : ndarray, shape (n_channels, n_times)
 
-    return_db : bool
+    return_db : bool (default: False)
         If True, the result is returned in dB/Hz.
 
     Returns
@@ -95,7 +99,9 @@ def power_spectrum(sfreq, data, return_db=True):
            estimates-using-fft.html
     """
     n_times = data.shape[1]
-    spect = np.fft.rfft(data, n_times)
+    m = np.mean(data, axis=-1)
+    _data = data - m[:, None]
+    spect = np.fft.rfft(_data, n_times)
     mag = np.abs(spect)
     freqs = np.fft.rfftfreq(n_times, 1. / sfreq)
     ps = np.power(mag, 2) / (n_times ** 2)
@@ -107,3 +113,43 @@ def power_spectrum(sfreq, data, return_db=True):
         return 10. * np.log10(ps), freqs
     else:
         return ps, freqs
+
+
+def filt(sfreq, data, filter_freqs, verbose=False):
+    """ Utility function to filter data.
+    Wrapper function for `mne.filter.filter_data` [1].
+
+    Parameters
+    ----------
+    sfreq : float
+        Sampling rate of the data.
+
+    data : ndarray, shape (n_channels, n_times)
+
+    filter_freqs : array-like, shape (2,)
+        Array of cutoff frequencies. If `filter_freqs[0]` is None, a low-pass
+        filter is used. If `filter_freqs[1]` is None, a high-pass filter is
+        used. If both `filter_freqs[0]`, `filter_freqs[1]` are not None and
+        `filter_freqs[0] < filter_freqs[1]`, a band-pass filter is used.
+        Eventually, if both `filter_freqs[0]`, `filter_freqs[1]` are not None
+        and `filter_freqs[0] > filter_freqs[1]`, a band-stop filter is used.
+
+    verbose : bool (default: False)
+        Verbosity parameter. If True, info and warnings related to
+        `mne.filter.filter_data` are printed.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels, n_times)
+
+    References
+    ----------
+    .. [1] https://mne-tools.github.io/stable/ (see doc for `filter_data`).
+    """
+    if filter_freqs[0] is None and filter_freqs[1] is None:
+        raise ValueError('The values of `filter_freqs` cannot all be None.')
+    else:
+        _verbose = 40 * (1 - int(verbose))
+        return filter_data(data, sfreq=sfreq, l_freq=filter_freqs[0],
+                           h_freq=filter_freqs[1], picks=None,
+                           fir_design='firwin', verbose=_verbose)

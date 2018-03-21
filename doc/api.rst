@@ -47,6 +47,14 @@ Functions
    compute_hjorth_complexity
    compute_higuchi_fd
    compute_katz_fd
+   compute_zero_crossings
+   compute_line_length
+   compute_spect_entropy
+   compute_svd_entropy
+   compute_svd_fisher_info
+   compute_energy_freq_bands
+   compute_spect_edge_freq
+   compute_wavelet_coef_energy
 
 Bivariate features
 ==================

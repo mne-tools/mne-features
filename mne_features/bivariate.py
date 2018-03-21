@@ -37,7 +37,7 @@ def get_bivariate_funcs(sfreq):
     bivariate_funcs['plv'] = compute_phase_locking_value
     bivariate_funcs['nonlin_interdep'] = compute_nonlinear_interdep
     bivariate_funcs['time_corr'] = compute_time_corr_coefs
-    bivariate_funcs['spect_corr'] = compute_spect_corr_coefs
+    bivariate_funcs['spect_corr'] = partial(compute_spect_corr_coefs, sfreq)
     return bivariate_funcs
 
 

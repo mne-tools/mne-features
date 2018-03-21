@@ -7,10 +7,12 @@ from functools import partial
 from math import sqrt, log, floor
 
 import numpy as np
+import pywt
 from scipy import stats, signal
+from scipy.ndimage import convolve1d
 
 from .mock_numba import nb
-from .utils import power_spectrum
+from .utils import power_spectrum, embed, filt
 
 
 def get_univariate_funcs(sfreq, freq_bands):
@@ -52,6 +54,13 @@ def get_univariate_funcs(sfreq, freq_bands):
     univariate_funcs['katz_fd'] = compute_katz_fd
     univariate_funcs['pow_freq_bands'] = partial(
         compute_power_spectrum_freq_bands, sfreq, freq_bands)
+    univariate_funcs['zero_cross'] = compute_zero_crossings
+    univariate_funcs['line_len'] = compute_line_length
+    univariate_funcs['spect_entropy'] = partial(compute_spect_entropy, sfreq)
+    univariate_funcs['svd_entropy'] = compute_svd_entropy
+    univariate_funcs['svd_fisher_info'] = compute_svd_fisher_info
+    univariate_funcs['spect_edge_freq'] = partial(compute_spect_edge_freq,
+                                                  sfreq)
     return univariate_funcs
 
 
@@ -389,7 +398,8 @@ def compute_decorr_time(sfreq, data):
     return decorrelation_times
 
 
-def compute_power_spectrum_freq_bands(sfreq, freq_bands, data, db=True):
+def compute_power_spectrum_freq_bands(sfreq, freq_bands, data,
+                                      normalize=True):
     """ Power Spectrum (computed by frequency bands) [1].
 
     Parameters
@@ -403,9 +413,9 @@ def compute_power_spectrum_freq_bands(sfreq, freq_bands, data, db=True):
 
     data : ndarray, shape (n_channels, n_times)
 
-    db : bool (default: True)
-        If True, the power spectrum returned by the function
-        `compute_power_spectrum` is returned in dB/Hz.
+    normalize : bool (default: True)
+        If True, the average power in each frequency band is normalized by
+        the total power.
 
     Returns
     -------
@@ -419,12 +429,15 @@ def compute_power_spectrum_freq_bands(sfreq, freq_bands, data, db=True):
     """
     n_channels = data.shape[0]
     n_freqs = freq_bands.shape[0]
-    ps, freqs = power_spectrum(sfreq, data, return_db=db)
+    ps, freqs = power_spectrum(sfreq, data, return_db=False)
     idx_freq_bands = np.digitize(freqs, freq_bands)
     pow_freq_bands = np.empty((n_channels, n_freqs - 1))
     for j in range(1, n_freqs):
         ps_band = ps[:, idx_freq_bands == j]
-        pow_freq_bands[:, j - 1] = np.mean(ps_band, axis=-1)
+        pow_freq_bands[:, j - 1] = np.sum(ps_band, axis=-1)
+    if normalize:
+        pow_freq_bands = np.divide(pow_freq_bands,
+                                   np.sum(ps, axis=-1)[:, None])
     return pow_freq_bands.ravel()
 
 
@@ -626,3 +639,256 @@ def compute_katz_fd(data):
     d = np.max(np.abs(aux_d[:, 1:]), axis=-1)
     katz = np.divide(ln, np.add(ln, np.log10(np.divide(d, ll))))
     return katz
+
+
+def compute_zero_crossings(data):
+    """ Number of zero crossings (per channel).
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+    """
+    return np.sum(np.diff(np.sign(data), axis=-1) != 0, axis=-1)
+
+
+def compute_line_length(data):
+    """ Line length (per channel) [1].
+
+    Paramters
+    ---------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Esteller, R. et al. (2001). Line length: an efficient feature for
+           seizure onset detection. In Engineering in Medicine and Biology
+           Society, 2001. Proceedings of the 23rd Annual International
+           Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
+    """
+    return np.sum(np.abs(np.diff(data, axis=-1)), axis=-1)
+
+
+def compute_spect_entropy(sfreq, data):
+    """ Spectral Entropy (Shannon entropy of the power spectrum,
+    per channel) [1].
+
+    Parameters
+    ----------
+    sfreq : float
+        Sampling rate of the data
+
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Inouye, T. et al. (1991). Quantification of EEG irregularity by
+           use of the entropy of the power spectrum. Electroencephalography
+           and clinical neurophysiology, 79(3), 204-210.
+    """
+    ps, _ = power_spectrum(sfreq, data, return_db=False)
+    m = np.sum(ps, axis=-1)
+    ps_norm = np.divide(ps[:, 1:], m[:, None])
+    return -np.sum(np.multiply(ps_norm, np.log2(ps_norm)), axis=-1)
+
+
+def compute_svd_entropy(data, tau=2, emb=10):
+    """ SVD entropy (per channel) [1].
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    tau : int (default: 2)
+        Delay (number of samples).
+
+    emb : int (default: 10)
+        Embedding dimension.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Roberts, S. J. et al. Temporal and spatial complexity measures for
+           electroencephalogram based brain-computer interfacing. Medical &
+           biological engineering & computing, 37(1), 93-98.
+    """
+    _, sv, _ = np.linalg.svd(embed(data, d=emb, tau=tau))
+    m = np.sum(sv, axis=-1)
+    sv_norm = np.divide(sv, m[:, None])
+    return -np.sum(np.multiply(sv_norm, np.log2(sv_norm)), axis=-1)
+
+
+def compute_svd_fisher_info(data, tau=2, emb=10):
+    """ SVD Fisher Information (per channel) [1].
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    tau : int (default: 2)
+        Delay (number of samples).
+
+    emb : int (default: 10)
+        Embedding dimension.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Roberts, S. J. et al. Temporal and spatial complexity measures for
+           electroencephalogram based brain-computer interfacing. Medical &
+           biological engineering & computing, 37(1), 93-98.
+    """
+    _, sv, _ = np.linalg.svd(embed(data, d=emb, tau=tau))
+    m = np.sum(sv, axis=-1)
+    sv_norm = np.divide(sv, m[:, None])
+    aux = np.divide(np.diff(sv_norm, axis=-1) ** 2, sv_norm[:, :-1])
+    return np.sum(aux, axis=-1)
+
+
+def compute_energy_freq_bands(sfreq, freq_bands, data, deriv_filt=True):
+    """ Energy (of the signal, filtered by frequency bands ; per channel) [1].
+
+    Parameters
+    ----------
+    sfreq : float
+        Sampling rate of the data.
+
+    freq_bands : ndarray, shape (n_freqs,)
+        Array defining the frequency bands. The j-th frequency band is defined
+        as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
+
+    data : ndarray, shape (n_channels, n_times)
+
+    deriv_filt : bool (default: False)
+        If True, a derivative filter is applied to the input data before
+        filtering (see Notes).
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels * (n_freqs - 1),)
+
+    References
+    ----------
+    .. [1] Kharbouch, A. et al. (2011). An algorithm for seizure onset
+           detection using intracranial EEG. Epilepsy & Behavior, 22, S29-S35.
+    """
+    n_freqs = freq_bands.shape[0]
+    n_channels = data.shape[0]
+    band_energy = np.empty((n_channels, n_freqs - 1))
+    if deriv_filt:
+        _data = convolve1d(data, [1., 0., -1.], axis=-1, mode='nearest')
+    else:
+        _data = data
+    for j in range(1, n_freqs):
+        filtered_data = filt(sfreq, _data, freq_bands[(j - 1):(j + 1)])
+        band_energy[:, j - 1] = np.sum(filtered_data ** 2, axis=-1)
+    return band_energy.ravel()
+
+
+def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
+    """ Spectal Edge Frequency (per channel) [1].
+
+    Paramters
+    ---------
+    sfreq : float
+        Sampling rate of the data.
+
+    data : ndarray, shape (n_channels, n_times)
+
+    ref_freq : float or None (default: None)
+        If not None, reference frequency for the computation of the spectral
+        edge frequency. If None, `ref_freq = sfreq / 2` is used.
+
+    edge : list of float or None (default: None)
+        If not None, the values of `edge` are assumed to be positive and will
+        be normalized to values between 0 and 1. Each entry of `edge`
+        corresponds to a percentage. The spectral edge frequency will be
+        computed for each different value in `edge`. If None, `edge = [0.5]`
+        is used.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels * n_edge,)
+        With: `n_edge = 1` if `edge` is None or `n_edge = len(edge)` otherwise.
+
+    References
+    ----------
+    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and winding
+           road. Brain, 130(2), 314-333.
+    """
+    if ref_freq is None:
+        _ref_freq = sfreq / 2
+    else:
+        _ref_freq = float(ref_freq)
+    if edge is None:
+        _edge = [0.5]
+    else:
+        _edge = [e / 100. for e in edge]
+    n_edge = len(_edge)
+    n_channels, n_times = data.shape
+    spect_edge_freq = np.empty((n_channels, n_edge))
+    ps, freqs = power_spectrum(sfreq, data, return_db=False)
+    out = np.cumsum(ps, 1)
+    for i, p in enumerate(_edge):
+        idx_ref = np.where(freqs >= _ref_freq)[0][0]
+        ref_pow = np.sum(ps[:, :(idx_ref + 1)], axis=-1)
+        for j in range(n_channels):
+            idx = np.where(out[j, :] >= p * ref_pow[j])[0]
+            if idx.size > 0:
+                spect_edge_freq[j, i] = freqs[idx[0]]
+            else:
+                spect_edge_freq[j, i] = -1
+    return spect_edge_freq.ravel()
+
+
+def compute_wavelet_coef_energy(data, wavelet_name):
+    """ Energy of Wavelet decomposition coefficients (per channel) [1].
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    wavelet_name : str
+        Wavelet name (to be used with `pywt.Wavelet`). The full list of Wavelet
+        names are given by: `[name for family in pywt.families() for name in
+        pywt.wavelist(family)]`.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels * levdec,)
+        The decomposition level (`levdec`) used for the DWT is either 6 or
+        the maximum useful decomposition level (given the number of time points
+        in the data and chosen wavelet ; see `pywt.dwt_max_level`).
+
+    References
+    ----------
+    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for
+           studies on the prediction of epileptic seizures. Journal of
+           Neuroscience Methods, 200(2), 257-271.
+    """
+    n_channels, n_times = data.shape
+    wavelet = pywt.Wavelet(wavelet_name)
+    levdec = min(pywt.dwt_max_level(n_times, wavelet.dec_len), 6)
+    wavelet_energy = np.zeros((n_channels, levdec))
+    for j in range(n_channels):
+        coefs = pywt.wavedec(data[j, :], wavelet, level=levdec)
+        for l in range(levdec):
+            wavelet_energy[j, l] = np.sum(coefs[levdec - l] ** 2)
+    return wavelet_energy.ravel()
