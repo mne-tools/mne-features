@@ -6,12 +6,92 @@
 import warnings
 
 import numpy as np
+import pandas as pd
 from sklearn.externals import joblib
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
 
 from .bivariate import get_bivariate_funcs
 from .univariate import get_univariate_funcs
+
+
+class FeatureFunctionTransformer(FunctionTransformer):
+    """ Construct a transformer from a given feature function.
+
+    Similarly to FunctionTransformer, FeatureFunctionTranformer applies a
+    feature function to a given array X.
+
+    Parameters
+    ----------
+    func : callable or None (default: None)
+        Feature function to be used in the transformer.
+        If None, the identity function is used.
+
+    validate : bool (default: True)
+        If True, the array X will be checked before calling the function.
+        If possible, a 2d Numpy array is returned. Otherwise, an exception
+        will be raised. If False, the array X is not checked.
+    """
+    def __init__(self, func=None, validate=True):
+        super(FeatureFunctionTransformer, self).__init__(func=func,
+                                                         validate=validate)
+
+    def transform(self, X, y='deprecated'):
+        """ Transform the array X with the given feature function.
+
+        Parameters
+        ----------
+        X : ndarray, shape (n_channels, n_times)
+
+        y : (ignored)
+
+        Returns
+        -------
+        X_out : ndarray, shape (n_output_func,)
+            Usually, `n_output_func` will be equal to `n_channels` for most
+            univariate feature functions and to
+            `(n_channels * (n_channels + 1)) // 2` for most bivariate feature
+            functions. See the doc of `func` for more details.
+        """
+        X_out = super(FeatureFunctionTransformer, self).transform(X, y)
+        self.output_shape_ = X_out.shape[0]
+        return X_out
+
+    def get_feature_names(self):
+        """ Mapping of the feature indices to feature names. """
+        if not hasattr(self, 'output_shape_'):
+            raise ValueError('Call `transform` or `fit_transform` first.')
+        else:
+            return np.arange(self.output_shape_).astype(str)
+
+
+def _format_as_dataframe(X, feature_names):
+    """ Utility function to format extracted features (X) as a Pandas
+    DataFrame using names and indexes from `feature_names`. The index of the
+    columns is a MultiIndex with two levels. At level 0, the alias of the
+    feature function is given. At level 1, an enumeration of the features is
+    given.
+
+    Parameters
+    ----------
+    X : ndarray, shape (n_epochs, n_features)
+        Extracted features. `X` should be the output of `extract_features`.
+
+    feature_names : list of str
+
+    Returns
+    -------
+    output : Pandas DataFrame
+    """
+    n_features = X.shape[1]
+    if len(feature_names) != n_features:
+        raise ValueError('The length of `feature_names` should be equal to '
+                         '`X.shape[1]` (`n_features`).')
+    else:
+        _names = [n.split('__')[0] for n in feature_names]
+        _idx = [n.split('__')[1] for n in feature_names]
+        columns = pd.MultiIndex.from_arrays([_names, _idx])
+        return pd.DataFrame(data=X, columns=columns)
 
 
 def _apply_extractor(extractor, X):
@@ -59,7 +139,8 @@ def _check_func_names(selected, feature_funcs_names):
         return valid_func_names
 
 
-def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1):
+def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1,
+                     return_as_df=False):
     """ Extraction of temporal or spectral features from epoched EEG signals.
 
     Parameters
@@ -75,7 +156,7 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1):
         as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
 
     selected_funcs : list of str
-        The elements of `selected_features` are the names of the feature
+        The elements of `selected_features` are aliases for the feature
         functions which will be used to extract features from the data.
         (See `mne_features` documentation for a complete list of available
         feature functions).
@@ -84,9 +165,15 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1):
         Number of CPU cores used when parallelizing the feature extraction.
         If given a value of -1, all cores are used.
 
+    return_as_df : bool (default: False)
+        If True, the extracted features will be returned as a Pandas DataFrame.
+        The column index is a MultiIndex (see `pd.MultiIndex`) which contains
+        the alias of each feature function which was used. If False, the
+        features are returned as a 2d Numpy array.
+
     Returns
     -------
-    ndarray, shape (n_epochs, n_features)
+    array-like, shape (n_epochs, n_features)
     """
     if sfreq <= 0:
         raise ValueError('Sampling rate `sfreq` must be positive.')
@@ -98,9 +185,13 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1):
 
     # Feature extraction
     n_epochs = X.shape[0]
-    _tr = [(n, FunctionTransformer(func=feature_funcs[n])) for n in sel_funcs]
+    _tr = [(n, FeatureFunctionTransformer(func=feature_funcs[n]))
+           for n in sel_funcs]
     extractor = FeatureUnion(transformer_list=_tr)
     res = joblib.Parallel(n_jobs=n_jobs)(joblib.delayed(_apply_extractor)(
         extractor, X[j, :, :]) for j in range(n_epochs))
     Xnew = np.vstack(res)
-    return Xnew
+    if return_as_df:
+        return _format_as_dataframe(Xnew, extractor.get_feature_names())
+    else:
+        return Xnew

@@ -19,8 +19,11 @@ def test_shape_output_feature_extraction():
     n_freqs = freq_bands.shape[0]
     sel_funcs = ['mean', 'variance', 'pow_freq_bands', 'kurtosis']
     features = extract_features(data, sfreq, freq_bands, sel_funcs, n_jobs=1)
+    features_as_df = extract_features(data, sfreq, freq_bands, sel_funcs,
+                                      n_jobs=1, return_as_df=True)
     expected_shape = (n_epochs, n_channels * (2 + n_freqs))
     assert_equal(features.shape, expected_shape)
+    assert_equal(features, features_as_df.values)
 
 
 def test_njobs_feature_extraction():
