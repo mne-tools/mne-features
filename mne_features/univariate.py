@@ -15,7 +15,7 @@ from .mock_numba import nb
 from .utils import power_spectrum, embed, filt
 
 
-def get_univariate_funcs(sfreq, freq_bands):
+def get_univariate_funcs(sfreq):
     """ Returns a dictionary of univariate feature functions. For each feature
     function, the corresponding key in the dictionary is an alias for the
     function.
@@ -24,10 +24,6 @@ def get_univariate_funcs(sfreq, freq_bands):
     ----------
     sfreq : float
         Sampling rate of the data.
-
-    freq_bands : ndarray, shape (n_freqs,)
-        Array defining the frequency bands. The j-th frequency band is defined
-        as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
 
     Returns
     -------
@@ -53,7 +49,7 @@ def get_univariate_funcs(sfreq, freq_bands):
     univariate_funcs['higuchi_fd'] = compute_higuchi_fd
     univariate_funcs['katz_fd'] = compute_katz_fd
     univariate_funcs['pow_freq_bands'] = partial(
-        compute_power_spectrum_freq_bands, sfreq, freq_bands)
+        compute_power_spectrum_freq_bands, sfreq)
     univariate_funcs['zero_cross'] = compute_zero_crossings
     univariate_funcs['line_len'] = compute_line_length
     univariate_funcs['spect_entropy'] = partial(compute_spect_entropy, sfreq)
@@ -398,7 +394,9 @@ def compute_decorr_time(sfreq, data):
     return decorrelation_times
 
 
-def compute_power_spectrum_freq_bands(sfreq, freq_bands, data,
+def compute_power_spectrum_freq_bands(sfreq, data,
+                                      freq_bands=np.array([0.5, 4., 8., 13.,
+                                                           30., 100.]),
                                       normalize=True):
     """ Power Spectrum (computed by frequency bands) [1].
 
@@ -407,7 +405,8 @@ def compute_power_spectrum_freq_bands(sfreq, freq_bands, data,
     sfreq : float
         Sampling rate of the data.
 
-    freq_bands : ndarray, shape (n_freqs,)
+    freq_bands : ndarray, shape (n_freqs,) (default: np.array([0.5, 4., 8.,
+        13., 30., 100.]))
         Array defining the frequency bands. The j-th frequency band is defined
         as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
 

@@ -187,8 +187,8 @@ def _check_func_names(selected, feature_funcs_names):
         return valid_func_names
 
 
-def extract_features(X, sfreq, freq_bands, selected_funcs, funcs_params=None,
-                     n_jobs=1, return_as_df=False):
+def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
+                     return_as_df=False):
     """ Extraction of temporal or spectral features from epoched EEG signals.
 
     Parameters
@@ -198,10 +198,6 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, funcs_params=None,
 
     sfreq : float
         Sampling rate of the data.
-
-    freq_bands : ndarray, shape (n_freqs,)
-        Array defining the frequency bands. The j-th frequency band is defined
-        as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
 
     selected_funcs : list of str
         The elements of `selected_features` are aliases for the feature
@@ -231,7 +227,7 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, funcs_params=None,
     """
     if sfreq <= 0:
         raise ValueError('Sampling rate `sfreq` must be positive.')
-    univariate_funcs = get_univariate_funcs(sfreq, freq_bands)
+    univariate_funcs = get_univariate_funcs(sfreq)
     bivariate_funcs = get_bivariate_funcs(sfreq)
     feature_funcs = univariate_funcs.copy()
     feature_funcs.update(bivariate_funcs)
