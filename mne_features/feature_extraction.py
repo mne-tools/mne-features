@@ -32,14 +32,15 @@ class FeatureFunctionTransformer(FunctionTransformer):
         If possible, a 2d Numpy array is returned. Otherwise, an exception
         will be raised. If False, the array X is not checked.
 
-    kw_args : dict or None (default: None)
+    params : dict or None (default: None)
         If not None, dictionary of additional keyword arguments to pass to the
         feature function.
     """
-    def __init__(self, func=None, validate=True, kw_args=None):
+    def __init__(self, func=None, validate=True, params=None):
+        self.params = params
         super(FeatureFunctionTransformer, self).__init__(func=func,
                                                          validate=validate,
-                                                         kw_args=kw_args)
+                                                         kw_args=params)
 
     def transform(self, X, y='deprecated'):
         """ Transform the array X with the given feature function.
@@ -96,17 +97,18 @@ class FeatureFunctionTransformer(FunctionTransformer):
             n_defaults = len(defaults)
             func_params = {key: value for key, value in
                            zip(args[-n_defaults:], defaults)}
-        if self.kw_args is not None:
-            return func_params.update(self.kw_args)
+        if self.params is not None:
+            return func_params.update(self.params)
         else:
             return func_params
 
-    def set_params(self, **params):
+    def set_params(self, **new_params):
         """ Set the parameters of the given feature function. """
-        if self.kw_args is not None:
-            self.kw_args.update(params)
+        if self.params is not None:
+            self.params.update(new_params)
         else:
-            self.kw_args = params
+            self.params = new_params
+        self.kw_args = self.params
         return self
 
 
