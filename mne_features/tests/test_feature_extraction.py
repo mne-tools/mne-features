@@ -37,15 +37,15 @@ def test_njobs():
 
 def test_optional_params():
     freq_bands = np.array([0.1, 4, 8, 12, 30, 70])
-    sel_funcs = ['spect_edge_freq']
-    features1 = extract_features(data, sfreq, freq_bands, sel_funcs,
+    features1 = extract_features(data, sfreq, freq_bands, ['spect_edge_freq'],
                                  {'spect_edge_freq__edge': [0.6]})
-    features2 = extract_features(data, sfreq, freq_bands, sel_funcs,
+    features2 = extract_features(data, sfreq, freq_bands, ['spect_edge_freq'],
                                  {'spect_edge_freq__edge': [0.5, 0.95]})
-    n_features1 = features1.shape[-1]
-    n_features2 = features2.shape[-1]
-    assert_equal(n_features1, n_channels)
-    assert_equal(n_features2, n_features1 * 2)
+    features3 = extract_features(data, sfreq, freq_bands, ['svd_fisher_info'],
+                                 {'svd_fisher_info__tau': 5})
+    assert_equal(features1.shape[-1], n_channels)
+    assert_equal(features3.shape[-1], n_channels)
+    assert_equal(features2.shape[-1], features1.shape[-1] * 2)
 
 
 def test_optional_params_func_with_numba():

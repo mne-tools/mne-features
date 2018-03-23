@@ -96,11 +96,17 @@ class FeatureFunctionTransformer(FunctionTransformer):
             n_defaults = len(defaults)
             func_params = {key: value for key, value in
                            zip(args[-n_defaults:], defaults)}
-        return func_params
+        if self.kw_args is not None:
+            return func_params.update(self.kw_args)
+        else:
+            return func_params
 
     def set_params(self, **params):
         """ Set the parameters of the given feature function. """
-        self.kw_args = params
+        if self.kw_args is not None:
+            self.kw_args.update(params)
+        else:
+            self.kw_args = params
         return self
 
 
@@ -170,9 +176,9 @@ def _check_func_names(selected, feature_funcs_names):
         if f in feature_funcs_names:
             valid_func_names.append(f)
         else:
-            ValueError('The given alias (%s) is not valid. The valid aliases '
-                       'for feature functions are: %s.' %
-                       (f, feature_funcs_names))
+            raise ValueError('The given alias (%s) is not valid. The valid '
+                             'aliases for feature functions are: %s.' %
+                             (f, feature_funcs_names))
     if not valid_func_names:
         raise ValueError('No valid feature function names given.')
     else:
