@@ -405,12 +405,12 @@ def compute_power_spectrum_freq_bands(sfreq, data,
     sfreq : float
         Sampling rate of the data.
 
-    freq_bands : ndarray, shape (n_freqs,) (default: np.array([0.5, 4., 8.,
-        13., 30., 100.]))
+    data : ndarray, shape (n_channels, n_times)
+
+    freq_bands : ndarray, shape (n_freqs,)
+        (default: np.array([0.5, 4., 8., 13., 30., 100.]))
         Array defining the frequency bands. The j-th frequency band is defined
         as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
-
-    data : ndarray, shape (n_channels, n_times)
 
     normalize : bool (default: True)
         If True, the average power in each frequency band is normalized by
@@ -761,7 +761,10 @@ def compute_svd_fisher_info(data, tau=2, emb=10):
     return np.sum(aux, axis=-1)
 
 
-def compute_energy_freq_bands(sfreq, freq_bands, data, deriv_filt=True):
+def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
+                                                                13., 30.,
+                                                                100.]),
+                              deriv_filt=True):
     """ Energy (of the signal, filtered by frequency bands ; per channel) [1].
 
     Parameters
@@ -769,11 +772,12 @@ def compute_energy_freq_bands(sfreq, freq_bands, data, deriv_filt=True):
     sfreq : float
         Sampling rate of the data.
 
+    data : ndarray, shape (n_channels, n_times)
+
     freq_bands : ndarray, shape (n_freqs,)
+        (default: np.array([0.5, 4., 8., 13., 30., 100.]))
         Array defining the frequency bands. The j-th frequency band is defined
         as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
-
-    data : ndarray, shape (n_channels, n_times)
 
     deriv_filt : bool (default: False)
         If True, a derivative filter is applied to the input data before
