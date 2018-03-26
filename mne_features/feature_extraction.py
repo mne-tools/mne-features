@@ -98,9 +98,8 @@ class FeatureFunctionTransformer(FunctionTransformer):
             func_params = {key: value for key, value in
                            zip(args[-n_defaults:], defaults)}
         if self.params is not None:
-            return func_params.update(self.params)
-        else:
-            return func_params
+            func_params.update(self.params)
+        return func_params
 
     def set_params(self, **new_params):
         """ Set the parameters of the given feature function. """

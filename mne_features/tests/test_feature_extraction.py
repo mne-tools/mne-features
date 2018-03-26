@@ -6,7 +6,9 @@
 import numpy as np
 from numpy.testing import assert_equal, assert_raises
 
-from mne_features.feature_extraction import extract_features
+from mne_features.feature_extraction import (extract_features,
+                                             FeatureFunctionTransformer)
+from mne_features.univariate import compute_svd_fisher_info
 
 rng = np.random.RandomState(42)
 sfreq = 256.
@@ -62,9 +64,17 @@ def test_wrong_params():
         # No alias given
         extract_features(data, sfreq, list())
     with assert_raises(ValueError):
-        # Passing optional arguments for with unknown alias
+        # Passing optional arguments with unknown alias
         extract_features(data, sfreq, ['higuchi_fd'],
                          {'higuch_fd__kmax': 3})
+
+
+def test_featurefunctiontransformer():
+    tr = FeatureFunctionTransformer(func=compute_svd_fisher_info)
+    assert_equal(tr.get_params(), {'tau': 2, 'emb': 10})
+    new_params = {'tau': 10}
+    tr.set_params(**new_params)
+    assert_equal(tr.get_params(), {'tau': 10, 'emb': 10})
 
 
 if __name__ == '__main__':
@@ -74,3 +84,4 @@ if __name__ == '__main__':
     test_optional_params()
     test_optional_params_func_with_numba()
     test_wrong_params()
+    test_featurefunctiontransformer()
