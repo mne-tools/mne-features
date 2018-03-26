@@ -80,6 +80,9 @@ def test_featurefunctiontransformer():
     assert_equal(tr2.get_params(), {'tau': 2, 'emb': 20})
     tr2.set_params(**new_params)
     assert_equal(tr2.get_params(), {'tau': 10, 'emb': 20})
+    with assert_raises(ValueError):
+        invalid_new_params = {'fisher_info_tau': 2}
+        tr2.set_params(**invalid_new_params)
 
 
 if __name__ == '__main__':

@@ -103,6 +103,13 @@ class FeatureFunctionTransformer(FunctionTransformer):
 
     def set_params(self, **new_params):
         """ Set the parameters of the given feature function. """
+        valid_params = self.get_params()
+        for key in new_params.keys():
+            if key not in valid_params.keys():
+                raise ValueError('Invalid parameter %s for transformer %s. '
+                                 'Check the list of available parameters '
+                                 'using the `get_params` method of the '
+                                 'transformer.' % (key, self))
         if self.params is not None:
             self.params.update(new_params)
         else:
