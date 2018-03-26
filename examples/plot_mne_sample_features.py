@@ -1,9 +1,9 @@
 """
-=======================================================
+=====================================
 Extract features from MEG time series
-=======================================================
+=====================================
 
-The example is based on the algorithm proposed in:
+The example is based on the method proposed in:
 
 Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
 Slim ESSID, Alexandre GRAMFORT,
@@ -19,7 +19,7 @@ Proc. IEEE ICASSP Conf. 2018
 
 import mne
 from mne.datasets import sample
-from mne_features import compute_kurtosis
+from mne_features.univariate import compute_kurtosis
 
 print(__doc__)
 
