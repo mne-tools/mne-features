@@ -105,7 +105,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
         """ Set the parameters of the given feature function. """
         valid_params = self.get_params()
         for key in new_params.keys():
-            if key not in valid_params.keys():
+            if key not in valid_params:
                 raise ValueError('Invalid parameter %s for transformer %s. '
                                  'Check the list of available parameters '
                                  'using the `get_params` method of the '
