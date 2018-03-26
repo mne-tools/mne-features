@@ -1,8 +1,9 @@
 language: python
 
 env:
-  - USE_NUMBA=ON
-  - USE_NUMBA=OFF
+  - USE_NUMBA=ON PYTHON_VERSION=2.7
+  - USE_NUMBA=ON PYTHON_VERSION=3.6
+  - USE_NUMBA=OFF PYTHON_VERSION=3.6
 
 before_install:
   - wget -q http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
@@ -11,7 +12,7 @@ before_install:
   - export PATH=/home/travis/miniconda/bin:$PATH
   - conda update --yes --quiet conda
 install:
-    - conda create -n testenv --yes pip python=2.7
+    - conda create -n testenv --yes pip python=${PYTHON_VERSION}
     - source activate testenv
     - conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn pandas
     - |
