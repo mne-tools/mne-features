@@ -348,7 +348,7 @@ def compute_samp_entropy(data):
                 j = jj + i + 1
                 if abs(x_new[j] - y1) < r:
                     run[jj] = lastrun[jj] + 1
-                    m1 = int(min((mm, run[jj])))
+                    m1 = int(min(mm, run[jj]))
                     for k in range(m1):
                         a[k] += 1
                         if j < (n_times - 1):
@@ -658,8 +658,8 @@ def compute_zero_crossings(data):
 def compute_line_length(data):
     """ Line length (per channel) [1].
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     data : ndarray, shape (n_channels, n_times)
 
     Returns
@@ -809,8 +809,8 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
 def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
     """ Spectal Edge Frequency (per channel) [1].
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     sfreq : float
         Sampling rate of the data.
 
