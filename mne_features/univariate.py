@@ -57,6 +57,7 @@ def get_univariate_funcs(sfreq):
     univariate_funcs['svd_fisher_info'] = compute_svd_fisher_info
     univariate_funcs['spect_edge_freq'] = partial(compute_spect_edge_freq,
                                                   sfreq)
+    univariate_funcs['wavelet_coef_energy'] = compute_wavelet_coef_energy
     return univariate_funcs
 
 
@@ -861,14 +862,14 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
     return spect_edge_freq.ravel()
 
 
-def compute_wavelet_coef_energy(data, wavelet_name):
+def compute_wavelet_coef_energy(data, wavelet_name='db4'):
     """ Energy of Wavelet decomposition coefficients (per channel) [1].
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
 
-    wavelet_name : str
+    wavelet_name : str (default: db4)
         Wavelet name (to be used with `pywt.Wavelet`). The full list of Wavelet
         names are given by: `[name for family in pywt.families() for name in
         pywt.wavelist(family)]`.
