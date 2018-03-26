@@ -9,9 +9,8 @@ MNE-Features
 .. |Codecov| image:: http://codecov.io/github/mne-tools/mne-features/coverage.svg?branch=master
 .. _Codecov: http://codecov.io/github/mne-tools/mne-features?branch=master
 
-This repository provides code for ....
-
-See the `documentation <https://mne-tools.github.io/mne-features/index.html>`_.
+This repository provides code for feature extraction with M/EEG data.
+The documentation of the MNE-Features module is available at: `documentation <https://mne-tools.github.io/mne-features/index.html>`_.
 
 Installation
 ------------
@@ -33,7 +32,11 @@ These are the dependencies to use MNE-Features:
 * numpy (>=1.8)
 * matplotlib (>=1.3)
 * scipy (>=0.19)
+* numba (>=0.37)
+* scikit-learn (>=0.19)
 * mne (>=0.14)
+* PyWavelets (>=0.5.2)
+* pandas (>=0.20)
 
 
 Cite

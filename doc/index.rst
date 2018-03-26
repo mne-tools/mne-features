@@ -1,7 +1,7 @@
 MNE-Features
 ============
 
-This is a library to ...
+This is a library proposes Python code for feature extraction with M/EEG data.
 
 Installation
 ------------
@@ -9,7 +9,7 @@ Installation
 We recommend the `Anaconda Python distribution <https://www.continuum.io/downloads>`_.
 Otherwise, to install ``mne-features``, you first need to install its dependencies::
 
-	$ pip install numpy matplotlib scipy numba scikit-learn
+	$ pip install numpy matplotlib scipy numba scikit-learn mne PyWavelets pandas
 
 Bug reports
 -----------
