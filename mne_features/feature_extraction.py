@@ -82,15 +82,24 @@ class FeatureFunctionTransformer(FunctionTransformer):
         _params = super(FeatureFunctionTransformer, self).get_params(deep=deep)
         if hasattr(_params['func'], 'func'):
             # If `_params['func'] is of type `functools.partial`
-            _to_inspect = _params['func'].func
+            func_to_inspect = _params['func'].func
         elif hasattr(_params['func'], 'py_func'):
             # If `_params['func'] is a jitted Python function
-            _to_inspect = _params['func'].py_func
+            func_to_inspect = _params['func'].py_func
         else:
             # If `_params['func'] is an actual Python function
-            _to_inspect = _params['func']
-        args, _, _ = getargs(_to_inspect.func_code)
-        defaults = _to_inspect.func_defaults
+            func_to_inspect = _params['func']
+        # Get code object from the function
+        if hasattr(func_to_inspect, 'func_code'):
+            func_code = func_to_inspect.func_code
+        else:
+            func_code = func_to_inspect.__code__
+        args, _, _ = getargs(func_code)
+        # Get defaults from the function
+        if hasattr(func_to_inspect, 'defaults'):
+            defaults = func_to_inspect.func_defaults
+        else:
+            defaults = func_to_inspect.__defaults__
         if defaults is None:
             return dict()
         else:
