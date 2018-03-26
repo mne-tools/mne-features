@@ -66,7 +66,8 @@ def test_shape_output_power_spectrum_freq_bands():
     fb = np.array([0.1, 4, 8, 12, 30])
     n_freqs = fb.shape[0]
     for j in range(n_epochs):
-        feat = compute_power_spectrum_freq_bands(sfreq, fb, data[j, :, :])
+        feat = compute_power_spectrum_freq_bands(sfreq, data[j, :, :],
+                                                 freq_bands=fb)
         assert_equal(feat.shape, (n_channels * (n_freqs - 1),))
 
 
@@ -92,7 +93,7 @@ def test_shape_output_energy_freq_bands():
     fb = np.array([0.1, 4, 8, 12, 30])
     n_freqs = fb.shape[0]
     for j in range(n_epochs):
-        feat = compute_energy_freq_bands(sfreq, fb, data[j, :, :])
+        feat = compute_energy_freq_bands(sfreq, data[j, :, :], freq_bands=fb)
         assert_equal(feat.shape, (n_channels * (n_freqs - 1),))
 
 

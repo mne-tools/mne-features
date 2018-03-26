@@ -3,7 +3,7 @@
 # License: BSD 3 clause
 
 
-import warnings
+from inspect import getargs
 
 import numpy as np
 import pandas as pd
@@ -31,10 +31,16 @@ class FeatureFunctionTransformer(FunctionTransformer):
         If True, the array X will be checked before calling the function.
         If possible, a 2d Numpy array is returned. Otherwise, an exception
         will be raised. If False, the array X is not checked.
+
+    params : dict or None (default: None)
+        If not None, dictionary of additional keyword arguments to pass to the
+        feature function.
     """
-    def __init__(self, func=None, validate=True):
+    def __init__(self, func=None, validate=True, params=None):
+        self.params = params
         super(FeatureFunctionTransformer, self).__init__(func=func,
-                                                         validate=validate)
+                                                         validate=validate,
+                                                         kw_args=params)
 
     def transform(self, X, y='deprecated'):
         """ Transform the array X with the given feature function.
@@ -63,6 +69,53 @@ class FeatureFunctionTransformer(FunctionTransformer):
             raise ValueError('Call `transform` or `fit_transform` first.')
         else:
             return np.arange(self.output_shape_).astype(str)
+
+    def get_params(self, deep=True):
+        """ Get the parameters (if any) of the given feature function.
+
+        Parameters
+        ----------
+        deep : bool (default: True)
+            If True, the method will get the parameters of the transformer and
+            subobjects. (See `sklearn.preprocessing.FunctionTransformer`).
+        """
+        _params = super(FeatureFunctionTransformer, self).get_params(deep=deep)
+        if hasattr(_params['func'], 'func'):
+            # If `_params['func'] is of type `functools.partial`
+            _to_inspect = _params['func'].func
+        elif hasattr(_params['func'], 'py_func'):
+            # If `_params['func'] is a jitted Python function
+            _to_inspect = _params['func'].py_func
+        else:
+            # If `_params['func'] is an actual Python function
+            _to_inspect = _params['func']
+        args, _, _ = getargs(_to_inspect.func_code)
+        defaults = _to_inspect.func_defaults
+        if defaults is None:
+            return dict()
+        else:
+            n_defaults = len(defaults)
+            func_params = {key: value for key, value in
+                           zip(args[-n_defaults:], defaults)}
+        if self.params is not None:
+            func_params.update(self.params)
+        return func_params
+
+    def set_params(self, **new_params):
+        """ Set the parameters of the given feature function. """
+        valid_params = self.get_params()
+        for key in new_params.keys():
+            if key not in valid_params:
+                raise ValueError('Invalid parameter %s for transformer %s. '
+                                 'Check the list of available parameters '
+                                 'using the `get_params` method of the '
+                                 'transformer.' % (key, self))
+        if self.params is not None:
+            self.params.update(new_params)
+        else:
+            self.params = new_params
+        self.kw_args = self.params
+        return self
 
 
 def _format_as_dataframe(X, feature_names):
@@ -131,15 +184,16 @@ def _check_func_names(selected, feature_funcs_names):
         if f in feature_funcs_names:
             valid_func_names.append(f)
         else:
-            warnings.warn('The name ``%s`` is not a valid feature function. '
-                          'This name was ignored.' % f)
+            raise ValueError('The given alias (%s) is not valid. The valid '
+                             'aliases for feature functions are: %s.' %
+                             (f, feature_funcs_names))
     if not valid_func_names:
         raise ValueError('No valid feature function names given.')
     else:
         return valid_func_names
 
 
-def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1,
+def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
                      return_as_df=False):
     """ Extraction of temporal or spectral features from epoched EEG signals.
 
@@ -151,15 +205,17 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1,
     sfreq : float
         Sampling rate of the data.
 
-    freq_bands : ndarray, shape (n_freqs,)
-        Array defining the frequency bands. The j-th frequency band is defined
-        as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
-
     selected_funcs : list of str
         The elements of `selected_features` are aliases for the feature
         functions which will be used to extract features from the data.
         (See `mne_features` documentation for a complete list of available
         feature functions).
+
+    funcs_params : dict or None (default: None)
+        If not None, dict of optional parameters to be passed to the feature
+        functions. Each key of the `funcs_params` dict should be of the form :
+        [alias_feature_function]__[optional_param] (for example:
+        'higuchi_fd__kmax`).
 
     n_jobs : int (default: 1)
         Number of CPU cores used when parallelizing the feature extraction.
@@ -177,7 +233,7 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1,
     """
     if sfreq <= 0:
         raise ValueError('Sampling rate `sfreq` must be positive.')
-    univariate_funcs = get_univariate_funcs(sfreq, freq_bands)
+    univariate_funcs = get_univariate_funcs(sfreq)
     bivariate_funcs = get_bivariate_funcs(sfreq)
     feature_funcs = univariate_funcs.copy()
     feature_funcs.update(bivariate_funcs)
@@ -188,6 +244,8 @@ def extract_features(X, sfreq, freq_bands, selected_funcs, n_jobs=1,
     _tr = [(n, FeatureFunctionTransformer(func=feature_funcs[n]))
            for n in sel_funcs]
     extractor = FeatureUnion(transformer_list=_tr)
+    if funcs_params is not None:
+        extractor.set_params(**funcs_params)
     res = joblib.Parallel(n_jobs=n_jobs)(joblib.delayed(_apply_extractor)(
         extractor, X[j, :, :]) for j in range(n_epochs))
     Xnew = np.vstack(res)

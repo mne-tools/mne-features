@@ -15,7 +15,7 @@ from .mock_numba import nb
 from .utils import power_spectrum, embed, filt
 
 
-def get_univariate_funcs(sfreq, freq_bands):
+def get_univariate_funcs(sfreq):
     """ Returns a dictionary of univariate feature functions. For each feature
     function, the corresponding key in the dictionary is an alias for the
     function.
@@ -24,10 +24,6 @@ def get_univariate_funcs(sfreq, freq_bands):
     ----------
     sfreq : float
         Sampling rate of the data.
-
-    freq_bands : ndarray, shape (n_freqs,)
-        Array defining the frequency bands. The j-th frequency band is defined
-        as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
 
     Returns
     -------
@@ -53,7 +49,7 @@ def get_univariate_funcs(sfreq, freq_bands):
     univariate_funcs['higuchi_fd'] = compute_higuchi_fd
     univariate_funcs['katz_fd'] = compute_katz_fd
     univariate_funcs['pow_freq_bands'] = partial(
-        compute_power_spectrum_freq_bands, sfreq, freq_bands)
+        compute_power_spectrum_freq_bands, sfreq)
     univariate_funcs['zero_cross'] = compute_zero_crossings
     univariate_funcs['line_len'] = compute_line_length
     univariate_funcs['spect_entropy'] = partial(compute_spect_entropy, sfreq)
@@ -61,6 +57,7 @@ def get_univariate_funcs(sfreq, freq_bands):
     univariate_funcs['svd_fisher_info'] = compute_svd_fisher_info
     univariate_funcs['spect_edge_freq'] = partial(compute_spect_edge_freq,
                                                   sfreq)
+    univariate_funcs['wavelet_coef_energy'] = compute_wavelet_coef_energy
     return univariate_funcs
 
 
@@ -398,7 +395,9 @@ def compute_decorr_time(sfreq, data):
     return decorrelation_times
 
 
-def compute_power_spectrum_freq_bands(sfreq, freq_bands, data,
+def compute_power_spectrum_freq_bands(sfreq, data,
+                                      freq_bands=np.array([0.5, 4., 8., 13.,
+                                                           30., 100.]),
                                       normalize=True):
     """ Power Spectrum (computed by frequency bands) [1].
 
@@ -407,11 +406,12 @@ def compute_power_spectrum_freq_bands(sfreq, freq_bands, data,
     sfreq : float
         Sampling rate of the data.
 
+    data : ndarray, shape (n_channels, n_times)
+
     freq_bands : ndarray, shape (n_freqs,)
+        (default: np.array([0.5, 4., 8., 13., 30., 100.]))
         Array defining the frequency bands. The j-th frequency band is defined
         as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
-
-    data : ndarray, shape (n_channels, n_times)
 
     normalize : bool (default: True)
         If True, the average power in each frequency band is normalized by
@@ -762,7 +762,10 @@ def compute_svd_fisher_info(data, tau=2, emb=10):
     return np.sum(aux, axis=-1)
 
 
-def compute_energy_freq_bands(sfreq, freq_bands, data, deriv_filt=True):
+def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
+                                                                13., 30.,
+                                                                100.]),
+                              deriv_filt=True):
     """ Energy (of the signal, filtered by frequency bands ; per channel) [1].
 
     Parameters
@@ -770,11 +773,12 @@ def compute_energy_freq_bands(sfreq, freq_bands, data, deriv_filt=True):
     sfreq : float
         Sampling rate of the data.
 
+    data : ndarray, shape (n_channels, n_times)
+
     freq_bands : ndarray, shape (n_freqs,)
+        (default: np.array([0.5, 4., 8., 13., 30., 100.]))
         Array defining the frequency bands. The j-th frequency band is defined
         as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
-
-    data : ndarray, shape (n_channels, n_times)
 
     deriv_filt : bool (default: False)
         If True, a derivative filter is applied to the input data before
@@ -858,14 +862,14 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
     return spect_edge_freq.ravel()
 
 
-def compute_wavelet_coef_energy(data, wavelet_name):
+def compute_wavelet_coef_energy(data, wavelet_name='db4'):
     """ Energy of Wavelet decomposition coefficients (per channel) [1].
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
 
-    wavelet_name : str
+    wavelet_name : str (default: db4)
         Wavelet name (to be used with `pywt.Wavelet`). The full list of Wavelet
         names are given by: `[name for family in pywt.families() for name in
         pywt.wavelist(family)]`.
