@@ -75,6 +75,11 @@ def test_featurefunctiontransformer():
     new_params = {'tau': 10}
     tr.set_params(**new_params)
     assert_equal(tr.get_params(), {'tau': 10, 'emb': 10})
+    tr2 = FeatureFunctionTransformer(func=compute_svd_fisher_info,
+                                     params={'emb': 20})
+    assert_equal(tr2.get_params(), {'tau': 2, 'emb': 20})
+    tr2.set_params(**new_params)
+    assert_equal(tr2.get_params(), {'tau': 10, 'emb': 20})
 
 
 if __name__ == '__main__':
