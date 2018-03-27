@@ -1,0 +1,6 @@
+mne_features.univariate.compute_wavelet_coef_energy
+===================================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_wavelet_coef_energy

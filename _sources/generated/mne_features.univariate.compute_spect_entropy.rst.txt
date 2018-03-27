@@ -1,0 +1,6 @@
+mne_features.univariate.compute_spect_entropy
+=============================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_spect_entropy

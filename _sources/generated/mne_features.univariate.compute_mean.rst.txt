@@ -1,0 +1,6 @@
+mne_features.univariate.compute_mean
+====================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_mean

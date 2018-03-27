@@ -1,0 +1,6 @@
+mne_features.feature_extraction.extract_features
+================================================
+
+.. currentmodule:: mne_features.feature_extraction
+
+.. autofunction:: extract_features

@@ -1,6 +1,0 @@
-mne\_features\.compute\_kurtosis
-================================
-
-.. currentmodule:: mne_features
-
-.. autofunction:: compute_kurtosis

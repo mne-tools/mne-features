@@ -1,0 +1,6 @@
+mne_features.univariate.power_spectrum
+======================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: power_spectrum

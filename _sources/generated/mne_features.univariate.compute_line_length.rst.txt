@@ -1,0 +1,6 @@
+mne_features.univariate.compute_line_length
+===========================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_line_length

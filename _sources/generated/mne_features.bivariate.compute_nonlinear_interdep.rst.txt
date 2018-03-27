@@ -1,0 +1,6 @@
+mne_features.bivariate.compute_nonlinear_interdep
+=================================================
+
+.. currentmodule:: mne_features.bivariate
+
+.. autofunction:: compute_nonlinear_interdep

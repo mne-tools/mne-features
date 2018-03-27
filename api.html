@@ -1,13 +1,17 @@
 
 <!DOCTYPE html>
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>API Documentation &#8212; mne_features 0.1.dev0 documentation</title>
+    
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -21,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -29,7 +33,7 @@
     <link rel="shortcut icon" href="_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="mne_features.compute_kurtosis" href="generated/mne_features.compute_kurtosis.html" />
+    <link rel="next" title="mne_features.feature_extraction.extract_features" href="generated/mne_features.feature_extraction.extract_features.html" />
     <link rel="prev" title="MNE-Features" href="index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -37,7 +41,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body>
+  <body role="document">
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -85,7 +89,9 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">API Documentation</a><ul>
-<li><a class="reference internal" href="#mne-features">MNE-Features</a></li>
+<li><a class="reference internal" href="#feature-extraction">Feature extraction</a></li>
+<li><a class="reference internal" href="#univariate-features">Univariate features</a></li>
+<li><a class="reference internal" href="#bivariate-features">Bivariate features</a></li>
 </ul>
 </li>
 </ul>
@@ -123,8 +129,8 @@
   
   <div class="section" id="api-documentation">
 <span id="id1"></span><h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="mne-features">
-<h2>MNE-Features<a class="headerlink" href="#mne-features" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="feature-extraction">
+<h2>Feature extraction<a class="headerlink" href="#feature-extraction" title="Permalink to this headline">¶</a></h2>
 <p>Functions</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -132,20 +138,131 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.compute_kurtosis.html#mne_features.compute_kurtosis" title="mne_features.compute_kurtosis"><code class="xref py py-obj docutils literal"><span class="pre">compute_kurtosis</span></code></a>(data)</td>
-<td>Computes the kurtosis of the data.</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="mne_features.feature_extraction.extract_features"><code class="xref py py-obj docutils literal"><span class="pre">extract_features</span></code></a>(X,&nbsp;sfreq,&nbsp;selected_funcs[,&nbsp;...])</td>
+<td>Extraction of temporal or spectral features from epoched EEG signals.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.compute_mean.html#mne_features.compute_mean" title="mne_features.compute_mean"><code class="xref py py-obj docutils literal"><span class="pre">compute_mean</span></code></a>(data)</td>
-<td>Computes the mean of the data.</td>
+</tbody>
+</table>
+</div>
+<div class="section" id="univariate-features">
+<h2>Univariate features<a class="headerlink" href="#univariate-features" title="Permalink to this headline">¶</a></h2>
+<p>Functions</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.get_univariate_funcs.html#mne_features.univariate.get_univariate_funcs" title="mne_features.univariate.get_univariate_funcs"><code class="xref py py-obj docutils literal"><span class="pre">get_univariate_funcs</span></code></a>(sfreq)</td>
+<td>Returns a dictionary of univariate feature functions.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.compute_ptp.html#mne_features.compute_ptp" title="mne_features.compute_ptp"><code class="xref py py-obj docutils literal"><span class="pre">compute_ptp</span></code></a>(data)</td>
-<td>Compute peak-to-peak amplitude.</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_mean.html#mne_features.univariate.compute_mean" title="mne_features.univariate.compute_mean"><code class="xref py py-obj docutils literal"><span class="pre">compute_mean</span></code></a>(data)</td>
+<td>Mean of the data (per channel).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.compute_skewness.html#mne_features.compute_skewness" title="mne_features.compute_skewness"><code class="xref py py-obj docutils literal"><span class="pre">compute_skewness</span></code></a>(data)</td>
-<td>Computes the skewness of the data.</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_variance.html#mne_features.univariate.compute_variance" title="mne_features.univariate.compute_variance"><code class="xref py py-obj docutils literal"><span class="pre">compute_variance</span></code></a>(data)</td>
+<td>Variance of the data (per channel).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.compute_variance.html#mne_features.compute_variance" title="mne_features.compute_variance"><code class="xref py py-obj docutils literal"><span class="pre">compute_variance</span></code></a>(data)</td>
-<td>Computes the variance of the data.</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_std.html#mne_features.univariate.compute_std" title="mne_features.univariate.compute_std"><code class="xref py py-obj docutils literal"><span class="pre">compute_std</span></code></a>(data)</td>
+<td>Standard deviation of the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_ptp.html#mne_features.univariate.compute_ptp" title="mne_features.univariate.compute_ptp"><code class="xref py py-obj docutils literal"><span class="pre">compute_ptp</span></code></a>(data)</td>
+<td>Peak-to-peak (PTP) amplitude of the data (per channel).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_skewness.html#mne_features.univariate.compute_skewness" title="mne_features.univariate.compute_skewness"><code class="xref py py-obj docutils literal"><span class="pre">compute_skewness</span></code></a>(data)</td>
+<td>Skewness of the data (per channel).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_kurtosis.html#mne_features.univariate.compute_kurtosis" title="mne_features.univariate.compute_kurtosis"><code class="xref py py-obj docutils literal"><span class="pre">compute_kurtosis</span></code></a>(data)</td>
+<td>Kurtosis of the data (per channel).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_hurst_exponent.html#mne_features.univariate.compute_hurst_exponent" title="mne_features.univariate.compute_hurst_exponent"><code class="xref py py-obj docutils literal"><span class="pre">compute_hurst_exponent</span></code></a>(data)</td>
+<td>Hurst exponent [1, 2] of the data (per channel).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_app_entropy.html#mne_features.univariate.compute_app_entropy" title="mne_features.univariate.compute_app_entropy"><code class="xref py py-obj docutils literal"><span class="pre">compute_app_entropy</span></code></a></td>
+<td>Approximate Entropy (AppEn, per channel) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_samp_entropy.html#mne_features.univariate.compute_samp_entropy" title="mne_features.univariate.compute_samp_entropy"><code class="xref py py-obj docutils literal"><span class="pre">compute_samp_entropy</span></code></a></td>
+<td>Sample Entropy (SampEn, per channel) [1].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_decorr_time.html#mne_features.univariate.compute_decorr_time" title="mne_features.univariate.compute_decorr_time"><code class="xref py py-obj docutils literal"><span class="pre">compute_decorr_time</span></code></a>(sfreq,&nbsp;data)</td>
+<td>Decorrelation time (per channel) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.power_spectrum.html#mne_features.univariate.power_spectrum" title="mne_features.univariate.power_spectrum"><code class="xref py py-obj docutils literal"><span class="pre">power_spectrum</span></code></a>(sfreq,&nbsp;data[,&nbsp;return_db])</td>
+<td>Utility function to compute the [one sided] Power Spectrum [1, 2].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_power_spectrum_freq_bands.html#mne_features.univariate.compute_power_spectrum_freq_bands" title="mne_features.univariate.compute_power_spectrum_freq_bands"><code class="xref py py-obj docutils literal"><span class="pre">compute_power_spectrum_freq_bands</span></code></a>(sfreq,&nbsp;data)</td>
+<td>Power Spectrum (computed by frequency bands) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_spect_hjorth_mobility.html#mne_features.univariate.compute_spect_hjorth_mobility" title="mne_features.univariate.compute_spect_hjorth_mobility"><code class="xref py py-obj docutils literal"><span class="pre">compute_spect_hjorth_mobility</span></code></a>(sfreq,&nbsp;data[,&nbsp;...])</td>
+<td>Hjorth mobility (computed from the power spectrum, per channel) [1].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_spect_hjorth_complexity.html#mne_features.univariate.compute_spect_hjorth_complexity" title="mne_features.univariate.compute_spect_hjorth_complexity"><code class="xref py py-obj docutils literal"><span class="pre">compute_spect_hjorth_complexity</span></code></a>(sfreq,&nbsp;data)</td>
+<td>Hjorth complexity (computed from the power spectrum, per channel) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_hjorth_mobility.html#mne_features.univariate.compute_hjorth_mobility" title="mne_features.univariate.compute_hjorth_mobility"><code class="xref py py-obj docutils literal"><span class="pre">compute_hjorth_mobility</span></code></a>(data)</td>
+<td>Hjorth mobility (computed in the time domain, per channel) [1].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_hjorth_complexity.html#mne_features.univariate.compute_hjorth_complexity" title="mne_features.univariate.compute_hjorth_complexity"><code class="xref py py-obj docutils literal"><span class="pre">compute_hjorth_complexity</span></code></a>(data)</td>
+<td>Hjorth complexity (computed in the time domain, per channel) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_higuchi_fd.html#mne_features.univariate.compute_higuchi_fd" title="mne_features.univariate.compute_higuchi_fd"><code class="xref py py-obj docutils literal"><span class="pre">compute_higuchi_fd</span></code></a></td>
+<td>Higuchi Fractal Dimension (per channel) [1, 2].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_katz_fd.html#mne_features.univariate.compute_katz_fd" title="mne_features.univariate.compute_katz_fd"><code class="xref py py-obj docutils literal"><span class="pre">compute_katz_fd</span></code></a>(data)</td>
+<td>Katz Fractal Dimension (per channel) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_zero_crossings.html#mne_features.univariate.compute_zero_crossings" title="mne_features.univariate.compute_zero_crossings"><code class="xref py py-obj docutils literal"><span class="pre">compute_zero_crossings</span></code></a>(data)</td>
+<td>Number of zero crossings (per channel).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_line_length.html#mne_features.univariate.compute_line_length" title="mne_features.univariate.compute_line_length"><code class="xref py py-obj docutils literal"><span class="pre">compute_line_length</span></code></a>(data)</td>
+<td>Line length (per channel) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_spect_entropy.html#mne_features.univariate.compute_spect_entropy" title="mne_features.univariate.compute_spect_entropy"><code class="xref py py-obj docutils literal"><span class="pre">compute_spect_entropy</span></code></a>(sfreq,&nbsp;data)</td>
+<td>Spectral Entropy (Shannon entropy of the power spectrum, per channel) [1].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_svd_entropy.html#mne_features.univariate.compute_svd_entropy" title="mne_features.univariate.compute_svd_entropy"><code class="xref py py-obj docutils literal"><span class="pre">compute_svd_entropy</span></code></a>(data[,&nbsp;tau,&nbsp;emb])</td>
+<td>SVD entropy (per channel) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_svd_fisher_info.html#mne_features.univariate.compute_svd_fisher_info" title="mne_features.univariate.compute_svd_fisher_info"><code class="xref py py-obj docutils literal"><span class="pre">compute_svd_fisher_info</span></code></a>(data[,&nbsp;tau,&nbsp;emb])</td>
+<td>SVD Fisher Information (per channel) [1].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_energy_freq_bands.html#mne_features.univariate.compute_energy_freq_bands" title="mne_features.univariate.compute_energy_freq_bands"><code class="xref py py-obj docutils literal"><span class="pre">compute_energy_freq_bands</span></code></a>(sfreq,&nbsp;data[,&nbsp;...])</td>
+<td>Energy (of the signal, filtered by frequency bands ; per channel) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.univariate.compute_spect_edge_freq.html#mne_features.univariate.compute_spect_edge_freq" title="mne_features.univariate.compute_spect_edge_freq"><code class="xref py py-obj docutils literal"><span class="pre">compute_spect_edge_freq</span></code></a>(sfreq,&nbsp;data[,&nbsp;...])</td>
+<td>Spectal Edge Frequency (per channel) [1].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.univariate.compute_wavelet_coef_energy.html#mne_features.univariate.compute_wavelet_coef_energy" title="mne_features.univariate.compute_wavelet_coef_energy"><code class="xref py py-obj docutils literal"><span class="pre">compute_wavelet_coef_energy</span></code></a>(data[,&nbsp;wavelet_name])</td>
+<td>Energy of Wavelet decomposition coefficients (per channel) [1].</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="bivariate-features">
+<h2>Bivariate features<a class="headerlink" href="#bivariate-features" title="Permalink to this headline">¶</a></h2>
+<p>Functions</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.bivariate.get_bivariate_funcs.html#mne_features.bivariate.get_bivariate_funcs" title="mne_features.bivariate.get_bivariate_funcs"><code class="xref py py-obj docutils literal"><span class="pre">get_bivariate_funcs</span></code></a>(sfreq)</td>
+<td>Returns a dictionary of bivariate feature functions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.bivariate.compute_max_cross_correlation.html#mne_features.bivariate.compute_max_cross_correlation" title="mne_features.bivariate.compute_max_cross_correlation"><code class="xref py py-obj docutils literal"><span class="pre">compute_max_cross_correlation</span></code></a></td>
+<td>Maximum linear cross-correlation [1, 2].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.bivariate.compute_phase_locking_value.html#mne_features.bivariate.compute_phase_locking_value" title="mne_features.bivariate.compute_phase_locking_value"><code class="xref py py-obj docutils literal"><span class="pre">compute_phase_locking_value</span></code></a>(data)</td>
+<td>Phase Locking Value (PLV) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.bivariate.compute_nonlinear_interdep.html#mne_features.bivariate.compute_nonlinear_interdep" title="mne_features.bivariate.compute_nonlinear_interdep"><code class="xref py py-obj docutils literal"><span class="pre">compute_nonlinear_interdep</span></code></a>(data[,&nbsp;tau,&nbsp;emb,&nbsp;nn])</td>
+<td>Measure of nonlinear interdependence [1, 2].</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/mne_features.bivariate.compute_time_corr_coefs.html#mne_features.bivariate.compute_time_corr_coefs" title="mne_features.bivariate.compute_time_corr_coefs"><code class="xref py py-obj docutils literal"><span class="pre">compute_time_corr_coefs</span></code></a>(data[,&nbsp;with_eigenvalues])</td>
+<td>Correlation Coefficients (computed in the time domain) [1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/mne_features.bivariate.compute_spect_corr_coefs.html#mne_features.bivariate.compute_spect_corr_coefs" title="mne_features.bivariate.compute_spect_corr_coefs"><code class="xref py py-obj docutils literal"><span class="pre">compute_spect_corr_coefs</span></code></a>(sfreq,&nbsp;data[,&nbsp;db,&nbsp;...])</td>
+<td>Correlation Coefficients (computed from the power spectrum) [1].</td>
 </tr>
 </tbody>
 </table>
@@ -167,8 +284,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2018, Jean-Baptiste SCHIRATTI.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.<br/>
+        &copy; Copyright 2018, MNE-Features developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
     </p>
   </div>
 </footer>

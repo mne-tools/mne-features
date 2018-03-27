@@ -1,13 +1,17 @@
 
 <!DOCTYPE html>
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mne_features.compute_variance &#8212; mne_features 0.1.dev0 documentation</title>
+    
+    <title>mne_features.bivariate.compute_nonlinear_interdep &#8212; mne_features 0.1.dev0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -21,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -29,14 +33,15 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="mne_features.compute_skewness" href="mne_features.compute_skewness.html" />
+    <link rel="next" title="mne_features.bivariate.compute_time_corr_coefs" href="mne_features.bivariate.compute_time_corr_coefs.html" />
+    <link rel="prev" title="mne_features.bivariate.compute_phase_locking_value" href="mne_features.bivariate.compute_phase_locking_value.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body>
+  <body role="document">
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -83,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">mne_features.compute_variance</a></li>
+<li><a class="reference internal" href="#">mne_features.bivariate.compute_nonlinear_interdep</a></li>
 </ul>
 </ul>
 </li>
@@ -95,7 +100,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.compute_variance.rst.txt"
+  <a href="../_sources/generated/mne_features.bivariate.compute_nonlinear_interdep.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -117,12 +122,52 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-compute-variance">
-<h1>mne_features.compute_variance<a class="headerlink" href="#mne-features-compute-variance" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-bivariate-compute-nonlinear-interdep">
+<h1>mne_features.bivariate.compute_nonlinear_interdep<a class="headerlink" href="#mne-features-bivariate-compute-nonlinear-interdep" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.compute_variance">
-<code class="descclassname">mne_features.</code><code class="descname">compute_variance</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.compute_variance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the variance of the data.</p>
+<dt id="mne_features.bivariate.compute_nonlinear_interdep">
+<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_nonlinear_interdep</code><span class="sig-paren">(</span><em>data</em>, <em>tau=2</em>, <em>emb=10</em>, <em>nn=5</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_nonlinear_interdep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure of nonlinear interdependence [1, 2].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
+<p><strong>tau</strong> : int (default: 2)</p>
+<blockquote>
+<div><p>Delay.</p>
+</div></blockquote>
+<p><strong>emb</strong> : int (default: 10)</p>
+<blockquote>
+<div><p>Embedding dimension.</p>
+</div></blockquote>
+<p><strong>nn</strong> : int (default: 5)</p>
+<blockquote>
+<div><p>Number of Nearest Neighbours.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">ndarray, shape (n_channels * (n_channels + 1) / 2,)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r34" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R34]</a></td><td>Mormann, F. et al. (2006). Seizure prediction: the long and winding
+road. Brain, 130(2), 314-333.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r35" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[R35]</a></td><td>Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
+networks for epileptic seizure prediction from intracranial EEG.
+In Machine Learning for Signal Processing. IEEE. pp. 244-249.</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -142,8 +187,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2018, Jean-Baptiste SCHIRATTI.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.<br/>
+        &copy; Copyright 2018, MNE-Features developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
     </p>
   </div>
 </footer>

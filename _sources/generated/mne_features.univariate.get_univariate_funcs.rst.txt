@@ -1,0 +1,6 @@
+mne_features.univariate.get_univariate_funcs
+============================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: get_univariate_funcs

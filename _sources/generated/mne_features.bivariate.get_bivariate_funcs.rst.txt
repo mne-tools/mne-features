@@ -1,0 +1,6 @@
+mne_features.bivariate.get_bivariate_funcs
+==========================================
+
+.. currentmodule:: mne_features.bivariate
+
+.. autofunction:: get_bivariate_funcs

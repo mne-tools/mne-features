@@ -1,0 +1,6 @@
+mne_features.univariate.compute_svd_entropy
+===========================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_svd_entropy

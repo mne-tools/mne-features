@@ -1,0 +1,6 @@
+mne_features.univariate.compute_higuchi_fd
+==========================================
+
+.. currentmodule:: mne_features
+
+.. autoattribute:: univariate.compute_higuchi_fd

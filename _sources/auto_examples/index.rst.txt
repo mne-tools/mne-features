@@ -13,7 +13,7 @@ Examples Gallery
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The example is based on the algorithm proposed in:">
+    <div class="sphx-glr-thumbcontainer" tooltip="The code for this example is based on the method proposed in:">
 
 .. only:: html
 
@@ -43,13 +43,13 @@ Examples Gallery
 
   .. container:: sphx-glr-download
 
-    :download:`Download all examples in Python source code: auto_examples_python.zip <//Users/alex/work/src/mne-features/doc/auto_examples/auto_examples_python.zip>`
+    :download:`Download all examples in Python source code: auto_examples_python.zip <//cal/homes/jbschiratti/mne-features/doc/auto_examples/auto_examples_python.zip>`
 
 
 
   .. container:: sphx-glr-download
 
-    :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip <//Users/alex/work/src/mne-features/doc/auto_examples/auto_examples_jupyter.zip>`
+    :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip <//cal/homes/jbschiratti/mne-features/doc/auto_examples/auto_examples_jupyter.zip>`
 
 
 .. only:: html

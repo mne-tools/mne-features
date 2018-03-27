@@ -1,13 +1,17 @@
 
 <!DOCTYPE html>
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mne_features.compute_mean &#8212; mne_features 0.1.dev0 documentation</title>
+    
+    <title>mne_features.bivariate.compute_spect_corr_coefs &#8212; mne_features 0.1.dev0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -21,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -29,15 +33,14 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_features.compute_ptp" href="mne_features.compute_ptp.html" />
-    <link rel="prev" title="mne_features.compute_kurtosis" href="mne_features.compute_kurtosis.html" />
+    <link rel="prev" title="mne_features.bivariate.compute_time_corr_coefs" href="mne_features.bivariate.compute_time_corr_coefs.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body>
+  <body role="document">
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -84,7 +87,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">mne_features.compute_mean</a></li>
+<li><a class="reference internal" href="#">mne_features.bivariate.compute_spect_corr_coefs</a></li>
 </ul>
 </ul>
 </li>
@@ -96,7 +99,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.compute_mean.rst.txt"
+  <a href="../_sources/generated/mne_features.bivariate.compute_spect_corr_coefs.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -118,12 +121,50 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-compute-mean">
-<h1>mne_features.compute_mean<a class="headerlink" href="#mne-features-compute-mean" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-bivariate-compute-spect-corr-coefs">
+<h1>mne_features.bivariate.compute_spect_corr_coefs<a class="headerlink" href="#mne-features-bivariate-compute-spect-corr-coefs" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.compute_mean">
-<code class="descclassname">mne_features.</code><code class="descname">compute_mean</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.compute_mean" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the mean of the data.</p>
+<dt id="mne_features.bivariate.compute_spect_corr_coefs">
+<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_spect_corr_coefs</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>db=True</em>, <em>with_eigenvalues=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_spect_corr_coefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correlation Coefficients (computed from the power spectrum) [1].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sfreq</strong> : float</p>
+<blockquote>
+<div><p>Sampling rate of the data.</p>
+</div></blockquote>
+<p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
+<p><strong>db</strong> : bool (default: True)</p>
+<blockquote>
+<div><p>If True, the power spectrum returned by the function
+<cite>compute_power_spectrum</cite> is returned in dB/Hz.</p>
+</div></blockquote>
+<p><strong>with_eigenvalues</strong> : bool (default: True)</p>
+<blockquote>
+<div><p>If True, the function also returns the eigenvalues of the correlation
+matrix.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_out,)</p>
+<blockquote class="last">
+<div><p>If <cite>with_eigenvalues</cite> is True, n_out = n_coefs + n_channels. Otherwise,
+n_out = n_coefs. With, n_coefs = n_channels * (n_channels + 1) // 2.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r37" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R37]</a></td><td><a class="reference external" href="https://kaggle2.blob.core.windows.net/forum-message-attachments/">https://kaggle2.blob.core.windows.net/forum-message-attachments/</a>
+134445/4803/seizure-detection.pdf</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -143,8 +184,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2018, Jean-Baptiste SCHIRATTI.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.<br/>
+        &copy; Copyright 2018, MNE-Features developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
     </p>
   </div>
 </footer>

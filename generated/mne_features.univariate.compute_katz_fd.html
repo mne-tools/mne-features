@@ -1,13 +1,17 @@
 
 <!DOCTYPE html>
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mne_features.compute_kurtosis &#8212; mne_features 0.1.dev0 documentation</title>
+    
+    <title>mne_features.univariate.compute_katz_fd &#8212; mne_features 0.1.dev0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -21,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -29,15 +33,15 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_features.compute_mean" href="mne_features.compute_mean.html" />
-    <link rel="prev" title="API Documentation" href="../api.html" />
+    <link rel="next" title="mne_features.univariate.compute_zero_crossings" href="mne_features.univariate.compute_zero_crossings.html" />
+    <link rel="prev" title="mne_features.univariate.compute_higuchi_fd" href="mne_features.univariate.compute_higuchi_fd.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body>
+  <body role="document">
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -84,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">mne_features.compute_kurtosis</a></li>
+<li><a class="reference internal" href="#">mne_features.univariate.compute_katz_fd</a></li>
 </ul>
 </ul>
 </li>
@@ -96,7 +100,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.compute_kurtosis.rst.txt"
+  <a href="../_sources/generated/mne_features.univariate.compute_katz_fd.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -118,12 +122,31 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-compute-kurtosis">
-<h1>mne_features.compute_kurtosis<a class="headerlink" href="#mne-features-compute-kurtosis" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-univariate-compute-katz-fd">
+<h1>mne_features.univariate.compute_katz_fd<a class="headerlink" href="#mne-features-univariate-compute-katz-fd" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.compute_kurtosis">
-<code class="descclassname">mne_features.</code><code class="descname">compute_kurtosis</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.compute_kurtosis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the kurtosis of the data.</p>
+<dt id="mne_features.univariate.compute_katz_fd">
+<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_katz_fd</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_katz_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Katz Fractal Dimension (per channel) [1].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> : ndarray, shape (n_channels, n_times)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>output</strong> : ndarray, shape (n_channels,)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r48" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R48]</a></td><td>Esteller, R. et al. (2001). A comparison of waveform fractal
+dimension algorithms. IEEE Transactions on Circuits and Systems I:
+Fundamental Theory and Applications, 48(2), 177-183.</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -143,8 +166,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2018, Jean-Baptiste SCHIRATTI.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.<br/>
+        &copy; Copyright 2018, MNE-Features developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
     </p>
   </div>
 </footer>

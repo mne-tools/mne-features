@@ -1,0 +1,6 @@
+mne_features.univariate.compute_power_spectrum_freq_bands
+=========================================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_power_spectrum_freq_bands

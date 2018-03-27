@@ -1,0 +1,6 @@
+mne_features.univariate.compute_hurst_exponent
+==============================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_hurst_exponent

@@ -1,0 +1,6 @@
+mne_features.univariate.compute_std
+===================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_std

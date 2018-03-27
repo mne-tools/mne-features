@@ -1,0 +1,6 @@
+mne_features.univariate.compute_variance
+========================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_variance

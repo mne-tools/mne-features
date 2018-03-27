@@ -1,0 +1,6 @@
+mne_features.univariate.compute_samp_entropy
+============================================
+
+.. currentmodule:: mne_features
+
+.. autoattribute:: univariate.compute_samp_entropy

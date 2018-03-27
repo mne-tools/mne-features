@@ -1,6 +1,0 @@
-mne\_features\.compute\_mean
-============================
-
-.. currentmodule:: mne_features
-
-.. autofunction:: compute_mean

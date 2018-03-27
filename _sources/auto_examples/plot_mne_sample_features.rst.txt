@@ -3,17 +3,23 @@
 .. _sphx_glr_auto_examples_plot_mne_sample_features.py:
 
 
-=======================================================
-Extract features from MEG time series
-=======================================================
+========================================================
+Extract features from MEG time series for classification
+========================================================
 
-The example is based on the algorithm proposed in:
+The code for this example is based on the method proposed in:
 
 Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
 Slim ESSID, Alexandre GRAMFORT,
 "An ensemble learning approach to detect epileptic seizures from long
 intracranial EEG recordings"
 Proc. IEEE ICASSP Conf. 2018
+
+.. note::
+
+    This example is for illustration purposes, as other methods
+    may lead to better performance on such a dataset (classification
+    of auditory vs. visual stimuli).
 
 
 
@@ -26,8 +32,14 @@ Proc. IEEE ICASSP Conf. 2018
     # License: BSD 3 clause
 
     import mne
+    import numpy as np
     from mne.datasets import sample
-    from mne_features import compute_kurtosis
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import cross_val_score, KFold
+    from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import StandardScaler
+
+    from mne_features.feature_extraction import extract_features
 
     print(__doc__)
 
@@ -37,27 +49,28 @@ Proc. IEEE ICASSP Conf. 2018
 
 
 
-Generate sample EEG data
+Let us import the data using MNE-Python and epoch it:
 
 
 
 .. code-block:: python
 
+
     data_path = sample.data_path()
     raw_fname = data_path + '/MEG/sample/sample_audvis_filt-0-40_raw.fif'
     event_fname = data_path + '/MEG/sample/sample_audvis_filt-0-40_raw-eve.fif'
-    tmin, tmax = -0.1, 0.4
+    tmin, tmax = -0.2, 0.5
     event_id = dict(aud_l=1, vis_l=3)
 
     # Setup for reading the raw data
     raw = mne.io.read_raw_fif(raw_fname, preload=True)
     raw.filter(.5, None, fir_design='firwin')
     events = mne.read_events(event_fname)
-    picks = mne.pick_types(raw.info, meg=True, eeg=False)
+    picks = mne.pick_types(raw.info, meg='grad', eeg=False)
 
     # Read epochs
     epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks, proj=True,
-                        decim=2, baseline=None, preload=True)
+                        baseline=None, preload=True)
     labels = epochs.events[:, -1]
 
     # get MEG and EEG data
@@ -71,17 +84,36 @@ Generate sample EEG data
 
  Out::
 
-    The measurement information indicates a low-pass frequency of 40 Hz. The decim=2 parameter will result in a sampling frequency of 75.0769 Hz, which can cause aliasing artifacts.
+    Successfully extracted to: [u'/data/jbschiratti/mne_data/MNE-sample-data']
+    Opening raw data file /home/users/jbschiratti/mne_data/MNE-sample-data/MEG/sample/sample_audvis_filt-0-40_raw.fif...
+        Read a total of 4 projection items:
+            PCA-v1 (1 x 102)  idle
+            PCA-v2 (1 x 102)  idle
+            PCA-v3 (1 x 102)  idle
+            Average EEG reference (1 x 60)  idle
+        Range : 6450 ... 48149 =     42.956 ...   320.665 secs
+    Ready.
+    Current compensation grade : 0
+    Reading 0 ... 41699  =      0.000 ...   277.709 secs...
+    Setting up high-pass filter at 0.5 Hz
+    l_trans_bandwidth chosen to be 0.5 Hz
+    Filter length of 991 samples (6.600 sec) selected
+    145 matching events found
+    4 projection items activated
+    Loading data for 145 events and 106 original time points ...
+    0 bad epochs dropped
 
 
-Extract some features to classify epochs
+Prepare for the classification task:
 
 
 
 .. code-block:: python
 
 
-    X = compute_kurtosis(data)
+    pipe = Pipeline([('scaler', StandardScaler()),
+                     ('lr', LogisticRegression(random_state=42))])
+    y = labels
 
 
 
@@ -89,21 +121,47 @@ Extract some features to classify epochs
 
 
 
-Run classification
+Classification using features (mean, peak-to-peak amplitude,
+standard deviation). See :ref:`api_documentation` for full list of supported
+features.
 
 
 
 .. code-block:: python
 
 
-    # XXX TODO
+    selected_funcs = {'mean', 'ptp_amplitude', 'std'}
+    X_new = extract_features(data, raw.info['sfreq'], selected_funcs)
+    kf = KFold(n_splits=3, random_state=42)
+    scores = cross_val_score(pipe, X_new, y, scoring='accuracy', cv=kf)
 
 
 
 
 
 
-**Total running time of the script:** ( 0 minutes  2.024 seconds)
+
+Print the cross-validation score:
+
+
+
+.. code-block:: python
+
+
+    print('Cross-validation accuracy score = %1.3f (+/- %1.5f)' % (np.mean(scores),
+                                                                   np.std(scores)))
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out::
+
+    Cross-validation accuracy score = 0.938 (+/- 0.00060)
+
+
+**Total running time of the script:** ( 0 minutes  2.177 seconds)
 
 
 
