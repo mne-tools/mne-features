@@ -156,7 +156,7 @@ def _format_as_dataframe(X, feature_names):
         return pd.DataFrame(data=X, columns=columns)
 
 
-def _apply_extractor(extractor, X):
+def _apply_extractor(extractor, X, return_as_df):
     """ Utility function to apply features extractor to ndarray X.
 
     Parameters
@@ -165,11 +165,20 @@ def _apply_extractor(extractor, X):
 
     X : ndarray, shape (n_channels, n_times)
 
+    return_as_df : bool
+
     Returns
     -------
-    ndarray, shape (n_features,)
+    X : ndarray, shape (n_features,)
+
+    feature_names : list of str | None
+        Not None, only if return_as_df is True.
     """
-    return extractor.fit_transform(X)
+    X = extractor.fit_transform(X)
+    feature_names = None
+    if return_as_df:
+        feature_names = extractor.get_feature_names()
+    return X, feature_names
 
 
 def _check_func_names(selected, feature_funcs_names):
@@ -256,9 +265,11 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     if funcs_params is not None:
         extractor.set_params(**funcs_params)
     res = joblib.Parallel(n_jobs=n_jobs)(joblib.delayed(_apply_extractor)(
-        extractor, X[j, :, :]) for j in range(n_epochs))
+        extractor, X[j, :, :], return_as_df) for j in range(n_epochs))
+    feature_names = res[0][1]
+    res = list(zip(*res))[0]
     Xnew = np.vstack(res)
     if return_as_df:
-        return _format_as_dataframe(Xnew, extractor.get_feature_names())
+        return _format_as_dataframe(Xnew, feature_names)
     else:
         return Xnew
