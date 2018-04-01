@@ -328,9 +328,9 @@ def compute_samp_entropy(data, emb=2, metric='chebyshev'):
     n_channels, n_times = data.shape
     phi = np.empty((n_channels, 2))
     for j in range(n_channels):
-        r = 0.2 * np.std(data[j, None], axis=-1, ddof=1)
+        r = 0.2 * np.std(data[j, :], axis=-1, ddof=1)
         # compute phi(emb, r)
-        emb_data1 = embed(data[j, :], emb, 1)[0, :, :]
+        emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
         count = KDTree(emb_data1, metric=metric).query_radius(
             emb_data1, r, count_only=True)
         phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
