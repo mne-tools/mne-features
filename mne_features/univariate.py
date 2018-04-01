@@ -287,12 +287,12 @@ def compute_app_entropy(data, emb=2, metric='chebyshev'):
         # compute phi(emb, r)
         emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
         count = KDTree(emb_data1, metric=metric).query_radius(
-            emb_data1, r, count_only=True)
+            emb_data1, r, count_only=True).astype(np.float64)
         phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
         # compute phi(emb + 1, r)
         emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
         count = KDTree(emb_data2, metric=metric).query_radius(
-            emb_data2, r, count_only=True)
+            emb_data2, r, count_only=True).astype(np.float64)
         phi[j, 1] = np.mean(np.log(count / emb_data2.shape[0]))
     return np.subtract(phi[:, 0], phi[:, 1])
 
@@ -332,12 +332,12 @@ def compute_samp_entropy(data, emb=2, metric='chebyshev'):
         # compute phi(emb, r)
         emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
         count = KDTree(emb_data1, metric=metric).query_radius(
-            emb_data1, r, count_only=True)
+            emb_data1, r, count_only=True).astype(np.float64)
         phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
         # compute phi(emb + 1, r)
         emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
         count = KDTree(emb_data2, metric=metric).query_radius(
-            emb_data2, r, count_only=True)
+            emb_data2, r, count_only=True).astype(np.float64)
         phi[j, 1] = np.mean(np.log(count / emb_data2.shape[0]))
     return np.log(np.divide(phi[:, 0], phi[:, 1]))
 
