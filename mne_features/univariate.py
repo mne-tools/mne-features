@@ -10,6 +10,7 @@ import numpy as np
 import pywt
 from scipy import stats, signal
 from scipy.ndimage import convolve1d
+from sklearn.neighbors import KDTree
 
 from .mock_numba import nb
 from .utils import power_spectrum, embed, filt
@@ -251,114 +252,94 @@ def compute_hurst_exponent(data):
     return hurst_exponent.ravel()
 
 
-@nb.jit([nb.float64[:](nb.float64[:, :]), nb.float32[:](nb.float32[:, :])],
-        nopython=True)
-def compute_app_entropy(data):
+def compute_app_entropy(data, emb=2, metric='chebyshev'):
     """ Approximate Entropy (AppEn, per channel) [1].
 
     Parameters
     ----------
-    data : shape (n_channels, n_times)
+    data : ndarray, shape (n_channels, n_times)
+
+    emb : int (default: 2)
+        Embedding dimension.
+
+    metric : str (default: chebyshev)
+        Name of the metric function used with KDTree. The list of available
+        metric functions is given by: `KDTree.valid_metrics`.
 
     Returns
     -------
-    output : ndarray, shape (n_channels)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
-    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for
-           studies on the prediction of epileptic seizures. Journal of
-           Neuroscience Methods, 200(2), 257-271.
+    .. [1] Borowska, M. (2015). Entropy-based algorithms in the analysis of
+           biomedical signals. Studies in Logic, Grammar and Rhetoric,
+           43(1), 21-32.
     """
+    _all_metrics = KDTree.valid_metrics
+    if metric not in _all_metrics:
+        raise ValueError('The given metric (%s) is not valid. The valid '
+                         'metric names are: %s' % (metric, _all_metrics))
     n_channels, n_times = data.shape
-    appen = np.empty((n_channels,), dtype=data.dtype)
-    for t in range(n_channels):
-        s = 0
-        for j in range(n_times):
-            s += data[t, j] ** 2
-        s /= (n_times - 1)
-        rs = sqrt(s)
-        r = 0.25 * rs
-        p = 0.
-        a = 0.
-        b = 0.
-        for i in range(n_times - 2):
-            for j in range((i + 1), (n_times - 3)):
-                d1 = abs(data[t, i] - data[t, j])
-                d2 = abs(data[t, i + 1] - data[t, j + 1])
-                d3 = abs(data[t, i + 2] - data[t, j + 2])
-                if d1 >= d2:
-                    da = d1
-                else:
-                    da = d2
-                if da < r:
-                    a += 1
-                    if d3 < r:
-                        b += 1
-            if (a > 0) and (b > 0):
-                pi = float(b) / float(a)
-                p += log(pi)
-        appen[t] = (-2.0) * p * (1.0 / (n_times - 2))
-    return appen
+    phi = np.empty((n_channels, 2))
+    for j in range(n_channels):
+        r = 0.2 * np.std(data[j, :], axis=-1, ddof=1)
+        # compute phi(emb, r)
+        emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
+        count = KDTree(emb_data1, metric=metric).query_radius(
+            emb_data1, r, count_only=True)
+        phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
+        # compute phi(emb + 1, r)
+        emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
+        count = KDTree(emb_data2, metric=metric).query_radius(
+            emb_data2, r, count_only=True)
+        phi[j, 1] = np.mean(np.log(count / emb_data2.shape[0]))
+    return np.subtract(phi[:, 0], phi[:, 1])
 
 
-@nb.jit([nb.float64[:](nb.float64[:, :]), nb.float32[:](nb.float32[:, :])],
-        nopython=True)
-def compute_samp_entropy(data):
+def compute_samp_entropy(data, emb=2, metric='chebyshev'):
     """ Sample Entropy (SampEn, per channel) [1].
 
     Parameters
     ----------
-    data : shape (n_channels, n_times)
+    data : ndarray, shape (n_channels, n_times)
+
+    emb : int (default: 2)
+        Embedding dimension.
+
+    metric : str (default: chebyshev)
+        Name of the metric function used with KDTree. The list of available
+        metric functions is given by: `KDTree.valid_metrics`.
 
     Returns
     -------
-    output : ndarray, shape (n_channels)
+    output : ndarray, shape (n_channels,)
 
     References
     ----------
-    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for
-           studies on the prediction of epileptic seizures. Journal of
-           Neuroscience Methods, 200(2), 257-271.
+    .. [1] Borowska, M. (2015). Entropy-based algorithms in the analysis of
+           biomedical signals. Studies in Logic, Grammar and Rhetoric,
+           43(1), 21-32.
     """
+    _all_metrics = KDTree.valid_metrics
+    if metric not in _all_metrics:
+        raise ValueError('The given metric (%s) is not valid. The valid '
+                         'metric names are: %s' % (metric, _all_metrics))
     n_channels, n_times = data.shape
-    sampen = np.empty((n_channels,), dtype=data.dtype)
-    for t in range(n_channels):
-        m = 0
-        s = 0
-        for j in range(n_times):
-            m += data[t, j]
-            s += data[t, j] ** 2
-        m /= n_times
-        s /= n_times
-        s = sqrt(s)
-        x_new = np.zeros(n_times)
-        for j in range(n_times):
-            x_new[j] = (data[t, j] - m) / s
-        mm = 3
-        r = 0.2
-        lastrun = np.zeros((n_times,))
-        run = np.zeros((n_times,))
-        a = np.zeros((mm,))
-        b = np.zeros((mm,))
-        for i in range(n_times - 1):
-            nj = n_times - i - 1
-            y1 = x_new[i]
-            for jj in range(nj):
-                j = jj + i + 1
-                if abs(x_new[j] - y1) < r:
-                    run[jj] = lastrun[jj] + 1
-                    m1 = int(min(mm, run[jj]))
-                    for k in range(m1):
-                        a[k] += 1
-                        if j < (n_times - 1):
-                            b[k] += 1
-                else:
-                    run[jj] = 0
-            for jj in range(nj):
-                lastrun[jj] = run[jj]
-        sampen[t] = -log(a[-1] / b[mm - 2])
-    return sampen
+    phi = np.empty((n_channels, 2))
+    for j in range(n_channels):
+        r = 0.2 * np.std(data[j, None], axis=-1, ddof=1)
+        # compute phi(emb, r)
+        emb_data1 = embed(data[j, :], emb, 1)[0, :, :]
+        count = KDTree(emb_data1, metric=metric).query_radius(
+            emb_data1, r, count_only=True)
+        phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
+        # compute phi(emb + 1, r)
+        emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
+        count = KDTree(emb_data2, metric=metric).query_radius(
+            emb_data2, r, count_only=True)
+        phi[j, 1] = np.mean(np.log(count / emb_data2.shape[0]))
+    return np.log(np.divide(phi[:, 0], phi[:, 1]))
 
 
 def compute_decorr_time(sfreq, data):

@@ -35,6 +35,32 @@ def triu_idx(n):
             yield pos, i, j
 
 
+@nb.jit([nb.float64[:, :, ::1](nb.float64[:, :], nb.int64, nb.int64),
+         nb.float32[:, :, ::1](nb.float32[:, :], nb.int32, nb.int32)])
+def _embed_helper(x, d, tau):
+    """ Helper function for `embed`.
+
+    Parameters
+    ----------
+    x : ndarray, shape (n_channels, n_times)
+
+    d : int
+
+    tau : int
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels, n_times - (d - 1) * tau, d)
+    """
+    n_channels, n_times = x.shape
+    td_emb = np.empty((n_channels, n_times - (d - 1) * tau, d), dtype=x.dtype)
+    for j in range(n_channels):
+        for i in range(n_times - (d - 1) * tau):
+            for k in range(d):
+                td_emb[j, i, k] = x[j, i + k]
+    return td_emb
+
+
 def embed(x, d, tau):
     """ Utility function to compute the time-delay embedding of a [univariate
     or multivariate] time series x.
@@ -54,19 +80,18 @@ def embed(x, d, tau):
 
     Returns
     -------
-    output : ndarray, shape (n_channels, n_times - 1 - (d - 1) * tau, d)
+    output : ndarray, shape (n_channels, n_times - (d - 1) * tau, d)
     """
     n_times = x.shape[-1]
-    ndim = x.ndim
     tau_max = floor((n_times - 1) / (d - 1))
     if tau > tau_max:
         warn('The given value (%s) for the parameter `tau` exceeds '
              '`tau_max = floor((n_times - 1) / (d - 1))`. Using `tau_max` '
              'instead.' % tau)
-        tau = tau_max
-    idx = tau * np.arange(d)
-    return np.concatenate([x[..., None, j + idx] for j in
-                           range(n_times - 1 - (d - 1) * tau)], axis=ndim - 1)
+        _tau = tau_max
+    else:
+        _tau = int(tau)
+    return _embed_helper(x, d, _tau)
 
 
 def power_spectrum(sfreq, data, return_db=False):

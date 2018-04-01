@@ -41,7 +41,7 @@ def test_triu_idx():
 def test_shape_output_embed():
     d, tau = 10, 10
     emb_data = embed(data, d=d, tau=tau)
-    expected = (data.shape[0], data.shape[-1] - 1 - (d - 1) * tau, d)
+    expected = (data.shape[0], data.shape[-1] - (d - 1) * tau, d)
     assert_equal(emb_data.shape, expected)
 
 
