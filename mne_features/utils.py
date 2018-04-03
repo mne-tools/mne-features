@@ -35,32 +35,6 @@ def triu_idx(n):
             yield pos, i, j
 
 
-@nb.jit([nb.float64[:, :, ::1](nb.float64[:, :], nb.int64, nb.int64),
-         nb.float32[:, :, ::1](nb.float32[:, :], nb.int32, nb.int32)])
-def _embed_helper(x, d, tau):
-    """ Helper function for `embed`.
-
-    Parameters
-    ----------
-    x : ndarray, shape (n_channels, n_times)
-
-    d : int
-
-    tau : int
-
-    Returns
-    -------
-    output : ndarray, shape (n_channels, n_times - (d - 1) * tau, d)
-    """
-    n_channels, n_times = x.shape
-    td_emb = np.empty((n_channels, n_times - (d - 1) * tau, d), dtype=x.dtype)
-    for j in range(n_channels):
-        for i in range(n_times - (d - 1) * tau):
-            for k in range(d):
-                td_emb[j, i, k] = x[j, i + k]
-    return td_emb
-
-
 def embed(x, d, tau):
     """ Utility function to compute the time-delay embedding of a [univariate
     or multivariate] time series x.
@@ -82,8 +56,7 @@ def embed(x, d, tau):
     -------
     output : ndarray, shape (n_channels, n_times - (d - 1) * tau, d)
     """
-    n_times = x.shape[-1]
-    tau_max = floor((n_times - 1) / (d - 1))
+    tau_max = floor((x.shape[1] - 1) / (d - 1))
     if tau > tau_max:
         warn('The given value (%s) for the parameter `tau` exceeds '
              '`tau_max = floor((n_times - 1) / (d - 1))`. Using `tau_max` '
@@ -91,7 +64,11 @@ def embed(x, d, tau):
         _tau = tau_max
     else:
         _tau = int(tau)
-    return _embed_helper(x, d, _tau)
+    x = x.copy()
+    X = np.lib.stride_tricks.as_strided(
+        x, (x.shape[0], x.shape[1] - d * _tau + _tau, d),
+        (x.strides[-2], x.strides[-1], x.strides[-1] * _tau))
+    return X
 
 
 def power_spectrum(sfreq, data, return_db=False):

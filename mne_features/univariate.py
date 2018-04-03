@@ -252,6 +252,45 @@ def compute_hurst_exponent(data):
     return hurst_exponent.ravel()
 
 
+def _app_samp_entropy_helper(data, emb, metric='chebyshev'):
+    """ Utility function for `compute_app_entropy` and `compute_samp_entropy`.
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    emb : int (default: 2)
+        Embedding dimension.
+
+    metric : str (default: chebyshev)
+        Name of the metric function used with KDTree. The list of available
+        metric functions is given by: `KDTree.valid_metrics`.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels, 2)
+    """
+    _all_metrics = KDTree.valid_metrics
+    if metric not in _all_metrics:
+        raise ValueError('The given metric (%s) is not valid. The valid '
+                         'metric names are: %s' % (metric, _all_metrics))
+    n_channels, n_times = data.shape
+    phi = np.empty((n_channels, 2))
+    for j in range(n_channels):
+        r = 0.2 * np.std(data[j, :], axis=-1, ddof=1)
+        # compute phi(emb, r)
+        emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
+        count = KDTree(emb_data1, metric=metric).query_radius(
+            emb_data1, r, count_only=True).astype(np.float64)
+        phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
+        # compute phi(emb + 1, r)
+        emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
+        count = KDTree(emb_data2, metric=metric).query_radius(
+            emb_data2, r, count_only=True).astype(np.float64)
+        phi[j, 1] = np.mean(np.log(count / emb_data2.shape[0]))
+    return phi
+
+
 def compute_app_entropy(data, emb=2, metric='chebyshev'):
     """ Approximate Entropy (AppEn, per channel) [1].
 
@@ -276,24 +315,7 @@ def compute_app_entropy(data, emb=2, metric='chebyshev'):
            biomedical signals. Studies in Logic, Grammar and Rhetoric,
            43(1), 21-32.
     """
-    _all_metrics = KDTree.valid_metrics
-    if metric not in _all_metrics:
-        raise ValueError('The given metric (%s) is not valid. The valid '
-                         'metric names are: %s' % (metric, _all_metrics))
-    n_channels, n_times = data.shape
-    phi = np.empty((n_channels, 2))
-    for j in range(n_channels):
-        r = 0.2 * np.std(data[j, :], axis=-1, ddof=1)
-        # compute phi(emb, r)
-        emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
-        count = KDTree(emb_data1, metric=metric).query_radius(
-            emb_data1, r, count_only=True).astype(np.float64)
-        phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
-        # compute phi(emb + 1, r)
-        emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
-        count = KDTree(emb_data2, metric=metric).query_radius(
-            emb_data2, r, count_only=True).astype(np.float64)
-        phi[j, 1] = np.mean(np.log(count / emb_data2.shape[0]))
+    phi = _app_samp_entropy_helper(data, emb=emb, metric=metric)
     return np.subtract(phi[:, 0], phi[:, 1])
 
 
@@ -321,24 +343,7 @@ def compute_samp_entropy(data, emb=2, metric='chebyshev'):
            biomedical signals. Studies in Logic, Grammar and Rhetoric,
            43(1), 21-32.
     """
-    _all_metrics = KDTree.valid_metrics
-    if metric not in _all_metrics:
-        raise ValueError('The given metric (%s) is not valid. The valid '
-                         'metric names are: %s' % (metric, _all_metrics))
-    n_channels, n_times = data.shape
-    phi = np.empty((n_channels, 2))
-    for j in range(n_channels):
-        r = 0.2 * np.std(data[j, :], axis=-1, ddof=1)
-        # compute phi(emb, r)
-        emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
-        count = KDTree(emb_data1, metric=metric).query_radius(
-            emb_data1, r, count_only=True).astype(np.float64)
-        phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
-        # compute phi(emb + 1, r)
-        emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
-        count = KDTree(emb_data2, metric=metric).query_radius(
-            emb_data2, r, count_only=True).astype(np.float64)
-        phi[j, 1] = np.mean(np.log(count / emb_data2.shape[0]))
+    phi = _app_samp_entropy_helper(data, emb=emb, metric=metric)
     return np.log(np.divide(phi[:, 0], phi[:, 1]))
 
 
