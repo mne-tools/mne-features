@@ -38,11 +38,13 @@ def test_triu_idx():
     assert_almost_equal(triu_indices, triu_indices2.transpose())
 
 
-def test_shape_output_embed():
+def test_embed():
     d, tau = 10, 10
     emb_data = embed(data, d=d, tau=tau)
-    expected = (data.shape[0], data.shape[-1] - 1 - (d - 1) * tau, d)
-    assert_equal(emb_data.shape, expected)
+    expected = np.concatenate([data[..., None, j + tau * np.arange(d)] for j in
+                               range(data.shape[-1] - (d - 1) * tau)],
+                              axis=data.ndim - 1)
+    assert_almost_equal(emb_data, expected)
 
 
 def test_filt():
@@ -57,5 +59,5 @@ if __name__ == '__main__':
     test_power_spectrum()
     test_psd()
     test_triu_idx()
-    test_shape_output_embed()
+    test_embed()
     test_filt()
