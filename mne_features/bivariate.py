@@ -169,8 +169,8 @@ def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
     n_coefs = n_channels * (n_channels + 1) // 2
     nlinterdep = np.empty((n_coefs,))
     for s, i, j in triu_idx(n_channels):
-        emb_x = embed(data[i, :], d=emb, tau=tau)
-        emb_y = embed(data[j, :], d=emb, tau=tau)
+        emb_x = embed(data[i, None], d=emb, tau=tau)[0, :, :]
+        emb_y = embed(data[j, None], d=emb, tau=tau)[0, :, :]
         knn = NearestNeighbors(n_neighbors=nn, algorithm='kd_tree')
         idx_x = clone(knn).fit(emb_x).kneighbors(emb_x, return_distance=False)
         idx_y = clone(knn).fit(emb_y).kneighbors(emb_y, return_distance=False)

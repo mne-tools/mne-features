@@ -54,19 +54,21 @@ def embed(x, d, tau):
 
     Returns
     -------
-    output : ndarray, shape (n_channels, n_times - 1 - (d - 1) * tau, d)
+    output : ndarray, shape (n_channels, n_times - (d - 1) * tau, d)
     """
-    n_times = x.shape[-1]
-    ndim = x.ndim
-    tau_max = floor((n_times - 1) / (d - 1))
+    tau_max = floor((x.shape[1] - 1) / (d - 1))
     if tau > tau_max:
         warn('The given value (%s) for the parameter `tau` exceeds '
              '`tau_max = floor((n_times - 1) / (d - 1))`. Using `tau_max` '
              'instead.' % tau)
-        tau = tau_max
-    idx = tau * np.arange(d)
-    return np.concatenate([x[..., None, j + idx] for j in
-                           range(n_times - 1 - (d - 1) * tau)], axis=ndim - 1)
+        _tau = tau_max
+    else:
+        _tau = int(tau)
+    x = x.copy()
+    X = np.lib.stride_tricks.as_strided(
+        x, (x.shape[0], x.shape[1] - d * _tau + _tau, d),
+        (x.strides[-2], x.strides[-1], x.strides[-1] * _tau))
+    return X
 
 
 def power_spectrum(sfreq, data, return_db=False):

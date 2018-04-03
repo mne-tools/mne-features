@@ -4,7 +4,7 @@
 
 
 import numpy as np
-from numpy.testing import assert_equal, assert_almost_equal
+from numpy.testing import assert_equal, assert_almost_equal, assert_raises
 
 from mne_features.univariate import (_slope_lstsq, compute_mean,
                                      compute_variance, compute_std,
@@ -46,8 +46,7 @@ def test_slope_lstsq():
 def test_shape_output():
     for func in (compute_mean, compute_variance, compute_std,
                  compute_kurtosis, compute_skewness, compute_ptp,
-                 compute_hurst_exponent, compute_app_entropy,
-                 compute_samp_entropy, compute_hjorth_complexity,
+                 compute_hurst_exponent, compute_hjorth_complexity,
                  compute_hjorth_mobility, compute_higuchi_fd, compute_katz_fd,
                  compute_zero_crossings, compute_line_length,
                  compute_svd_entropy, compute_svd_fisher_info):
@@ -109,6 +108,20 @@ def test_shape_output_wavelet_coef_energy():
     assert_equal(feat.shape, (n_channels * 6,))
 
 
+def test_app_entropy():
+    feat = compute_app_entropy(data[0, :, :], emb=5)
+    assert_equal(feat.shape, (n_channels,))
+    with assert_raises(ValueError):
+        compute_app_entropy(data[0, :, :], emb=5, metric='sqeuclidean')
+
+
+def test_samp_entropy():
+    feat = compute_samp_entropy(data[0, :, :], emb=5)
+    assert_equal(feat.shape, (n_channels,))
+    with assert_raises(ValueError):
+        compute_samp_entropy(data[0, :, :], emb=5, metric='sqeuclidean')
+
+
 if __name__ == '__main__':
 
     test_slope_lstsq()
@@ -119,3 +132,5 @@ if __name__ == '__main__':
     test_shape_output_energy_freq_bands()
     test_shape_output_spect_edge_freq()
     test_shape_output_wavelet_coef_energy()
+    test_app_entropy()
+    test_samp_entropy()
