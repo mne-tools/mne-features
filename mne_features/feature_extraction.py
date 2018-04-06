@@ -7,6 +7,7 @@ from inspect import getargs
 
 import numpy as np
 import pandas as pd
+from sklearn.base import TransformerMixin, BaseEstimator
 from sklearn.externals import joblib
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
@@ -209,6 +210,58 @@ def _check_func_names(selected, feature_funcs_names):
         raise ValueError('No valid feature function names given.')
     else:
         return valid_func_names
+
+
+class FeatureExtraction(BaseEstimator, TransformerMixin):
+    """ Wrapper for `extract_features`.
+
+    Parameters
+    ----------
+    sfreq : float (default: 256.)
+        Sampling rate of the data.
+
+    selected_funcs : list of str or None (default: None)
+        Aliases of the feature functions which will be used to extract
+        features from the data. (See the documentation of `mne_features` for a
+        complete list of available feature functions).
+
+    params : None
+        If not None, dict of optional parameters to be passed to
+        `extract_features`.
+    """
+    def __init__(self, sfreq=256., selected_funcs=None, params=None):
+        self.sfreq = sfreq
+        self.selected_funcs = selected_funcs
+        self.params = params
+
+    def fit(self, X, y=None):
+        """ Does nothing. """
+        return self
+
+    def transform(self, X, y=None):
+        """ Extract features.
+
+        Parameters
+        ----------
+        X : ndarray, shape (n_epochs, n_channels, n_times)
+
+        y : None
+            Only for compatibility with `sklearn.pipeline.Pipeline`.
+
+        Returns
+        -------
+        Xnew : ndarray, shape (n_epochs, n_features)
+            Extracted features.
+        """
+        return extract_features(X, self.sfreq, self.selected_funcs,
+                                funcs_params=self.params, n_jobs=1)
+
+    def get_params(self, deep=True):
+        return super(FeatureExtraction, self).get_params(deep=deep)
+
+    def set_params(self, **params):
+        self.params = params
+        return self
 
 
 def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
