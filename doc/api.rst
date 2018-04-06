@@ -15,7 +15,11 @@ Functions
 
 .. autosummary::
    :toctree: generated/
+   :nosignatures:
+   :template: class.rst
 
+   FeatureExtraction
+   :template: function.rst
    extract_features
 
 Univariate features
@@ -27,6 +31,7 @@ Functions
 
 .. autosummary::
    :toctree: generated/
+   :template: function.rst
 
    get_univariate_funcs
    compute_mean

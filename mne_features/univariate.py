@@ -547,30 +547,9 @@ def compute_hjorth_complexity(data):
 
 @nb.jit([nb.float64[:](nb.float64[:, :], nb.optional(nb.int64)),
          nb.float32[:](nb.float32[:, :], nb.optional(nb.int32))])
-def compute_higuchi_fd(data, kmax=10):
-    """ Higuchi Fractal Dimension (per channel) [1, 2].
-
-    Parameters
-    ----------
-    data : ndarray, shape (n_channels, n_times)
-
-    kmax : int (default: 10)
-        Maximum delay/offset (in number of samples).
-
-    Returns
-    -------
-    output : ndarray, shape (n_channels,)
-
-    References
-    ----------
-    .. [1] Esteller, R. et al. (2001). A comparison of waveform fractal
-           dimension algorithms. IEEE Transactions on Circuits and Systems I:
-           Fundamental Theory and Applications, 48(2), 177-183.
-
-    .. [2] Paivinen, N. et al. (2005). Epileptic seizure detection: A nonlinear
-           viewpoint. Computer methods and programs in biomedicine, 79(2),
-           151-159.
-    """
+def _higuchi_fd(data, kmax):
+    # make an auxiliary function as sphinx does not like numba
+    # decorated functions.
     n_channels, n_times = data.shape
     higuchi = np.empty((n_channels,), dtype=data.dtype)
     for s in range(n_channels):
@@ -598,6 +577,33 @@ def compute_higuchi_fd(data, kmax=10):
             y_reg[k - 1] = log(m_lm)
         higuchi[s] = _slope_lstsq(x_reg, y_reg)
     return higuchi
+
+
+def compute_higuchi_fd(data, kmax=10):
+    """ Higuchi Fractal Dimension (per channel) [1, 2].
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    kmax : int (default: 10)
+        Maximum delay/offset (in number of samples).
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    References
+    ----------
+    .. [1] Esteller, R. et al. (2001). A comparison of waveform fractal
+           dimension algorithms. IEEE Transactions on Circuits and Systems I:
+           Fundamental Theory and Applications, 48(2), 177-183.
+
+    .. [2] Paivinen, N. et al. (2005). Epileptic seizure detection: A nonlinear
+           viewpoint. Computer methods and programs in biomedicine, 79(2),
+           151-159.
+    """
+    return _higuchi_fd(data, kmax)
 
 
 def compute_katz_fd(data):
