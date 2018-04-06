@@ -17,10 +17,11 @@ from .univariate import get_univariate_funcs
 
 
 class FeatureFunctionTransformer(FunctionTransformer):
-    """ Construct a transformer from a given feature function.
+    """ Constructs a transformer from a given feature function.
 
-    Similarly to FunctionTransformer, FeatureFunctionTranformer applies a
-    feature function to a given array X.
+    Similarly to :class:`~sklearn.preprocessing.FunctionTransformer`,
+    :class:`FeatureFunctionTranformer` applies a feature function to a given
+    array X.
 
     Parameters
     ----------
@@ -44,7 +45,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
                                                          kw_args=params)
 
     def transform(self, X, y='deprecated'):
-        """ Transform the array X with the given feature function.
+        """ Applies the given feature function to the array X.
 
         Parameters
         ----------
@@ -55,10 +56,11 @@ class FeatureFunctionTransformer(FunctionTransformer):
         Returns
         -------
         X_out : ndarray, shape (n_output_func,)
-            Usually, `n_output_func` will be equal to `n_channels` for most
+            Usually, ``n_output_func`` will be equal to ``n_channels`` for most
             univariate feature functions and to
-            `(n_channels * (n_channels + 1)) // 2` for most bivariate feature
-            functions. See the doc of `func` for more details.
+            ``(n_channels * (n_channels + 1)) // 2`` for most bivariate feature
+            functions. See the doc of the given feature function for more
+            details.
         """
         X_out = super(FeatureFunctionTransformer, self).transform(X, y)
         self.output_shape_ = X_out.shape[0]
@@ -77,8 +79,8 @@ class FeatureFunctionTransformer(FunctionTransformer):
         Parameters
         ----------
         deep : bool (default: True)
-            If True, the method will get the parameters of the transformer and
-            subobjects. (See `sklearn.preprocessing.FunctionTransformer`).
+            If True, the method will get the parameters of the transformer.
+            (See :class:`~sklearn.preprocessing.FunctionTransformer`).
         """
         _params = super(FeatureFunctionTransformer, self).get_params(deep=deep)
         if hasattr(_params['func'], 'func'):
@@ -112,7 +114,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
         return func_params
 
     def set_params(self, **new_params):
-        """ Set the parameters of the given feature function. """
+        """ Set the parameters (if any) of the given feature function. """
         valid_params = self.get_params()
         for key in new_params.keys():
             if key not in valid_params:
@@ -130,7 +132,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
 
 def _format_as_dataframe(X, feature_names):
     """ Utility function to format extracted features (X) as a Pandas
-    DataFrame using names and indexes from `feature_names`. The index of the
+    DataFrame using names and indexes from ``feature_names``. The index of the
     columns is a MultiIndex with two levels. At level 0, the alias of the
     feature function is given. At level 1, an enumeration of the features is
     given.
@@ -138,7 +140,7 @@ def _format_as_dataframe(X, feature_names):
     Parameters
     ----------
     X : ndarray, shape (n_epochs, n_features)
-        Extracted features. `X` should be the output of `extract_features`.
+        Extracted features. X should be the output of :func:`extract_features`.
 
     feature_names : list of str
 
@@ -162,7 +164,8 @@ def _apply_extractor(extractor, X, return_as_df):
 
     Parameters
     ----------
-    extractor : Instance of sklearn.pipeline.FeatureUnion or sklearn.pipeline
+    extractor : Instance of :class:`~sklearn.pipeline.FeatureUnion` or
+    :class:`~sklearn.pipeline.Pipeline`.
 
     X : ndarray, shape (n_channels, n_times)
 
@@ -173,7 +176,7 @@ def _apply_extractor(extractor, X, return_as_df):
     X : ndarray, shape (n_features,)
 
     feature_names : list of str | None
-        Not None, only if return_as_df is True.
+        Not None, only if ``return_as_df`` is True.
     """
     X = extractor.fit_transform(X)
     feature_names = None
@@ -212,8 +215,8 @@ def _check_func_names(selected, feature_funcs_names):
         return valid_func_names
 
 
-class FeatureExtraction(BaseEstimator, TransformerMixin):
-    """ Wrapper for `extract_features`.
+class FeatureExtractor(BaseEstimator, TransformerMixin):
+    """ Class acting as a wrapper for :func:`extract_features`.
 
     Parameters
     ----------
@@ -222,12 +225,12 @@ class FeatureExtraction(BaseEstimator, TransformerMixin):
 
     selected_funcs : list of str or None (default: None)
         Aliases of the feature functions which will be used to extract
-        features from the data. (See the documentation of `mne_features` for a
+        features from the data. (See the documentation of mne-features for a
         complete list of available feature functions).
 
     params : None
         If not None, dict of optional parameters to be passed to
-        `extract_features`.
+        :func:`extract_features`.
     """
     def __init__(self, sfreq=256., selected_funcs=None, params=None):
         self.sfreq = sfreq
@@ -235,18 +238,18 @@ class FeatureExtraction(BaseEstimator, TransformerMixin):
         self.params = params
 
     def fit(self, X, y=None):
-        """ Does nothing. """
+        """ Does not have any effect. """
         return self
 
     def transform(self, X, y=None):
-        """ Extract features.
+        """ Extract features from the array X.
 
         Parameters
         ----------
         X : ndarray, shape (n_epochs, n_channels, n_times)
 
         y : None
-            Only for compatibility with `sklearn.pipeline.Pipeline`.
+            Only for compatibility with :class:`~sklearn.pipeline.Pipeline`.
 
         Returns
         -------
@@ -257,9 +260,11 @@ class FeatureExtraction(BaseEstimator, TransformerMixin):
                                 funcs_params=self.params, n_jobs=1)
 
     def get_params(self, deep=True):
-        return super(FeatureExtraction, self).get_params(deep=deep)
+        """ Get the parameters of the transformer. """
+        return super(FeatureExtractor, self).get_params(deep=deep)
 
     def set_params(self, **params):
+        """ Set the parameters of the transformer. """
         self.params = params
         return self
 
@@ -277,16 +282,16 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
         Sampling rate of the data.
 
     selected_funcs : list of str
-        The elements of `selected_features` are aliases for the feature
+        The elements of ``selected_features`` are aliases for the feature
         functions which will be used to extract features from the data.
-        (See `mne_features` documentation for a complete list of available
+        (See the documentation of mne-features for a complete list of available
         feature functions).
 
     funcs_params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to the feature
-        functions. Each key of the `funcs_params` dict should be of the form :
-        [alias_feature_function]__[optional_param] (for example:
-        'higuchi_fd__kmax`).
+        functions. Each key of the ``funcs_params`` dict should be of the form:
+        ``[alias_feature_function]__[optional_param]`` (for example:
+        ``higuchi_fd__kmax``).
 
     n_jobs : int (default: 1)
         Number of CPU cores used when parallelizing the feature extraction.
@@ -294,9 +299,9 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
 
     return_as_df : bool (default: False)
         If True, the extracted features will be returned as a Pandas DataFrame.
-        The column index is a MultiIndex (see `pd.MultiIndex`) which contains
-        the alias of each feature function which was used. If False, the
-        features are returned as a 2d Numpy array.
+        The column index is a MultiIndex (see :class:`~pandas.MultiIndex`)
+        which contains the alias of each feature function which was used.
+        If False, the features are returned as a 2d Numpy array.
 
     Returns
     -------

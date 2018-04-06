@@ -18,7 +18,7 @@ Functions
    :nosignatures:
    :template: class.rst
 
-   FeatureExtraction
+   FeatureExtractor
    :template: function.rst
    extract_features
 

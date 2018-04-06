@@ -10,7 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.utils.mocking import CheckingClassifier
 from mne_features.feature_extraction import (extract_features,
                                              FeatureFunctionTransformer,
-                                             FeatureExtraction)
+                                             FeatureExtractor)
 from mne_features.univariate import compute_svd_fisher_info
 
 rng = np.random.RandomState(42)
@@ -90,11 +90,11 @@ def test_featurefunctiontransformer():
 
 def test_feature_extraction_wrapper():
     selected_funcs = ['app_entropy']
-    extractor = FeatureExtraction(sfreq=sfreq, selected_funcs=selected_funcs)
+    extractor = FeatureExtractor(sfreq=sfreq, selected_funcs=selected_funcs)
     expected_features = extract_features(data, sfreq, selected_funcs)
     assert_almost_equal(expected_features, extractor.fit_transform(data))
     with assert_raises(ValueError):
-        FeatureExtraction(
+        FeatureExtractor(
             sfreq=sfreq, selected_funcs=selected_funcs,
             params={'app_entropy__metric': 'sqeuclidean'}).fit_transform(data)
 
@@ -102,8 +102,8 @@ def test_feature_extraction_wrapper():
 def test_gridsearch_feature_extraction():
     X = data
     y = np.ones((X.shape[0],))  # dummy labels
-    pipe = Pipeline([('FE', FeatureExtraction(sfreq=sfreq,
-                                              selected_funcs=['higuchi_fd'])),
+    pipe = Pipeline([('FE', FeatureExtractor(sfreq=sfreq,
+                                             selected_funcs=['higuchi_fd'])),
                      ('clf', CheckingClassifier(
                          check_X=lambda arr: arr.shape[1:] == (X.shape[1],)))])
     params_grid = {'FE__higuchi_fd__kmax': [5, 10]}
