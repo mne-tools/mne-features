@@ -232,6 +232,17 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         If not None, dict of optional parameters to be passed to
         :func:`extract_features`.
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> rng = np.random.RandomState(42)
+    >>> n_epochs, n_channels, n_times = 5, 3, 32
+    >>> X = rng.randn(n_epochs, n_channels, n_times)
+    >>> fe = FeatureExtractor(sfreq=100., selected_funcs=['std', 'kurtosis'])
+    >>> X = fe.fit_transform(X)
+    >>> print(X.shape)
+    (5, 6)
+
     See also
     --------
     extract_features
