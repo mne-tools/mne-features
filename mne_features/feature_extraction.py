@@ -216,7 +216,14 @@ def _check_func_names(selected, feature_funcs_names):
 
 
 class FeatureExtractor(BaseEstimator, TransformerMixin):
-    """ Class acting as a wrapper for :func:`extract_features`.
+    """ Feature extraction from epoched EEG data.
+    
+    The method `fit_transform` implemented in this class can be used to 
+    extract univariate or bivariate features from epoched data 
+    (see example below). The method ``fit`` does not have any effect and is 
+    implemented for compatibility with Scikit-learn's API. As a result, the 
+    class ``FeatureExtractor`` can be used as a step in a Pipeline (see 
+    :class:`~sklearn.pipeline.Pipeline` and MNE-features examples).  
 
     Parameters
     ----------
@@ -230,7 +237,13 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 
     params : None
         If not None, dict of optional parameters to be passed to
-        :func:`extract_features`.
+        :func:`extract_features`. Each key of the ``funcs_params`` dict should 
+        be of the form: ``[alias_feature_function]__[optional_param]`` 
+        (for example: ``higuchi_fd__kmax``).
+        
+    n_jobs : int (default: 1)
+        Number of CPU cores used when parallelizing the feature extraction.
+        If given a value of -1, all cores are used.
 
     Examples
     --------
@@ -245,12 +258,13 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 
     See also
     --------
-    extract_features
+    :func:`extract_features`
     """
-    def __init__(self, sfreq=256., selected_funcs=None, params=None):
+    def __init__(self, sfreq=256., selected_funcs=None, params=None, n_jobs=1):
         self.sfreq = sfreq
         self.selected_funcs = selected_funcs
         self.params = params
+        self.n_jobs = n_jobs
 
     def fit(self, X, y=None):
         """ Does not have any effect. """
@@ -272,7 +286,7 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
             Extracted features.
         """
         return extract_features(X, self.sfreq, self.selected_funcs,
-                                funcs_params=self.params, n_jobs=1)
+                                funcs_params=self.params, n_jobs=self.n_jobs)
 
     def get_params(self, deep=True):
         """ Get the parameters of the transformer. """
