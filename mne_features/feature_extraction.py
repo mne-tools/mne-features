@@ -231,6 +231,10 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     params : None
         If not None, dict of optional parameters to be passed to
         :func:`extract_features`.
+
+    See also
+    --------
+    extract_features
     """
     def __init__(self, sfreq=256., selected_funcs=None, params=None):
         self.sfreq = sfreq
