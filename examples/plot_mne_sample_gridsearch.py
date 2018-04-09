@@ -1,7 +1,7 @@
 """
-====================================================================
-Optimized feature extraction from MEG time series for classification
-====================================================================
+==========================================================================
+Use scikit-learn GridSearchCV with FeatureExtractor for setting parameters
+==========================================================================
 
 The code for this example is based on the method proposed in:
 
@@ -15,7 +15,15 @@ Proc. IEEE ICASSP Conf. 2018
 
     This example is for illustration purposes, as other methods
     may lead to better performance on such a dataset (classification
-    of auditory vs. visual stimuli).
+    of auditory vs. visual stimuli). 
+    
+    The example shows how a :class:`~sklearn.model_selection.GridSearchCV` 
+    object can be used for parameter tuning in a pipeline which sequentially 
+    combines feature extraction (with :class:`FeatureExtractor`), 
+    data standardization (with :class:`~sklearn.preprocessing.StandardScaler`)
+    and classification (with :class:`~sklearn.linear_model.LogisticRegression`).
+    
+    
 
 """  # noqa
 
