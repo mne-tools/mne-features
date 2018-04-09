@@ -212,7 +212,7 @@ def compute_time_corr_coefs(data, with_eigenvalues=True):
 
 
 def compute_spect_corr_coefs(sfreq, data, db=False, with_eigenvalues=True):
-    """ Correlation Coefficients (computed from the power spectrum) [1].
+    """ Correlation Coefficients (computed from the power spectrum) ([Tisp]_).
 
     Parameters
     ----------
