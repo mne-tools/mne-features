@@ -1,0 +1,32 @@
+:mod:`mne_features.feature_extraction`.FeatureExtractor
+==============================================================
+
+.. currentmodule:: mne_features.feature_extraction
+
+.. autoclass:: FeatureExtractor
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+       :nosignatures:
+   
+      ~FeatureExtractor.__init__
+      ~FeatureExtractor.fit
+      ~FeatureExtractor.fit_transform
+      ~FeatureExtractor.get_params
+      ~FeatureExtractor.set_params
+      ~FeatureExtractor.transform
+   
+   
+
+   
+   
+   
+
+.. raw:: html
+
+    <div class="clearer"></div>

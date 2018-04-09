@@ -125,8 +125,8 @@
 <h1>mne_features.bivariate.compute_spect_corr_coefs<a class="headerlink" href="#mne-features-bivariate-compute-spect-corr-coefs" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="mne_features.bivariate.compute_spect_corr_coefs">
-<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_spect_corr_coefs</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>db=True</em>, <em>with_eigenvalues=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_spect_corr_coefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Correlation Coefficients (computed from the power spectrum) [1].</p>
+<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_spect_corr_coefs</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>db=False</em>, <em>with_eigenvalues=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_spect_corr_coefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correlation Coefficients (computed from the power spectrum) (<a class="reference internal" href="mne_features.bivariate.compute_time_corr_coefs.html#tisp" id="id1">[Tisp]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -139,7 +139,7 @@
 <p><strong>db</strong> : bool (default: True)</p>
 <blockquote>
 <div><p>If True, the power spectrum returned by the function
-<cite>compute_power_spectrum</cite> is returned in dB/Hz.</p>
+<code class="xref py py-func docutils literal"><span class="pre">compute_power_spectrum()</span></code> is returned in dB/Hz.</p>
 </div></blockquote>
 <p><strong>with_eigenvalues</strong> : bool (default: True)</p>
 <blockquote>
@@ -150,19 +150,12 @@ matrix.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_out,)</p>
 <blockquote class="last">
-<div><p>If <cite>with_eigenvalues</cite> is True, n_out = n_coefs + n_channels. Otherwise,
-n_out = n_coefs. With, n_coefs = n_channels * (n_channels + 1) // 2.</p>
+<div><p>If <code class="docutils literal"><span class="pre">with_eigenvalues</span></code> is True, n_out = n_coefs + n_channels.
+Otherwise, n_out = n_coefs. With, n_coefs = n_channels *
+(n_channels + 1) // 2.</p>
 </div></blockquote>
 </td>
 </tr>
-</tbody>
-</table>
-<p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r37" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[R37]</a></td><td><a class="reference external" href="https://kaggle2.blob.core.windows.net/forum-message-attachments/">https://kaggle2.blob.core.windows.net/forum-message-attachments/</a>
-134445/4803/seizure-detection.pdf</td></tr>
 </tbody>
 </table>
 </dd></dl>

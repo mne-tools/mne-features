@@ -1,6 +1,10 @@
-mne_features.univariate.compute_svd_fisher_info
-===============================================
+:mod:`mne_features.univariate`.compute_svd_fisher_info
+=============================================================
 
 .. currentmodule:: mne_features.univariate
 
 .. autofunction:: compute_svd_fisher_info
+
+.. raw:: html
+
+    <div class="clearer"></div>

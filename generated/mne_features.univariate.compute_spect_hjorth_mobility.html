@@ -88,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">mne_features.univariate.compute_spect_hjorth_mobility</a></li>
+<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_spect_hjorth_mobility</a></li>
 </ul>
 </ul>
 </li>
@@ -123,11 +123,12 @@
 <div class="container content-container">
   
   <div class="section" id="mne-features-univariate-compute-spect-hjorth-mobility">
-<h1>mne_features.univariate.compute_spect_hjorth_mobility<a class="headerlink" href="#mne-features-univariate-compute-spect-hjorth-mobility" title="Permalink to this headline">¶</a></h1>
+<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_spect_hjorth_mobility<a class="headerlink" href="#mne-features-univariate-compute-spect-hjorth-mobility" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="mne_features.univariate.compute_spect_hjorth_mobility">
 <code class="descclassname">mne_features.univariate.</code><code class="descname">compute_spect_hjorth_mobility</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_spect_hjorth_mobility" title="Permalink to this definition">¶</a></dt>
-<dd><p>Hjorth mobility (computed from the power spectrum, per channel) [1].</p>
+<dd><p>Hjorth mobility (computed from the power spectrum, per channel)
+(<a class="reference internal" href="#morm06" id="id1">[Morm06]</a>, <a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id2">[Teix11]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -139,7 +140,7 @@
 <p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
 <p><strong>normalize</strong> : bool (default: False)</p>
 <blockquote>
-<div><p>Normalize the result by the total power (see [2]).</p>
+<div><p>Normalize the result by the total power (see <a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id3">[Teix11]</a>).</p>
 </div></blockquote>
 </td>
 </tr>
@@ -149,24 +150,16 @@
 </tbody>
 </table>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r56" rules="none">
+<table class="docutils citation" frame="void" id="morm06" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[R56]</a></td><td>Mormann, F. et al. (2006). Seizure prediction: the long and winding
-road. Brain, 130(2), 314-333.</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="r57" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[R57]</a></td><td>Teixeira, C. A. et al. (2011). EPILAB: A software package for
-studies on the prediction of epileptic seizures. Journal of
-Neuroscience Methods, 200(2), 257-271.</td></tr>
+<tr><td class="label">[Morm06]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> Mormann, F. et al. (2006). Seizure prediction: the long and
+winding road. Brain, 130(2), 314-333.</td></tr>
 </tbody>
 </table>
 </dd></dl>
 
-</div>
+<div class="clearer"></div></div>
 
 
 </div>

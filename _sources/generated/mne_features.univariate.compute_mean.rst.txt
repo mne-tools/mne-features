@@ -1,6 +1,10 @@
-mne_features.univariate.compute_mean
-====================================
+:mod:`mne_features.univariate`.compute_mean
+==================================================
 
 .. currentmodule:: mne_features.univariate
 
 .. autofunction:: compute_mean
+
+.. raw:: html
+
+    <div class="clearer"></div>

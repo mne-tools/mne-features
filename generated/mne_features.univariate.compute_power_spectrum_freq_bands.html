@@ -88,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">mne_features.univariate.compute_power_spectrum_freq_bands</a></li>
+<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_power_spectrum_freq_bands</a></li>
 </ul>
 </ul>
 </li>
@@ -123,11 +123,11 @@
 <div class="container content-container">
   
   <div class="section" id="mne-features-univariate-compute-power-spectrum-freq-bands">
-<h1>mne_features.univariate.compute_power_spectrum_freq_bands<a class="headerlink" href="#mne-features-univariate-compute-power-spectrum-freq-bands" title="Permalink to this headline">¶</a></h1>
+<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_power_spectrum_freq_bands<a class="headerlink" href="#mne-features-univariate-compute-power-spectrum-freq-bands" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="mne_features.univariate.compute_power_spectrum_freq_bands">
 <code class="descclassname">mne_features.univariate.</code><code class="descname">compute_power_spectrum_freq_bands</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>freq_bands=array([   0.5</em>, <em>4.</em>, <em>8.</em>, <em>13.</em>, <em>30.</em>, <em>100. ])</em>, <em>normalize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_power_spectrum_freq_bands" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power Spectrum (computed by frequency bands) [1].</p>
+<dd><p>Power Spectrum (computed by frequency bands) (<a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id1">[Teix11]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -137,11 +137,11 @@
 <div><p>Sampling rate of the data.</p>
 </div></blockquote>
 <p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
-<p><strong>freq_bands</strong> : ndarray, shape (n_freqs,)</p>
+<p><strong>freq_bands</strong> : ndarray, shape (n_freqs,) (default:</p>
+<p><strong>np.array([0.5, 4., 8., 13., 30., 100.]))</strong></p>
 <blockquote>
-<div><p>(default: np.array([0.5, 4., 8., 13., 30., 100.]))
-Array defining the frequency bands. The j-th frequency band is defined
-as: [freq_bands[j], freq_bands[j + 1]] (0 &lt;= j &lt;= n_freqs - 1).</p>
+<div><p>Array defining the frequency bands. The j-th frequency band is defined
+as: <code class="docutils literal"><span class="pre">[freq_bands[j],</span> <span class="pre">freq_bands[j</span> <span class="pre">+</span> <span class="pre">1]]</span></code> (0 &lt;= j &lt;= n_freqs - 1).</p>
 </div></blockquote>
 <p><strong>normalize</strong> : bool (default: True)</p>
 <blockquote>
@@ -155,18 +155,9 @@ the total power.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r50" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[R50]</a></td><td>Teixeira, C. A. et al. (2011). EPILAB: A software package for
-studies on the prediction of epileptic seizures. Journal of
-Neuroscience Methods, 200(2), 257-271.</td></tr>
-</tbody>
-</table>
 </dd></dl>
 
-</div>
+<div class="clearer"></div></div>
 
 
 </div>

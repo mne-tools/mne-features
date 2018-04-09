@@ -1,6 +1,10 @@
-mne_features.univariate.compute_energy_freq_bands
-=================================================
+:mod:`mne_features.univariate`.compute_energy_freq_bands
+===============================================================
 
 .. currentmodule:: mne_features.univariate
 
 .. autofunction:: compute_energy_freq_bands
+
+.. raw:: html
+
+    <div class="clearer"></div>

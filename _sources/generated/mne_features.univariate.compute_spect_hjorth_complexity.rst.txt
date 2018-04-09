@@ -1,6 +1,10 @@
-mne_features.univariate.compute_spect_hjorth_complexity
-=======================================================
+:mod:`mne_features.univariate`.compute_spect_hjorth_complexity
+=====================================================================
 
 .. currentmodule:: mne_features.univariate
 
 .. autofunction:: compute_spect_hjorth_complexity
+
+.. raw:: html
+
+    <div class="clearer"></div>

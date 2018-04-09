@@ -88,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">mne_features.univariate.compute_samp_entropy</a></li>
+<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_samp_entropy</a></li>
 </ul>
 </ul>
 </li>
@@ -123,33 +123,35 @@
 <div class="container content-container">
   
   <div class="section" id="mne-features-univariate-compute-samp-entropy">
-<h1>mne_features.univariate.compute_samp_entropy<a class="headerlink" href="#mne-features-univariate-compute-samp-entropy" title="Permalink to this headline">¶</a></h1>
-<dl class="attribute">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_samp_entropy<a class="headerlink" href="#mne-features-univariate-compute-samp-entropy" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
 <dt id="mne_features.univariate.compute_samp_entropy">
-<code class="descclassname">univariate.</code><code class="descname">compute_samp_entropy</code><a class="headerlink" href="#mne_features.univariate.compute_samp_entropy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sample Entropy (SampEn, per channel) [1].</p>
+<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_samp_entropy</code><span class="sig-paren">(</span><em>data</em>, <em>emb=2</em>, <em>metric='chebyshev'</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_samp_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample Entropy (SampEn, per channel) (<a class="reference internal" href="mne_features.univariate.compute_app_entropy.html#boro15" id="id1">[Boro15]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> : shape (n_channels, n_times)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
+<p><strong>emb</strong> : int (default: 2)</p>
+<blockquote>
+<div><p>Embedding dimension.</p>
+</div></blockquote>
+<p><strong>metric</strong> : str (default: chebyshev)</p>
+<blockquote>
+<div><p>Name of the metric function used with KDTree. The list of available
+metric functions is given by: <cite>KDTree.valid_metrics</cite>.</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>output</strong> : ndarray, shape (n_channels)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>output</strong> : ndarray, shape (n_channels,)</p>
+</td>
 </tr>
-</tbody>
-</table>
-<p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r51" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[R51]</a></td><td>Teixeira, C. A. et al. (2011). EPILAB: A software package for
-studies on the prediction of epileptic seizures. Journal of
-Neuroscience Methods, 200(2), 257-271.</td></tr>
 </tbody>
 </table>
 </dd></dl>
 
-</div>
+<div class="clearer"></div></div>
 
 
 </div>

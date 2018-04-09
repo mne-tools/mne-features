@@ -161,7 +161,7 @@ Print the cross-validation score:
     Cross-validation accuracy score = 0.938 (+/- 0.00060)
 
 
-**Total running time of the script:** ( 0 minutes  2.177 seconds)
+**Total running time of the script:** ( 0 minutes  1.357 seconds)
 
 
 

@@ -1,6 +1,10 @@
-mne_features.univariate.compute_decorr_time
-===========================================
+:mod:`mne_features.univariate`.compute_decorr_time
+=========================================================
 
 .. currentmodule:: mne_features.univariate
 
 .. autofunction:: compute_decorr_time
+
+.. raw:: html
+
+    <div class="clearer"></div>

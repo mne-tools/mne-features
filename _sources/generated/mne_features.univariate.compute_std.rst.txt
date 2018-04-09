@@ -1,6 +1,10 @@
-mne_features.univariate.compute_std
-===================================
+:mod:`mne_features.univariate`.compute_std
+=================================================
 
 .. currentmodule:: mne_features.univariate
 
 .. autofunction:: compute_std
+
+.. raw:: html
+
+    <div class="clearer"></div>
