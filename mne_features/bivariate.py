@@ -44,7 +44,7 @@ def get_bivariate_funcs(sfreq):
 @nb.jit([nb.float64[:](nb.float64, nb.float64[:, :]),
          nb.float32[:](nb.float32, nb.float32[:, :])], nopython=True)
 def compute_max_cross_correlation(s_freq, data):
-    """ Maximum linear cross-correlation [1, 2].
+    """ Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
 
     Parameters
     ----------
@@ -59,13 +59,10 @@ def compute_max_cross_correlation(s_freq, data):
 
     References
     ----------
-    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and winding
-           road. Brain, 130(2), 314-333.
-
-    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
-           networks for epileptic seizure prediction from intracranial EEG.
-           Machine Learning for Signal Processing, 2008.
-           IEEE Workshop on (pp. 244-249). IEEE.
+    .. [Miro08] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
+                networks for epileptic seizure prediction from intracranial
+                EEG. Machine Learning for Signal Processing, 2008. IEEE
+                Workshop on (pp. 244-249). IEEE.
     """
 
     n_channels, n_times = data.shape
@@ -107,7 +104,7 @@ def compute_max_cross_correlation(s_freq, data):
 
 
 def compute_phase_locking_value(data):
-    """ Phase Locking Value (PLV) [1].
+    """ Phase Locking Value (PLV) ([Plv]_).
 
     Parameters
     ----------
@@ -119,7 +116,7 @@ def compute_phase_locking_value(data):
 
     References
     ----------
-    .. [1] http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf
+    .. [Plv] http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf
     """
     n_channels, n_times = data.shape
     n_coefs = n_channels * (n_channels + 1) // 2
@@ -137,7 +134,7 @@ def compute_phase_locking_value(data):
 
 
 def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
-    """ Measure of nonlinear interdependence [1, 2].
+    """ Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
 
     Parameters
     ----------
@@ -155,15 +152,6 @@ def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
     Returns
     -------
     ndarray, shape (n_channels * (n_channels + 1) / 2,)
-
-    References
-    ----------
-    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and winding
-           road. Brain, 130(2), 314-333.
-
-    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
-           networks for epileptic seizure prediction from intracranial EEG.
-           In Machine Learning for Signal Processing. IEEE. pp. 244-249.
     """
     n_channels, n_times = data.shape
     n_coefs = n_channels * (n_channels + 1) // 2
@@ -188,7 +176,7 @@ def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
 
 
 def compute_time_corr_coefs(data, with_eigenvalues=True):
-    """ Correlation Coefficients (computed in the time domain) [1].
+    """ Correlation Coefficients (computed in the time domain) ([Tisp]_).
 
     Parameters
     ----------
@@ -201,14 +189,14 @@ def compute_time_corr_coefs(data, with_eigenvalues=True):
     Returns
     -------
     output : ndarray, shape (n_out,)
-        If `with_eigenvalues` is True, n_out = n_coefs + n_channels (with:
+        If ``with_eigenvalues`` is True, n_out = n_coefs + n_channels (with:
         n_coefs = n_channels * (n_channels + 1) // 2). Otherwise,
         n_out = n_coefs.
 
     References
     ----------
-    .. [1] https://kaggle2.blob.core.windows.net/forum-message-attachments/
-           134445/4803/seizure-detection.pdf
+    .. [Tisp] https://kaggle2.blob.core.windows.net/forum-message-attachments/
+              134445/4803/seizure-detection.pdf
     """
     n_channels = data.shape[0]
     _scaled = scale(data, axis=0)
@@ -235,7 +223,7 @@ def compute_spect_corr_coefs(sfreq, data, db=False, with_eigenvalues=True):
 
     db : bool (default: True)
         If True, the power spectrum returned by the function
-        `compute_power_spectrum` is returned in dB/Hz.
+        :func:`compute_power_spectrum` is returned in dB/Hz.
 
     with_eigenvalues : bool (default: True)
         If True, the function also returns the eigenvalues of the correlation
@@ -244,13 +232,9 @@ def compute_spect_corr_coefs(sfreq, data, db=False, with_eigenvalues=True):
     Returns
     -------
     output : ndarray, shape (n_out,)
-        If `with_eigenvalues` is True, n_out = n_coefs + n_channels. Otherwise,
-        n_out = n_coefs. With, n_coefs = n_channels * (n_channels + 1) // 2.
-
-    References
-    ----------
-    .. [1] https://kaggle2.blob.core.windows.net/forum-message-attachments/
-           134445/4803/seizure-detection.pdf
+        If ``with_eigenvalues`` is True, n_out = n_coefs + n_channels.
+        Otherwise, n_out = n_coefs. With, n_coefs = n_channels *
+        (n_channels + 1) // 2.
     """
     n_channels = data.shape[0]
     ps, _ = power_spectrum(sfreq, data, return_db=db)

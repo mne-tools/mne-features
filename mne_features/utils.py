@@ -45,12 +45,12 @@ def embed(x, d, tau):
 
     d : int
         Embedding dimension.
-        The embedding dimension `d` should be greater than 2.
+        The embedding dimension ``d`` should be greater than 2.
 
     tau : int
         Delay.
-        The delay parameter `tau` should be less or equal than
-        `floor((n_times - 1) / (d - 1))`.
+        The delay parameter ``tau`` should be less or equal than
+        ``floor((n_times - 1) / (d - 1))``.
 
     Returns
     -------
@@ -72,7 +72,8 @@ def embed(x, d, tau):
 
 
 def power_spectrum(sfreq, data, return_db=False):
-    """ Utility function to compute the [one sided] Power Spectrum [1, 2].
+    """ Utility function to compute the [one sided] Power Spectrum ([Hein02]_,
+    [Math]_).
 
     Parameters
     ----------
@@ -93,12 +94,13 @@ def power_spectrum(sfreq, data, return_db=False):
 
     References
     ----------
-    .. [1] Heinzel, G. et al. (2002). Spectrum and spectral density estimation
-           by the Discrete Fourier transform (DFT), including a comprehensive
-           list of window functions and some new at-top windows.
+    .. [Hein02] Heinzel, G. et al. (2002). Spectrum and spectral density
+                estimation by the Discrete Fourier transform (DFT), including
+                a comprehensive list of window functions and some new at-top
+                windows.
 
-    .. [2] http://fr.mathworks.com/help/signal/ug/power-spectral-density-
-           estimates-using-fft.html
+    .. [Math] http://fr.mathworks.com/help/signal/ug/power-spectral-density-
+              estimates-using-fft.html
     """
     n_times = data.shape[1]
     m = np.mean(data, axis=-1)
@@ -118,8 +120,8 @@ def power_spectrum(sfreq, data, return_db=False):
 
 
 def filt(sfreq, data, filter_freqs, verbose=False):
-    """ Utility function to filter data.
-    Wrapper function for `mne.filter.filter_data` [1].
+    """ Utility function to filter data which acts as a wrapper for
+    ``mne.filter.filter_data`` ([Mne]_).
 
     Parameters
     ----------
@@ -129,16 +131,17 @@ def filt(sfreq, data, filter_freqs, verbose=False):
     data : ndarray, shape (n_channels, n_times)
 
     filter_freqs : array-like, shape (2,)
-        Array of cutoff frequencies. If `filter_freqs[0]` is None, a low-pass
-        filter is used. If `filter_freqs[1]` is None, a high-pass filter is
-        used. If both `filter_freqs[0]`, `filter_freqs[1]` are not None and
-        `filter_freqs[0] < filter_freqs[1]`, a band-pass filter is used.
-        Eventually, if both `filter_freqs[0]`, `filter_freqs[1]` are not None
-        and `filter_freqs[0] > filter_freqs[1]`, a band-stop filter is used.
+        Array of cutoff frequencies. If ``filter_freqs[0]`` is None, a low-pass
+        filter is used. If ``filter_freqs[1]`` is None, a high-pass filter is
+        used. If both ``filter_freqs[0]``, ``filter_freqs[1]`` are not None and
+        ``filter_freqs[0] < filter_freqs[1]``, a band-pass filter is used.
+        Eventually, if both ``filter_freqs[0]``, ``filter_freqs[1]`` are not
+        None and ``filter_freqs[0] > filter_freqs[1]``, a band-stop filter is
+        used.
 
     verbose : bool (default: False)
         Verbosity parameter. If True, info and warnings related to
-        `mne.filter.filter_data` are printed.
+        ``mne.filter.filter_data`` are printed.
 
     Returns
     -------
@@ -146,7 +149,7 @@ def filt(sfreq, data, filter_freqs, verbose=False):
 
     References
     ----------
-    .. [1] https://mne-tools.github.io/stable/ (see doc for `filter_data`).
+    .. [Mne] https://mne-tools.github.io/stable/
     """
     if filter_freqs[0] is None and filter_freqs[1] is None:
         raise ValueError('The values of `filter_freqs` cannot all be None.')

@@ -1,4 +1,5 @@
-{{ fullname | escape | underline}}
+:mod:`{{module}}`.{{objname}}
+{{ underline }}==============
 
 .. currentmodule:: {{ module }}
 
