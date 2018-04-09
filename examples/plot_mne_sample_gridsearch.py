@@ -3,6 +3,13 @@
 Use scikit-learn GridSearchCV with FeatureExtractor for setting parameters
 ==========================================================================
 
+The example shows how :class:`~sklearn.model_selection.GridSearchCV`
+can be used for parameter tuning in a pipeline which sequentially
+combines feature extraction (with
+:class:`mne_features.feature_extraction.FeatureExtractor`),
+data standardization (with :class:`~sklearn.preprocessing.StandardScaler`)
+and classification (with :class:`~sklearn.linear_model.LogisticRegression`).
+
 The code for this example is based on the method proposed in:
 
 Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
@@ -15,15 +22,7 @@ Proc. IEEE ICASSP Conf. 2018
 
     This example is for illustration purposes, as other methods
     may lead to better performance on such a dataset (classification
-    of auditory vs. visual stimuli). 
-    
-    The example shows how a :class:`~sklearn.model_selection.GridSearchCV` 
-    object can be used for parameter tuning in a pipeline which sequentially 
-    combines feature extraction (with :class:`FeatureExtractor`), 
-    data standardization (with :class:`~sklearn.preprocessing.StandardScaler`)
-    and classification (with :class:`~sklearn.linear_model.LogisticRegression`).
-    
-    
+    of auditory vs. visual stimuli).
 
 """  # noqa
 
@@ -34,8 +33,11 @@ Proc. IEEE ICASSP Conf. 2018
 
 import mne
 import numpy as np
-from mne_features.feature_extraction import FeatureExtraction
+import pandas as pd
+from mne.datasets import sample
+from mne_features.feature_extraction import FeatureExtractor
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import (GridSearchCV, cross_val_score,
                                      StratifiedKFold)
 from sklearn.pipeline import Pipeline
@@ -45,7 +47,7 @@ print(__doc__)
 ###############################################################################
 # Let us import the data using MNE-Python and epoch it:
 
-data_path = '/home/guillaume/Workspace/MNE-sample-data'
+data_path = sample.data_path()
 raw_fname = data_path + '/MEG/sample/sample_audvis_filt-0-40_raw.fif'
 event_fname = data_path + '/MEG/sample/sample_audvis_filt-0-40_raw-eve.fif'
 tmin, tmax = -0.2, 0.5
@@ -68,9 +70,10 @@ data = epochs.get_data()
 ###############################################################################
 # Prepare for the classification task:
 
-pipe = Pipeline([('FE', FeatureExtraction(sfreq=raw.info['sfreq'],
-                                          selected_funcs=['app_entropy',
-                                                          'mean'])),
+pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
+                                         selected_funcs=['app_entropy',
+                                                         'mean'])),
+                 ('scaler', StandardScaler()),
                  ('clf', LogisticRegression(random_state=42))])
 skf = StratifiedKFold(n_splits=3, random_state=42)
 y = labels
@@ -85,17 +88,23 @@ print('Cross-validation accuracy score (with default parameters) = %1.3f '
 
 ###############################################################################
 # Optimization of features extraction optional parameters:
-# Here, only the embedding dimension parameter of `compute_app_entropy` is
-# optimized using GridSearchCV.
+# Here, only the embedding dimension parameter of
+# :func:`mne_features.univariate.compute_app_entropy` is optimized using
+# GridSearchCV.
 
-params_grid = {'FE__app_entropy__emb': np.arange(2, 11)}
+params_grid = {'fe__app_entropy__emb': np.arange(2, 5)}
 
 gs = GridSearchCV(estimator=pipe, param_grid=params_grid,
-                  cv=StratifiedKFold(n_splits=2, random_state=52), n_jobs=-1)
+                  cv=StratifiedKFold(n_splits=2, random_state=42), n_jobs=1)
 gs.fit(data, y)
 
 # Best parameters obtained with GridSearchCV:
 print(gs.best_params_)
+
+###############################################################################
+# Scores with all parameter values:
+scores = pd.DataFrame(gs.cv_results_)
+print(scores[['params', 'mean_test_score', 'mean_train_score']])
 
 ###############################################################################
 # Cross-validation accuracy score with optimized parameters:
