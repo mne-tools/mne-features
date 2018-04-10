@@ -4,7 +4,6 @@
 
 
 import numpy as np
-import time
 from tempfile import mkdtemp
 from numpy.testing import assert_equal, assert_raises, assert_almost_equal
 from sklearn.model_selection import GridSearchCV
@@ -122,7 +121,7 @@ def test_memory_feature_extractor():
                                         selected_funcs=selected_funcs,
                                         memory=cachedir)
     y = np.ones((data.shape[0],))
-    _ = cached_extractor.fit_transform(data, y)
+    cached_extractor.fit_transform(data, y)
     # Ensure that the right features were cached
     assert_almost_equal(extractor.fit_transform(data, y),
                         cached_extractor.fit_transform(data, y))
