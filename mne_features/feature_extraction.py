@@ -223,10 +223,10 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     (see example below). The method ``fit`` does not have any effect and is
     implemented for compatibility with Scikit-learn's API. As a result, the
     class ``FeatureExtractor`` can be used as a step in a Pipeline (see
-    :class:`~sklearn.pipeline.Pipeline` and MNE-features examples). The class 
-    also accepts a ``memory`` parameter which allows for caching the result of 
-    feature extraction. Therefore, if caching is used, calling 
-    ``fit_transform`` twice on the same data will not trigger a second call 
+    :class:`~sklearn.pipeline.Pipeline` and MNE-features examples). The class
+    also accepts a ``memory`` parameter which allows for caching the result of
+    feature extraction. Therefore, if caching is used, calling
+    ``fit_transform`` twice on the same data will not trigger a second call
     to :func:`extract_features`.
 
     Parameters
@@ -248,11 +248,11 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     n_jobs : int (default: 1)
         Number of CPU cores used when parallelizing the feature extraction.
         If given a value of -1, all cores are used.
-        
+
     memory : str or None (default: None)
-        If None, no caching is performed. If a string is given, the string 
-        should be the path to the caching directory. Caching is particularly 
-        advantageous when feature extraction is time consuming. 
+        If None, no caching is performed. If a string is given, the string
+        should be the path to the caching directory. Caching is particularly
+        advantageous when feature extraction is time consuming.
 
     Examples
     --------

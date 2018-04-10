@@ -44,7 +44,6 @@ Functions
    compute_app_entropy
    compute_samp_entropy
    compute_decorr_time
-   power_spectrum
    compute_power_spectrum_freq_bands
    compute_spect_hjorth_mobility
    compute_spect_hjorth_complexity
