@@ -4,6 +4,8 @@
 
 
 import numpy as np
+import time
+from tempfile import mkdtemp
 from numpy.testing import assert_equal, assert_raises, assert_almost_equal
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
@@ -88,7 +90,7 @@ def test_featurefunctiontransformer():
         tr2.set_params(**invalid_new_params)
 
 
-def test_feature_extraction_wrapper():
+def test_feature_extractor():
     selected_funcs = ['app_entropy']
     extractor = FeatureExtractor(sfreq=sfreq, selected_funcs=selected_funcs)
     expected_features = extract_features(data, sfreq, selected_funcs)
@@ -99,7 +101,7 @@ def test_feature_extraction_wrapper():
             params={'app_entropy__metric': 'sqeuclidean'}).fit_transform(data)
 
 
-def test_gridsearch_feature_extraction():
+def test_gridsearch_feature_extractor():
     X = data
     y = np.ones((X.shape[0],))  # dummy labels
     pipe = Pipeline([('FE', FeatureExtractor(sfreq=sfreq,
@@ -112,6 +114,20 @@ def test_gridsearch_feature_extraction():
     assert_equal(hasattr(gs, 'cv_results_'), True)
 
 
+def test_memory_feature_extractor():
+    selected_funcs = ['mean', 'zero_cross']
+    cachedir = mkdtemp()
+    extractor = FeatureExtractor(sfreq=sfreq, selected_funcs=selected_funcs)
+    cached_extractor = FeatureExtractor(sfreq=sfreq,
+                                        selected_funcs=selected_funcs,
+                                        memory=cachedir)
+    y = np.ones((data.shape[0],))
+    _ = cached_extractor.fit_transform(data, y)
+    # Ensure that the right features were cached
+    assert_almost_equal(extractor.fit_transform(data, y),
+                        cached_extractor.fit_transform(data, y))
+
+
 if __name__ == '__main__':
 
     test_shape_output()
@@ -120,4 +136,6 @@ if __name__ == '__main__':
     test_optional_params_func_with_numba()
     test_wrong_params()
     test_featurefunctiontransformer()
-    test_gridsearch_feature_extraction()
+    test_feature_extractor()
+    test_gridsearch_feature_extractor()
+    test_memory_feature_extractor()
