@@ -72,7 +72,8 @@ data = epochs.get_data()
 
 pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                          selected_funcs=['app_entropy',
-                                                         'mean'])),
+                                                         'mean'],
+                                         memory='.')),
                  ('scaler', StandardScaler()),
                  ('clf', LogisticRegression(random_state=42))])
 skf = StratifiedKFold(n_splits=3, random_state=42)
