@@ -43,12 +43,12 @@ def get_bivariate_funcs(sfreq):
 
 @nb.jit([nb.float64[:](nb.float64, nb.float64[:, :]),
          nb.float32[:](nb.float32, nb.float32[:, :])], nopython=True)
-def compute_max_cross_correlation(s_freq, data):
-    """ Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
+def _max_cross_corr(sfreq, data):
+    """ Utility function for :func:`compute_max_cross_correlation`.
 
     Parameters
     ----------
-    s_freq : float
+    sfreq : float
         Sampling rate of the data.
 
     data : ndarray, shape (n_channels, n_times)
@@ -56,17 +56,9 @@ def compute_max_cross_correlation(s_freq, data):
     Returns
     -------
     output : ndarray, shape (n_channels * (n_channels + 1) / 2,)
-
-    References
-    ----------
-    .. [Miro08] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
-                networks for epileptic seizure prediction from intracranial
-                EEG. Machine Learning for Signal Processing, 2008. IEEE
-                Workshop on (pp. 244-249). IEEE.
     """
-
     n_channels, n_times = data.shape
-    n_tau = int(0.5 * s_freq)
+    n_tau = int(0.5 * sfreq)
     taus = np.arange(-n_tau, n_tau)
     n_coefs = n_channels * (n_channels + 1) // 2
     max_cc = np.empty((n_coefs,), dtype=data.dtype)
@@ -103,6 +95,34 @@ def compute_max_cross_correlation(s_freq, data):
     return max_cc
 
 
+def compute_max_cross_correlation(sfreq, data):
+    """ Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
+
+    Parameters
+    ----------
+    sfreq : float
+        Sampling rate of the data.
+
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels * (n_channels + 1) / 2,)
+
+    Notes
+    -----
+    Alias of the feature function: **max_cross_corr**
+
+    References
+    ----------
+    .. [Miro08] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
+                networks for epileptic seizure prediction from intracranial
+                EEG. Machine Learning for Signal Processing, 2008. IEEE
+                Workshop on (pp. 244-249). IEEE.
+    """
+    return _max_cross_corr(sfreq, data)
+
+
 def compute_phase_locking_value(data):
     """ Phase Locking Value (PLV) ([Plv]_).
 
@@ -113,6 +133,10 @@ def compute_phase_locking_value(data):
     Returns
     -------
     output : ndarray, shape (n_channels * (n_channels + 1) / 2,)
+
+    Notes
+    -----
+    Alias of the feature function: **plv**
 
     References
     ----------
@@ -152,6 +176,10 @@ def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
     Returns
     -------
     ndarray, shape (n_channels * (n_channels + 1) / 2,)
+
+    Notes
+    -----
+    Alias of the feature function: **nonlin_interdep**
     """
     n_channels, n_times = data.shape
     n_coefs = n_channels * (n_channels + 1) // 2
@@ -192,6 +220,10 @@ def compute_time_corr_coefs(data, with_eigenvalues=True):
         If ``with_eigenvalues`` is True, n_out = n_coefs + n_channels (with:
         n_coefs = n_channels * (n_channels + 1) // 2). Otherwise,
         n_out = n_coefs.
+
+    Notes
+    -----
+    Alias of the feature function: **time_corr**
 
     References
     ----------
@@ -235,6 +267,10 @@ def compute_spect_corr_coefs(sfreq, data, db=False, with_eigenvalues=True):
         If ``with_eigenvalues`` is True, n_out = n_coefs + n_channels.
         Otherwise, n_out = n_coefs. With, n_coefs = n_channels *
         (n_channels + 1) // 2.
+
+    Notes
+    -----
+    Alias of the feature function: **spect_corr**
     """
     n_channels = data.shape[0]
     ps, _ = power_spectrum(sfreq, data, return_db=db)

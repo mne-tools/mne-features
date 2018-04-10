@@ -51,6 +51,8 @@ def get_univariate_funcs(sfreq):
     univariate_funcs['katz_fd'] = compute_katz_fd
     univariate_funcs['pow_freq_bands'] = partial(
         compute_power_spectrum_freq_bands, sfreq)
+    univariate_funcs['energy_freq_bands'] = partial(compute_energy_freq_bands,
+                                                    sfreq)
     univariate_funcs['zero_cross'] = compute_zero_crossings
     univariate_funcs['line_len'] = compute_line_length
     univariate_funcs['spect_entropy'] = partial(compute_spect_entropy, sfreq)
@@ -140,6 +142,10 @@ def compute_mean(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **mean**
     """
     return np.mean(data, axis=-1)
 
@@ -154,6 +160,10 @@ def compute_variance(data):
      Returns
      -------
      output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **variance**
      """
     return np.var(data, axis=-1, ddof=1)
 
@@ -168,6 +178,10 @@ def compute_std(data):
     Returns
     -------
     output : ndarray, shape (n_channels)
+
+    Notes
+    -----
+    Alias of the feature function: **std**
     """
     return np.std(data, axis=-1, ddof=1)
 
@@ -182,6 +196,10 @@ def compute_ptp(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **ptp_amplitude**
     """
     return np.ptp(data, axis=-1)
 
@@ -196,6 +214,10 @@ def compute_skewness(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **skewness**
     """
 
     ndim = data.ndim
@@ -212,6 +234,10 @@ def compute_kurtosis(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **kurtosis**
     """
 
     ndim = data.ndim
@@ -228,6 +254,10 @@ def compute_hurst_exponent(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **hurst_exp**
 
     References
     ----------
@@ -311,6 +341,10 @@ def compute_app_entropy(data, emb=2, metric='chebyshev'):
     -------
     output : ndarray, shape (n_channels,)
 
+    Notes
+    -----
+    Alias of the feature function: **app_entropy**
+
     References
     ----------
     .. [Boro15] Borowska, M. (2015). Entropy-based algorithms in the analysis
@@ -338,6 +372,10 @@ def compute_samp_entropy(data, emb=2, metric='chebyshev'):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **samp_entropy**
     """
     phi = _app_samp_entropy_helper(data, emb=emb, metric=metric)
     return np.log(np.divide(phi[:, 0], phi[:, 1]))
@@ -356,6 +394,10 @@ def compute_decorr_time(sfreq, data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **decorr_time**
 
     References
     ----------
@@ -402,6 +444,10 @@ def compute_power_spectrum_freq_bands(sfreq, data,
     Returns
     -------
     output : ndarray, shape (n_channels * (n_freqs - 1),)
+
+    Notes
+    -----
+    Alias of the feature function: **pow_freq_bands**
     """
     n_channels = data.shape[0]
     n_freqs = freq_bands.shape[0]
@@ -435,6 +481,10 @@ def compute_spect_hjorth_mobility(sfreq, data, normalize=False):
     -------
     output : ndarray, shape (n_channels,)
 
+    Notes
+    -----
+    Alias of the feature function: **hjorth_mobility_spect**
+
     References
     ----------
     .. [Morm06] Mormann, F. et al. (2006). Seizure prediction: the long and
@@ -465,6 +515,10 @@ def compute_spect_hjorth_complexity(sfreq, data, normalize=False):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **hjorth_complexity_spect**
     """
     ps, freqs = power_spectrum(sfreq, data)
     w_freqs = np.power(freqs, 4)
@@ -484,6 +538,10 @@ def compute_hjorth_mobility(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **hjorth_mobility**
 
     References
     ----------
@@ -510,6 +568,10 @@ def compute_hjorth_complexity(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **hjorth_complexity**
     """
     x = np.insert(data, 0, 0, axis=-1)
     dx = np.diff(x, axis=-1)
@@ -577,6 +639,10 @@ def compute_higuchi_fd(data, kmax=10):
     -------
     output : ndarray, shape (n_channels,)
 
+    Notes
+    -----
+    Alias of the feature function: **higuchi_fd**
+
     References
     ----------
     .. [Este01a] Esteller, R. et al. (2001). A comparison of waveform fractal
@@ -597,6 +663,10 @@ def compute_katz_fd(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **katz_fd**
     """
     dists = np.abs(np.diff(data, axis=-1))
     ll = np.sum(dists, axis=-1)
@@ -618,6 +688,10 @@ def compute_zero_crossings(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **zero_cross**
     """
     return np.sum(np.diff(np.sign(data), axis=-1) != 0, axis=-1)
 
@@ -632,6 +706,10 @@ def compute_line_length(data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **line_len**
 
     References
     ----------
@@ -658,6 +736,10 @@ def compute_spect_entropy(sfreq, data):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **spect_entropy**
 
     References
     ----------
@@ -689,6 +771,10 @@ def compute_svd_entropy(data, tau=2, emb=10):
     -------
     output : ndarray, shape (n_channels,)
 
+    Notes
+    -----
+    Alias of the feature function: **svd_entropy**
+
     References
     ----------
     .. [Robe99] Roberts, S. J. et al. (1999). Temporal and spatial complexity
@@ -718,6 +804,10 @@ def compute_svd_fisher_info(data, tau=2, emb=10):
     Returns
     -------
     output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: **svd_fisher_info**
     """
     _, sv, _ = np.linalg.svd(embed(data, d=emb, tau=tau))
     m = np.sum(sv, axis=-1)
@@ -752,6 +842,10 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
     Returns
     -------
     output : ndarray, shape (n_channels * (n_freqs - 1),)
+
+    Notes
+    -----
+    Alias of the feature function: **energy_freq_bands**
 
     References
     ----------
@@ -797,6 +891,10 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
     -------
     output : ndarray, shape (n_channels * n_edge,)
         With: `n_edge = 1` if `edge` is None or `n_edge = len(edge)` otherwise.
+
+    Notes
+    -----
+    Alias of the feature function: **spect_edge_freq**
     """
     if ref_freq is None:
         _ref_freq = sfreq / 2
@@ -841,6 +939,10 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
         The decomposition level (`levdec`) used for the DWT is either 6 or
         the maximum useful decomposition level (given the number of time points
         in the data and chosen wavelet ; see `pywt.dwt_max_level`).
+
+    Notes
+    -----
+    Alias of the feature function: **wavelet_coef_energy**
     """
     n_channels, n_times = data.shape
     wavelet = pywt.Wavelet(wavelet_name)

@@ -218,12 +218,16 @@ def _check_func_names(selected, feature_funcs_names):
 class FeatureExtractor(BaseEstimator, TransformerMixin):
     """ Feature extraction from epoched EEG data.
 
-    The method `fit_transform` implemented in this class can be used to
+    The method ``fit_transform`` implemented in this class can be used to
     extract univariate or bivariate features from epoched data
     (see example below). The method ``fit`` does not have any effect and is
     implemented for compatibility with Scikit-learn's API. As a result, the
     class ``FeatureExtractor`` can be used as a step in a Pipeline (see
-    :class:`~sklearn.pipeline.Pipeline` and MNE-features examples).
+    :class:`~sklearn.pipeline.Pipeline` and MNE-features examples). The class
+    also accepts a ``memory`` parameter which allows for caching the result of
+    feature extraction. Therefore, if caching is used, calling
+    ``fit_transform`` twice on the same data will not trigger a second call
+    to :func:`extract_features`.
 
     Parameters
     ----------
@@ -235,7 +239,7 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         features from the data. (See the documentation of mne-features for a
         complete list of available feature functions).
 
-    params : None
+    params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to
         :func:`extract_features`. Each key of the ``funcs_params`` dict should
         be of the form: ``[alias_feature_function]__[optional_param]``
@@ -244,6 +248,11 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     n_jobs : int (default: 1)
         Number of CPU cores used when parallelizing the feature extraction.
         If given a value of -1, all cores are used.
+
+    memory : str or None (default: None)
+        If None, no caching is performed. If a string is given, the string
+        should be the path to the caching directory. Caching is particularly
+        advantageous when feature extraction is time consuming.
 
     Examples
     --------
@@ -260,11 +269,13 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     --------
     :func:`extract_features`
     """
-    def __init__(self, sfreq=256., selected_funcs=None, params=None, n_jobs=1):
+    def __init__(self, sfreq=256., selected_funcs=None, params=None, n_jobs=1,
+                 memory=None):
         self.sfreq = sfreq
         self.selected_funcs = selected_funcs
         self.params = params
         self.n_jobs = n_jobs
+        self.memory = memory
 
     def fit(self, X, y=None):
         """ Does not have any effect. """
@@ -285,8 +296,10 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         Xnew : ndarray, shape (n_epochs, n_features)
             Extracted features.
         """
-        return extract_features(X, self.sfreq, self.selected_funcs,
-                                funcs_params=self.params, n_jobs=self.n_jobs)
+        mem = joblib.Memory(cachedir=self.memory)
+        _extractor = mem.cache(extract_features)
+        return _extractor(X, self.sfreq, self.selected_funcs,
+                          funcs_params=self.params, n_jobs=self.n_jobs)
 
     def get_params(self, deep=True):
         """ Get the parameters of the transformer. """
