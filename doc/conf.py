@@ -283,6 +283,7 @@ man_pages = [
 # If true, show URL addresses after external links.
 #man_show_urls = False
 
+numpydoc_show_class_members = False
 
 # -- Options for Texinfo output -------------------------------------------
 
@@ -315,6 +316,7 @@ intersphinx_mapping = {
     # 'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
     'matplotlib': ('https://matplotlib.org/', None),
     'sklearn': ('http://scikit-learn.org/stable', None),
+    'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
 }
 
 sphinx_gallery_conf = {

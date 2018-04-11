@@ -15,7 +15,11 @@ Functions
 
 .. autosummary::
    :toctree: generated/
+   :nosignatures:
+   :template: class.rst
 
+   FeatureExtractor
+   :template: function.rst
    extract_features
 
 Univariate features
@@ -27,6 +31,7 @@ Functions
 
 .. autosummary::
    :toctree: generated/
+   :template: function.rst
 
    get_univariate_funcs
    compute_mean
@@ -39,7 +44,6 @@ Functions
    compute_app_entropy
    compute_samp_entropy
    compute_decorr_time
-   power_spectrum
    compute_power_spectrum_freq_bands
    compute_spect_hjorth_mobility
    compute_spect_hjorth_complexity

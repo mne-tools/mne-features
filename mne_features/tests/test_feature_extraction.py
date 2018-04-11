@@ -4,10 +4,14 @@
 
 
 import numpy as np
-from numpy.testing import assert_equal, assert_raises
-
+from tempfile import mkdtemp
+from numpy.testing import assert_equal, assert_raises, assert_almost_equal
+from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.utils.mocking import CheckingClassifier
 from mne_features.feature_extraction import (extract_features,
-                                             FeatureFunctionTransformer)
+                                             FeatureFunctionTransformer,
+                                             FeatureExtractor)
 from mne_features.univariate import compute_svd_fisher_info
 
 rng = np.random.RandomState(42)
@@ -85,6 +89,44 @@ def test_featurefunctiontransformer():
         tr2.set_params(**invalid_new_params)
 
 
+def test_feature_extractor():
+    selected_funcs = ['app_entropy']
+    extractor = FeatureExtractor(sfreq=sfreq, selected_funcs=selected_funcs)
+    expected_features = extract_features(data, sfreq, selected_funcs)
+    assert_almost_equal(expected_features, extractor.fit_transform(data))
+    with assert_raises(ValueError):
+        FeatureExtractor(
+            sfreq=sfreq, selected_funcs=selected_funcs,
+            params={'app_entropy__metric': 'sqeuclidean'}).fit_transform(data)
+
+
+def test_gridsearch_feature_extractor():
+    X = data
+    y = np.ones((X.shape[0],))  # dummy labels
+    pipe = Pipeline([('FE', FeatureExtractor(sfreq=sfreq,
+                                             selected_funcs=['higuchi_fd'])),
+                     ('clf', CheckingClassifier(
+                         check_X=lambda arr: arr.shape[1:] == (X.shape[1],)))])
+    params_grid = {'FE__higuchi_fd__kmax': [5, 10]}
+    gs = GridSearchCV(estimator=pipe, param_grid=params_grid)
+    gs.fit(X, y)
+    assert_equal(hasattr(gs, 'cv_results_'), True)
+
+
+def test_memory_feature_extractor():
+    selected_funcs = ['mean', 'zero_cross']
+    cachedir = mkdtemp()
+    extractor = FeatureExtractor(sfreq=sfreq, selected_funcs=selected_funcs)
+    cached_extractor = FeatureExtractor(sfreq=sfreq,
+                                        selected_funcs=selected_funcs,
+                                        memory=cachedir)
+    y = np.ones((data.shape[0],))
+    cached_extractor.fit_transform(data, y)
+    # Ensure that the right features were cached
+    assert_almost_equal(extractor.fit_transform(data, y),
+                        cached_extractor.fit_transform(data, y))
+
+
 if __name__ == '__main__':
 
     test_shape_output()
@@ -93,3 +135,6 @@ if __name__ == '__main__':
     test_optional_params_func_with_numba()
     test_wrong_params()
     test_featurefunctiontransformer()
+    test_feature_extractor()
+    test_gridsearch_feature_extractor()
+    test_memory_feature_extractor()
