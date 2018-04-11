@@ -34,15 +34,15 @@ def get_univariate_funcs(sfreq):
     univariate_funcs['mean'] = compute_mean
     univariate_funcs['variance'] = compute_variance
     univariate_funcs['std'] = compute_std
-    univariate_funcs['ptp_amplitude'] = compute_ptp
+    univariate_funcs['ptp_amp'] = compute_ptp_amp
     univariate_funcs['skewness'] = compute_skewness
     univariate_funcs['kurtosis'] = compute_kurtosis
-    univariate_funcs['hurst_exp'] = compute_hurst_exponent
+    univariate_funcs['hurst_exp'] = compute_hurst_exp
     univariate_funcs['decorr_time'] = partial(compute_decorr_time, sfreq)
     univariate_funcs['hjorth_mobility_spect'] = partial(
-        compute_spect_hjorth_mobility, sfreq)
+        compute_hjorth_mobility_spect, sfreq)
     univariate_funcs['hjorth_complexity_spect'] = partial(
-        compute_spect_hjorth_complexity, sfreq)
+        compute_hjorth_complexity_spect, sfreq)
     univariate_funcs['app_entropy'] = compute_app_entropy
     univariate_funcs['samp_entropy'] = compute_samp_entropy
     univariate_funcs['hjorth_mobility'] = compute_hjorth_mobility
@@ -50,11 +50,11 @@ def get_univariate_funcs(sfreq):
     univariate_funcs['higuchi_fd'] = compute_higuchi_fd
     univariate_funcs['katz_fd'] = compute_katz_fd
     univariate_funcs['pow_freq_bands'] = partial(
-        compute_power_spectrum_freq_bands, sfreq)
+        compute_pow_freq_bands, sfreq)
     univariate_funcs['energy_freq_bands'] = partial(compute_energy_freq_bands,
                                                     sfreq)
-    univariate_funcs['zero_cross'] = compute_zero_crossings
-    univariate_funcs['line_len'] = compute_line_length
+    univariate_funcs['zero_crossings'] = compute_zero_crossings
+    univariate_funcs['line_length'] = compute_line_length
     univariate_funcs['spect_entropy'] = partial(compute_spect_entropy, sfreq)
     univariate_funcs['svd_entropy'] = compute_svd_entropy
     univariate_funcs['svd_fisher_info'] = compute_svd_fisher_info
@@ -186,7 +186,7 @@ def compute_std(data):
     return np.std(data, axis=-1, ddof=1)
 
 
-def compute_ptp(data):
+def compute_ptp_amp(data):
     """ Peak-to-peak (PTP) amplitude of the data (per channel).
 
     Parameters
@@ -199,7 +199,7 @@ def compute_ptp(data):
 
     Notes
     -----
-    Alias of the feature function: **ptp_amplitude**
+    Alias of the feature function: **ptp_amp**
     """
     return np.ptp(data, axis=-1)
 
@@ -244,7 +244,7 @@ def compute_kurtosis(data):
     return stats.kurtosis(data, axis=ndim - 1, fisher=False)
 
 
-def compute_hurst_exponent(data):
+def compute_hurst_exp(data):
     """ Hurst exponent of the data (per channel) ([Deva14]_, [HursWiki]_).
 
     Parameters
@@ -419,10 +419,9 @@ def compute_decorr_time(sfreq, data):
     return decorrelation_times
 
 
-def compute_power_spectrum_freq_bands(sfreq, data,
-                                      freq_bands=np.array([0.5, 4., 8., 13.,
-                                                           30., 100.]),
-                                      normalize=True):
+def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
+                                                             30., 100.]),
+                           normalize=True):
     """ Power Spectrum (computed by frequency bands) ([Teix11]_).
 
     Parameters
@@ -463,7 +462,7 @@ def compute_power_spectrum_freq_bands(sfreq, data,
     return pow_freq_bands.ravel()
 
 
-def compute_spect_hjorth_mobility(sfreq, data, normalize=False):
+def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
     """ Hjorth mobility (computed from the power spectrum, per channel)
     ([Morm06]_, [Teix11]_).
 
@@ -498,7 +497,7 @@ def compute_spect_hjorth_mobility(sfreq, data, normalize=False):
     return mobility
 
 
-def compute_spect_hjorth_complexity(sfreq, data, normalize=False):
+def compute_hjorth_complexity_spect(sfreq, data, normalize=False):
     """ Hjorth complexity (computed from the power spectrum, per channel)
     ([Morm06]_, [Teix11]_).
 
@@ -691,7 +690,7 @@ def compute_zero_crossings(data):
 
     Notes
     -----
-    Alias of the feature function: **zero_cross**
+    Alias of the feature function: **zero_crossings**
     """
     return np.sum(np.diff(np.sign(data), axis=-1) != 0, axis=-1)
 
@@ -709,7 +708,7 @@ def compute_line_length(data):
 
     Notes
     -----
-    Alias of the feature function: **line_len**
+    Alias of the feature function: **line_length**
 
     References
     ----------
