@@ -63,7 +63,7 @@ def test_wrong_params():
         extract_features(data, -0.1, ['mean'])
     with assert_raises(ValueError):
         # Unknown alias of feature function
-        extract_features(data, sfreq, ['powfreqbands'])
+        extract_features(data, sfreq, ['power_freq_bands'])
     with assert_raises(ValueError):
         # No alias given
         extract_features(data, sfreq, list())
@@ -114,7 +114,7 @@ def test_gridsearch_feature_extractor():
 
 
 def test_memory_feature_extractor():
-    selected_funcs = ['mean', 'zero_cross']
+    selected_funcs = ['mean', 'zero_crossings']
     cachedir = mkdtemp()
     extractor = FeatureExtractor(sfreq=sfreq, selected_funcs=selected_funcs)
     cached_extractor = FeatureExtractor(sfreq=sfreq,

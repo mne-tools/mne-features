@@ -8,13 +8,13 @@ from numpy.testing import assert_equal, assert_almost_equal, assert_raises
 
 from mne_features.univariate import (_slope_lstsq, compute_mean,
                                      compute_variance, compute_std,
-                                     compute_ptp, compute_skewness,
-                                     compute_kurtosis, compute_hurst_exponent,
+                                     compute_ptp_amp, compute_skewness,
+                                     compute_kurtosis, compute_hurst_exp,
                                      compute_app_entropy, compute_samp_entropy,
                                      compute_decorr_time,
-                                     compute_power_spectrum_freq_bands,
-                                     compute_spect_hjorth_mobility,
-                                     compute_spect_hjorth_complexity,
+                                     compute_pow_freq_bands,
+                                     compute_hjorth_mobility_spect,
+                                     compute_hjorth_complexity_spect,
                                      compute_hjorth_mobility,
                                      compute_hjorth_complexity,
                                      compute_higuchi_fd, compute_katz_fd,
@@ -45,8 +45,8 @@ def test_slope_lstsq():
 
 def test_shape_output():
     for func in (compute_mean, compute_variance, compute_std,
-                 compute_kurtosis, compute_skewness, compute_ptp,
-                 compute_hurst_exponent, compute_hjorth_complexity,
+                 compute_kurtosis, compute_skewness, compute_ptp_amp,
+                 compute_hurst_exp, compute_hjorth_complexity,
                  compute_hjorth_mobility, compute_higuchi_fd, compute_katz_fd,
                  compute_zero_crossings, compute_line_length,
                  compute_svd_entropy, compute_svd_fisher_info):
@@ -61,24 +61,23 @@ def test_shape_output_decorr_time():
         assert_equal(feat.shape, (n_channels,))
 
 
-def test_shape_output_power_spectrum_freq_bands():
+def test_shape_output_pow_freq_bands():
     fb = np.array([0.1, 4, 8, 12, 30])
     n_freqs = fb.shape[0]
     for j in range(n_epochs):
-        feat = compute_power_spectrum_freq_bands(sfreq, data[j, :, :],
-                                                 freq_bands=fb)
+        feat = compute_pow_freq_bands(sfreq, data[j, :, :], freq_bands=fb)
         assert_equal(feat.shape, (n_channels * (n_freqs - 1),))
 
 
-def test_shape_output_spect_hjorth_mobility():
+def test_shape_output_hjorth_mobility_spect():
     for j in range(n_epochs):
-        feat = compute_spect_hjorth_mobility(sfreq, data[j, :, :])
+        feat = compute_hjorth_mobility_spect(sfreq, data[j, :, :])
         assert_equal(feat.shape, (n_channels,))
 
 
-def test_shape_output_spect_hjorth_complexity():
+def test_shape_output_hjorth_complexity_spect():
     for j in range(n_epochs):
-        feat = compute_spect_hjorth_complexity(sfreq, data[j, :, :])
+        feat = compute_hjorth_complexity_spect(sfreq, data[j, :, :])
         assert_equal(feat.shape, (n_channels,))
 
 
@@ -127,7 +126,7 @@ if __name__ == '__main__':
     test_slope_lstsq()
     test_shape_output()
     test_shape_output_decorr_time()
-    test_shape_output_power_spectrum_freq_bands()
+    test_shape_output_pow_freq_bands()
     test_shape_output_spect_entropy()
     test_shape_output_energy_freq_bands()
     test_shape_output_spect_edge_freq()

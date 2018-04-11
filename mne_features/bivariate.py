@@ -32,12 +32,12 @@ def get_bivariate_funcs(sfreq):
     bivariate_funcs : dict of feature functions
     """
     bivariate_funcs = dict()
-    bivariate_funcs['max_cross_corr'] = partial(compute_max_cross_correlation,
+    bivariate_funcs['max_cross_corr'] = partial(compute_max_cross_corr,
                                                 sfreq)
-    bivariate_funcs['plv'] = compute_phase_locking_value
-    bivariate_funcs['nonlin_interdep'] = compute_nonlinear_interdep
-    bivariate_funcs['time_corr'] = compute_time_corr_coefs
-    bivariate_funcs['spect_corr'] = partial(compute_spect_corr_coefs, sfreq)
+    bivariate_funcs['phase_lock_val'] = compute_phase_lock_val
+    bivariate_funcs['nonlin_interdep'] = compute_nonlin_interdep
+    bivariate_funcs['time_corr'] = compute_time_corr
+    bivariate_funcs['spect_corr'] = partial(compute_spect_corr, sfreq)
     return bivariate_funcs
 
 
@@ -95,7 +95,7 @@ def _max_cross_corr(sfreq, data):
     return max_cc
 
 
-def compute_max_cross_correlation(sfreq, data):
+def compute_max_cross_corr(sfreq, data):
     """ Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
 
     Parameters
@@ -123,7 +123,7 @@ def compute_max_cross_correlation(sfreq, data):
     return _max_cross_corr(sfreq, data)
 
 
-def compute_phase_locking_value(data):
+def compute_phase_lock_val(data):
     """ Phase Locking Value (PLV) ([Plv]_).
 
     Parameters
@@ -136,7 +136,7 @@ def compute_phase_locking_value(data):
 
     Notes
     -----
-    Alias of the feature function: **plv**
+    Alias of the feature function: **phase_lock_val**
 
     References
     ----------
@@ -157,7 +157,7 @@ def compute_phase_locking_value(data):
     return plv
 
 
-def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
+def compute_nonlin_interdep(data, tau=2, emb=10, nn=5):
     """ Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
 
     Parameters
@@ -203,7 +203,7 @@ def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
     return nlinterdep
 
 
-def compute_time_corr_coefs(data, with_eigenvalues=True):
+def compute_time_corr(data, with_eigenvalues=True):
     """ Correlation Coefficients (computed in the time domain) ([Tisp]_).
 
     Parameters
@@ -243,7 +243,7 @@ def compute_time_corr_coefs(data, with_eigenvalues=True):
         return coefs
 
 
-def compute_spect_corr_coefs(sfreq, data, db=False, with_eigenvalues=True):
+def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True):
     """ Correlation Coefficients (computed from the power spectrum) ([Tisp]_).
 
     Parameters
