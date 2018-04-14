@@ -16,7 +16,7 @@ from .mock_numba import nb
 
 
 @nb.jit()
-def triu_idx(n):
+def triu_idx(n, include_diag=False):
     """ Utility function to generate an enumeration of the pairs of indices
     (i,j) corresponding to the upper triangular part of a (n, n) array.
 
@@ -24,13 +24,17 @@ def triu_idx(n):
     ----------
     n : int
 
+    include_diag : bool (default: False)
+        If False, the pairs of indices corresponding to the diagonal are
+        removed.
+
     Returns
     -------
     generator
     """
     pos = -1
     for i in range(n):
-        for j in range(i, n):
+        for j in range(i + 1 - int(include_diag), n):
             pos += 1
             yield pos, i, j
 
