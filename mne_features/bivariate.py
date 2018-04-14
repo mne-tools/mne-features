@@ -58,9 +58,10 @@ def _max_cross_corr(sfreq, data, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where: ``n_output = n_channels *
-    n_channels + 1) // 2`` if ``ìnclude_diag`` is True and ``n_output =
-    n_channels * (n_channels - 1) // 2`` if ``include_diag`` is False.
+    output : ndarray, shape (n_output,) where:
+    ``n_output = n_channels * (n_channels + 1) // 2`` if ``include_diag`` is
+    True and ``n_output = n_channels * (n_channels - 1) // 2`` if
+    ``include_diag`` is False.
     """
     n_channels, n_times = data.shape
     n_tau = int(0.5 * sfreq)
@@ -120,9 +121,10 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where: ``n_output = n_channels *
-    (n_channels + 1) // 2`` if ``ìnclude_diag`` is True and ``n_output =
-    n_channels * (n_channels - 1) // 2`` if ``include_diag`` is False.
+    output : ndarray, shape (n_output,) where:
+    ``n_output = n_channels * (n_channels + 1) // 2`` if ``include_diag`` is
+    True and ``n_output = n_channels * (n_channels - 1) // 2`` if
+    ``include_diag`` is False.
 
     Notes
     -----
@@ -152,9 +154,10 @@ def compute_phase_lock_val(data, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where: ``n_output = n_channels *
-    (n_channels + 1) // 2`` if ``ìnclude_diag`` is True and ``n_output =
-    n_channels * (n_channels - 1) // 2`` if ``include_diag`` is False.
+    output : ndarray, shape (n_output,) where:
+    ``n_output = n_channels * (n_channels + 1) // 2`` if ``include_diag`` is
+    True and ``n_output = n_channels * (n_channels - 1) // 2`` if
+    ``include_diag`` is False.
 
     Notes
     -----
@@ -205,9 +208,10 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where: ``n_output = n_channels *
-    (n_channels + 1) // 2`` if ``ìnclude_diag`` is True and ``n_output =
-    n_channels * (n_channels - 1) // 2`` if ``include_diag`` is False.
+    output : ndarray, shape (n_output,) where:
+    ``n_output = n_channels * (n_channels + 1) // 2`` if ``include_diag`` is
+    True and ``n_output = n_channels * (n_channels - 1) // 2`` if
+    ``include_diag`` is False.
 
     Notes
     -----
@@ -256,11 +260,12 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where: ``n_output = n_coefs +
-    n_channels`` if ``with_eigenvalues`` is True and ``n_output = n_coefs``
-    otherwise. If ``include_diag`` is True, then ``n_coefs = (n_channels *
-    (n_channels + 1)) // 2`` and ``n_coefs = (n_channels * (n_channels - 1))
-    // 2`` otherwise.
+    output : ndarray, shape (n_output,) where:
+    ``n_output = n_coefs + n_channels`` if ``with_eigenvalues`` is True and
+    ``n_output = n_coefs`` if ``with_eigenvalues`` is False. If
+    ``include_diag`` is True, then
+    ``n_coefs = n_channels * (n_channels + 1) // 2`` and
+    ``n_coefs = n_channels * (n_channels - 1) // 2`` otherwise.
 
     Notes
     -----
@@ -310,11 +315,12 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where: ``n_output = n_coefs +
-    n_channels`` if ``with_eigenvalues`` is True and ``n_output = n_coefs``
-    otherwise. If ``include_diag`` is True, then ``n_coefs = (n_channels *
-    (n_channels + 1)) // 2`` and ``n_coefs = (n_channels * (n_channels - 1))
-    // 2`` otherwise.
+output : ndarray, shape (n_output,) where:
+    ``n_output = n_coefs + n_channels`` if ``with_eigenvalues`` is True and
+    ``n_output = n_coefs`` if ``with_eigenvalues`` is False. If
+    ``include_diag`` is True, then
+    ``n_coefs = n_channels * (n_channels + 1) // 2`` and
+    ``n_coefs = n_channels * (n_channels - 1) // 2`` otherwise.
 
     Notes
     -----
