@@ -185,34 +185,60 @@ def _apply_extractor(extractor, X, return_as_df):
     return X, feature_names
 
 
-def _check_func_names(selected, feature_funcs_names):
-    """ Checks if the names of selected feature functions match the available
-    feature functions.
+def _check_funcs(selected, feature_funcs):
+    """ Checks if the elements of ``selected`` are either strings (alias of a
+    feature function defined in mne-features) or tuples of the form
+    ``(str, callable)`` (user-defined feature function).
 
     Parameters
     ----------
-    selected : list of str
+    selected : list of str or tuples
         Names of the selected feature functions.
 
-    feature_funcs_names : dict-keys or list
-        Names of available feature functions.
+    feature_funcs : dict
+        Dictionary of the feature functions (univariate and bivariate)
+        available in mne-features.
 
     Returns
     -------
-    valid_func_names : list of str
+    valid_funcs : list of tuples
     """
-    valid_func_names = list()
-    for f in selected:
-        if f in feature_funcs_names:
-            valid_func_names.append(f)
+    valid_funcs = list()
+    _intrinsic_func_names = feature_funcs.keys()
+    for s in selected:
+        if isinstance(s, str):
+            # Case of a MNE-feature alias
+            if s in _intrinsic_func_names:
+                valid_funcs.append((s, feature_funcs[s]))
+            else:
+                raise ValueError('The given alias (%s) is not valid. The '
+                                 'valid aliases for feature functions are: %s.'
+                                 % (s, _intrinsic_func_names))
+        elif isinstance(s, tuple):
+            if len(s) != 2:
+                raise ValueError('The given tuple (%s) is not of length 2. '
+                                 'Each user-defined feature function should '
+                                 'be passed as a tuple of the form '
+                                 '`(str, callable)`.' % str(s))
+            else:
+                # Case of a user-defined feature function
+                if s[0] in _intrinsic_func_names:
+                    raise ValueError('A user-defined feature function was '
+                                     'given an alias (%s) which is already '
+                                     'used by mne-features. The list of '
+                                     'aliases used by mne-features is: %s.'
+                                     % (s[0], _intrinsic_func_names))
+                else:
+                    valid_funcs.append(s)
         else:
-            raise ValueError('The given alias (%s) is not valid. The valid '
-                             'aliases for feature functions are: %s.' %
-                             (f, feature_funcs_names))
-    if not valid_func_names:
-        raise ValueError('No valid feature function names given.')
+            # Case where the element is neither a string, nor a tuple
+            raise ValueError('%s is not a valid feature function and cannot '
+                             'be interpreted as a user-defined feature '
+                             'function.' % str(s))
+    if not valid_funcs:
+        raise ValueError('No valid feature function was given.')
     else:
-        return valid_func_names
+        return valid_funcs
 
 
 class FeatureExtractor(BaseEstimator, TransformerMixin):
@@ -234,13 +260,21 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     sfreq : float (default: 256.)
         Sampling rate of the data.
 
-    selected_funcs : list of str or None (default: None)
-        The elements of ``selected_features`` are aliases for the feature
-        functions which will be used to extract features from the data.
-        The aliases are built from the feature functions' names removing
-        ``compute_``. Example : The alias of the function
-        :func:`compute_ptp_amp` is ``ptp_amp``. (See the documentation of
-        mne-features for a complete list of available feature functions).
+    selected_funcs : list of str or tuples
+        The elements of ``selected_features`` are either strings or tuples of
+        the form ``(str, callable)``. If an element is of type ``str``, it is
+        the alias of a feature function. The aliases are built from the
+        feature functions' names by removing ``compute_``. For instance, the
+        alias of the feature function :func:`compute_ptp_amp` is ``ptp_amp``.
+        (See the documentation of mne-features). If an element is of type
+        ``tuple``, the first element of the tuple should be a string
+        (name/alias given to a user-defined feature function) and the second
+        element should be a  callable (a user-defined feature function which
+        accepts Numpy arrays with shape ``(n_channels, n_times)``). The
+        names/aliases given to user-defined feature functions should not
+        intersect the aliases used by mne-features. If the name given to a
+        user-defined feature function is already used as an alias in
+        mne-features, an error will be raised.
 
     params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to
@@ -326,13 +360,21 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     sfreq : float
         Sampling rate of the data.
 
-    selected_funcs : list of str
-        The elements of ``selected_features`` are aliases for the feature
-        functions which will be used to extract features from the data.
-        The aliases are built from the feature functions' names removing
-        ``compute_``. Example : The alias of the function
-        :func:`compute_ptp_amp` is ``ptp_amp``. (See the documentation of
-        mne-features for a complete list of available feature functions).
+    selected_funcs : list of str or tuples
+        The elements of ``selected_features`` are either strings or tuples of
+        the form ``(str, callable)``. If an element is of type ``str``, it is
+        the alias of a feature function. The aliases are built from the
+        feature functions' names by removing ``compute_``. For instance, the
+        alias of the feature function :func:`compute_ptp_amp` is ``ptp_amp``.
+        (See the documentation of mne-features). If an element is of type
+        ``tuple``, the first element of the tuple should be a string
+        (name/alias given to a user-defined feature function) and the second
+        element should be a  callable (a user-defined feature function which
+        accepts Numpy arrays with shape ``(n_channels, n_times)``). The
+        names/aliases given to user-defined feature functions should not
+        intersect the aliases used by mne-features. If the name given to a
+        user-defined feature function is already used as an alias in
+        mne-features, an error will be raised.
 
     funcs_params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to the feature
@@ -360,12 +402,11 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     bivariate_funcs = get_bivariate_funcs(sfreq)
     feature_funcs = univariate_funcs.copy()
     feature_funcs.update(bivariate_funcs)
-    sel_funcs = _check_func_names(selected_funcs, feature_funcs.keys())
+    sel_funcs = _check_funcs(selected_funcs, feature_funcs)
 
     # Feature extraction
     n_epochs = X.shape[0]
-    _tr = [(n, FeatureFunctionTransformer(func=feature_funcs[n]))
-           for n in sel_funcs]
+    _tr = [(n, FeatureFunctionTransformer(func=func)) for n, func in sel_funcs]
     extractor = FeatureUnion(transformer_list=_tr)
     if funcs_params is not None:
         extractor.set_params(**funcs_params)
