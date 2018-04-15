@@ -18,9 +18,10 @@ from .utils import triu_idx, power_spectrum, embed
 
 
 def get_bivariate_funcs(sfreq):
-    """ Returns a dictionary of bivariate feature functions. For each feature
-    function, the corresponding key in the dictionary is an alias for the
-    function.
+    """Returns a dictionary of bivariate feature functions.
+
+    For each feature function, the corresponding key in the dictionary is
+    an alias for the function.
 
     Parameters
     ----------
@@ -29,7 +30,8 @@ def get_bivariate_funcs(sfreq):
 
     Returns
     -------
-    bivariate_funcs : dict of feature functions
+    bivariate_funcs : dict
+        The dictionary of feature functions.
     """
     bivariate_funcs = dict()
     bivariate_funcs['max_cross_corr'] = partial(compute_max_cross_corr,
@@ -53,15 +55,20 @@ def _max_cross_corr(sfreq, data, include_diag=False):
         Sampling rate of the data.
 
     data : ndarray, shape (n_channels, n_times)
+        The signals.
 
     include_diag : bool (default: False)
+        If False, features corresponding to pairs of identical electrodes
+        are not computed. In other words, features are not computed from pairs
+        of electrodes of the form ``(ch[i], ch[i])``.
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where:
-    ``n_output = n_channels * (n_channels + 1) // 2`` if ``include_diag`` is
-    True and ``n_output = n_channels * (n_channels - 1) // 2`` if
-    ``include_diag`` is False.
+    output : ndarray, shape (n_output,)
+        With ``n_output = n_channels * (n_channels + 1) / 2`` if
+        ``include_diag`` is True and
+        ``n_output = n_channels * (n_channels - 1) / 2`` if
+        ``include_diag`` is False.
     """
     n_channels, n_times = data.shape
     n_tau = int(0.5 * sfreq)
@@ -113,6 +120,7 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
         Sampling rate of the data.
 
     data : ndarray, shape (n_channels, n_times)
+        The signals.
 
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
@@ -121,10 +129,11 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where:
-    ``n_output = n_channels * (n_channels + 1) // 2`` if ``include_diag`` is
-    True and ``n_output = n_channels * (n_channels - 1) // 2`` if
-    ``include_diag`` is False.
+    output : ndarray, shape (n_output,)
+        With ``n_output = n_channels * (n_channels + 1) / 2`` if
+        ``include_diag`` is True and
+        ``n_output = n_channels * (n_channels - 1) / 2`` if
+        ``include_diag`` is False.
 
     Notes
     -----
@@ -154,10 +163,11 @@ def compute_phase_lock_val(data, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where:
-    ``n_output = n_channels * (n_channels + 1) // 2`` if ``include_diag`` is
-    True and ``n_output = n_channels * (n_channels - 1) // 2`` if
-    ``include_diag`` is False.
+    output : ndarray, shape (n_output,)
+        With ``n_output = n_channels * (n_channels + 1) / 2`` if
+        ``include_diag`` is True and
+        ``n_output = n_channels * (n_channels - 1) / 2`` if
+        ``include_diag`` is False.
 
     Notes
     -----
@@ -191,15 +201,16 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
+        The signals.
 
     tau : int (default: 2)
-        Delay.
+        Delay in time samples.
 
     emb : int (default: 10)
         Embedding dimension.
 
     nn : int (default: 5)
-        Number of Nearest Neighbours.
+        Number of Nearest Neighbors.
 
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
@@ -208,10 +219,11 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where:
-    ``n_output = n_channels * (n_channels + 1) // 2`` if ``include_diag`` is
-    True and ``n_output = n_channels * (n_channels - 1) // 2`` if
-    ``include_diag`` is False.
+    output : ndarray, shape (n_output,)
+        With ``n_output = n_channels * (n_channels + 1) / 2`` if
+        ``include_diag`` is True and
+        ``n_output = n_channels * (n_channels - 1) / 2`` if
+        ``include_diag`` is False.
 
     Notes
     -----
@@ -248,6 +260,7 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
+        The signals.
 
     with_eigenvalues : bool (default: False)
         If True, the function also returns the eigenvalues of the correlation
@@ -260,12 +273,12 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
 
     Returns
     -------
-    output : ndarray, shape (n_output,) where:
-    ``n_output = n_coefs + n_channels`` if ``with_eigenvalues`` is True and
-    ``n_output = n_coefs`` if ``with_eigenvalues`` is False. If
-    ``include_diag`` is True, then
-    ``n_coefs = n_channels * (n_channels + 1) // 2`` and
-    ``n_coefs = n_channels * (n_channels - 1) // 2`` otherwise.
+    output : ndarray, shape (n_output,)
+        With ``n_output = n_coefs + n_channels`` if ``with_eigenvalues`` is
+        True and ``n_output = n_coefs`` if ``with_eigenvalues`` is False. If
+        ``include_diag`` is True, then
+        ``n_coefs = n_channels * (n_channels + 1) // 2`` and
+        ``n_coefs = n_channels * (n_channels - 1) // 2`` otherwise.
 
     Notes
     -----
@@ -299,6 +312,7 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
         Sampling rate of the data.
 
     data : ndarray, shape (n_channels, n_times)
+        The signals.
 
     db : bool (default: True)
         If True, the power spectrum returned by the function
@@ -315,12 +329,12 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
 
     Returns
     -------
-output : ndarray, shape (n_output,) where:
-    ``n_output = n_coefs + n_channels`` if ``with_eigenvalues`` is True and
-    ``n_output = n_coefs`` if ``with_eigenvalues`` is False. If
-    ``include_diag`` is True, then
-    ``n_coefs = n_channels * (n_channels + 1) // 2`` and
-    ``n_coefs = n_channels * (n_channels - 1) // 2`` otherwise.
+    output : ndarray, shape (n_output,)
+        Where ``n_output = n_coefs + n_channels`` if ``with_eigenvalues`` is
+        True and ``n_output = n_coefs`` if ``with_eigenvalues`` is False. If
+        ``include_diag`` is True, then
+        ``n_coefs = n_channels * (n_channels + 1) // 2`` and
+        ``n_coefs = n_channels * (n_channels - 1) // 2`` otherwise.
 
     Notes
     -----

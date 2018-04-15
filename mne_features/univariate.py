@@ -17,9 +17,11 @@ from .utils import power_spectrum, embed, filt
 
 
 def get_univariate_funcs(sfreq):
-    """ Returns a dictionary of univariate feature functions. For each feature
-    function, the corresponding key in the dictionary is an alias for the
-    function.
+    """Returns a dictionary of univariate feature functions.
+
+
+    For each feature function, the corresponding key in the dictionary is
+    an alias for the function.
 
     Parameters
     ----------
@@ -29,7 +31,10 @@ def get_univariate_funcs(sfreq):
     Returns
     -------
     univariate_funcs : dict
+        The dictionary of feature functions.
     """
+    # XXX : you should make this automatically by inspecting the available
+    # functions that start with compute_
     univariate_funcs = dict()
     univariate_funcs['mean'] = compute_mean
     univariate_funcs['variance'] = compute_variance
@@ -87,8 +92,9 @@ def _unbiased_autocorr(x):
 @nb.jit([nb.float64(nb.float64[:], nb.float64[:]),
          nb.float32(nb.float32[:], nb.float32[:])], nopython=True)
 def _slope_lstsq(x, y):
-    """ Utility function which returns the slope of the linear
-    regression between x and y.
+    """ Utility function
+
+    It returns the slope of the linear regression between x and y.
 
     Parameters
     ----------
@@ -153,18 +159,18 @@ def compute_mean(data):
 def compute_variance(data):
     """ Variance of the data (per channel).
 
-     Parameters
-     ----------
-     data : shape (n_channels, n_times)
+    Parameters
+    ----------
+    data : shape (n_channels, n_times)
 
-     Returns
-     -------
-     output : ndarray, shape (n_channels,)
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
 
     Notes
     -----
     Alias of the feature function: **variance**
-     """
+    """
     return np.var(data, axis=-1, ddof=1)
 
 
