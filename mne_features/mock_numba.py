@@ -27,6 +27,7 @@ except ImportError as _:
     nb.float32 = MockType()
     nb.float64 = MockType()
     nb.optional = MockType()
+    nb.boolean = MockType()
 
     def jit(*args, **kwargs):
         def identity(ob):

@@ -1,3 +1,5 @@
+"""Feature extraction functions."""
+
 # Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
