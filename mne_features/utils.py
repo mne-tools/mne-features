@@ -2,9 +2,7 @@
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
-
-""" Utility functions to be used with either univariate or bivariate feature
-functions."""
+"""Utility functions."""
 
 from math import floor
 from warnings import warn
@@ -20,7 +18,9 @@ from .mock_numba import nb
 
 @nb.jit()
 def triu_idx(n, include_diag=False):
-    """ Utility function to generate an enumeration of the pairs of indices
+    """Enumeration of the upper-triangular part of a squre matrix.
+
+    Utility function to generate an enumeration of the pairs of indices
     (i,j) corresponding to the upper triangular part of a (n, n) array.
 
     Parameters
@@ -43,8 +43,7 @@ def triu_idx(n, include_diag=False):
 
 
 def embed(x, d, tau):
-    """ Utility function to compute the time-delay embedding of a [univariate
-    or multivariate] time series x.
+    """Time-delay embedding.
 
     Parameters
     ----------
@@ -79,8 +78,7 @@ def embed(x, d, tau):
 
 
 def power_spectrum(sfreq, data, return_db=False):
-    """ Utility function to compute the [one sided] Power Spectrum ([Hein02]_,
-    [Math]_).
+    """One-sided Power Spectrum ([Hein02]_, [Math]_).
 
     Parameters
     ----------
@@ -127,7 +125,9 @@ def power_spectrum(sfreq, data, return_db=False):
 
 
 def filt(sfreq, data, filter_freqs, verbose=False):
-    """ Utility function to filter data which acts as a wrapper for
+    """Filter data.
+
+    Utility function to filter data which acts as a wrapper for
     ``mne.filter.filter_data`` ([Mne]_).
 
     Parameters
@@ -168,7 +168,9 @@ def filt(sfreq, data, filter_freqs, verbose=False):
 
 
 def _get_feature_funcs(sfreq, module_name):
-    """ Inspects a given module and returns a dictionary of feature
+    """Inspection for feature functions.
+
+    Inspects a given module and returns a dictionary of feature
     functions in this module. If the module does not contain any feature
     function, an empty dictionary is returned.
 
@@ -187,14 +189,14 @@ def _get_feature_funcs(sfreq, module_name):
     feature_funcs = dict()
     res = getmembers(sys.modules[module_name], isfunction)
     for name, func in res:
-        if 'compute_' in name:
+        if name.startswith('compute_'):
             alias = name.split('compute_')[-1]
             if hasattr(func, 'func_code'):
                 func_code = func.func_code
             else:
                 func_code = func.__code__
             args, _, _ = getargs(func_code)
-            if args[0] == 'sfreq':
+            if 'sfreq' in args[0]:
                 feature_funcs[alias] = partial(func, sfreq)
             else:
                 feature_funcs[alias] = func

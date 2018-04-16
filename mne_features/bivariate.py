@@ -2,6 +2,7 @@
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
+"""Bivariate feature functions."""
 
 from math import sqrt
 
@@ -17,7 +18,7 @@ from .utils import triu_idx, power_spectrum, embed, _get_feature_funcs
 
 
 def get_bivariate_funcs(sfreq):
-    """Returns a dictionary of bivariate feature functions.
+    """Mapping between aliases and bivariate feature functions.
 
     Parameters
     ----------
@@ -35,7 +36,7 @@ def get_bivariate_funcs(sfreq):
          nb.float32[:](nb.float32, nb.float32[:, :], nb.optional(nb.boolean))],
         nopython=True)
 def _max_cross_corr(sfreq, data, include_diag=False):
-    """ Utility function for :func:`compute_max_cross_correlation`.
+    """Utility function for :func:`compute_max_cross_correlation`.
 
     Parameters
     ----------
@@ -100,7 +101,7 @@ def _max_cross_corr(sfreq, data, include_diag=False):
 
 
 def compute_max_cross_corr(sfreq, data, include_diag=False):
-    """ Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
+    """Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
 
     Parameters
     ----------
@@ -138,7 +139,7 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
 
 
 def compute_phase_lock_val(data, include_diag=False):
-    """ Phase Locking Value (PLV) ([Plv]_).
+    """Phase Locking Value (PLV) ([Plv]_).
 
     Parameters
     ----------
@@ -184,7 +185,7 @@ def compute_phase_lock_val(data, include_diag=False):
 
 
 def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
-    """ Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
+    """Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
 
     Parameters
     ----------
@@ -243,7 +244,7 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
 
 
 def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
-    """ Correlation Coefficients (computed in the time domain) ([Tisp]_).
+    """Correlation Coefficients (computed in the time domain) ([Tisp]_).
 
     Parameters
     ----------
@@ -292,7 +293,7 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
 
 def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
                        include_diag=False):
-    """ Correlation Coefficients (computed from the power spectrum) ([Tisp]_).
+    """Correlation Coefficients (computed from the power spectrum) ([Tisp]_).
 
     Parameters
     ----------
