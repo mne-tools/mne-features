@@ -3,7 +3,7 @@
 Extract features using user-defined feature functions.
 ======================================================
 
-The example shows how user-defined feature functions can be used in 
+The example shows how user-defined feature functions can be used in
 MNE-Features along with built-in feature functions.
 
 The code for this example is based on the method proposed in:
@@ -20,16 +20,18 @@ Proc. IEEE ICASSP Conf. 2018
     may lead to better performance on such a dataset (classification
     of auditory vs. visual stimuli).
 
-"""  # noqa
+"""
 
 # Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
-import mne
 import numpy as np
+from scipy.signal import medfilt
+
+import mne
 from mne.datasets import sample
-from scipy.signal import medfilt2d
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import (cross_val_score, StratifiedKFold)
 from sklearn.pipeline import Pipeline
@@ -68,8 +70,8 @@ data = epochs.get_data()
 # features:
 
 
-def compute_medfilt_data(arr):
-    """ Median filtered signal as features.
+def compute_medfilt(arr):
+    """Median filtered signal as features.
 
     Parameters
     ----------
@@ -79,7 +81,7 @@ def compute_medfilt_data(arr):
     -------
     output : (n_channels * n_times,)
     """
-    return medfilt2d(arr).ravel()
+    return medfilt(arr, kernel_size=(1, 5)).ravel()
 
 
 ###############################################################################
@@ -87,7 +89,7 @@ def compute_medfilt_data(arr):
 
 # In addition to the new feature function, we also propose to extract the
 # mean of the data:
-selected_funcs = [('medfilt', compute_medfilt_data), 'mean']
+selected_funcs = [('medfilt', compute_medfilt), 'mean']
 
 pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                          selected_funcs=selected_funcs,
