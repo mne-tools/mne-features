@@ -8,6 +8,9 @@ functions."""
 
 from math import floor
 from warnings import warn
+import sys
+from inspect import getmembers, isfunction, getargs
+from functools import partial
 
 import numpy as np
 from mne.filter import filter_data
@@ -162,3 +165,37 @@ def filt(sfreq, data, filter_freqs, verbose=False):
         return filter_data(data, sfreq=sfreq, l_freq=filter_freqs[0],
                            h_freq=filter_freqs[1], picks=None,
                            fir_design='firwin', verbose=_verbose)
+
+
+def _get_feature_funcs(sfreq, module_name):
+    """ Inspects a given module and returns a dictionary of feature
+    functions in this module. If the module does not contain any feature
+    function, an empty dictionary is returned.
+
+    Parameters
+    ----------
+    sfreq : float
+        Sampling rate of the data.
+
+    module_name : str
+        Name of the module to inspect.
+
+    Returns
+    -------
+    feature_funcs : dict
+    """
+    feature_funcs = dict()
+    res = getmembers(sys.modules[module_name], isfunction)
+    for name, func in res:
+        if 'compute_' in name:
+            alias = name.split('compute_')[-1]
+            if hasattr(func, 'func_code'):
+                func_code = func.func_code
+            else:
+                func_code = func.__code__
+            args, _, _ = getargs(func_code)
+            if args[0] == 'sfreq':
+                feature_funcs[alias] = partial(func, sfreq)
+            else:
+                feature_funcs[alias] = func
+    return feature_funcs

@@ -3,7 +3,6 @@
 # License: BSD 3 clause
 
 
-from functools import partial
 from math import sqrt
 
 import numpy as np
@@ -14,14 +13,11 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import scale
 
 from .mock_numba import nb
-from .utils import triu_idx, power_spectrum, embed
+from .utils import triu_idx, power_spectrum, embed, _get_feature_funcs
 
 
 def get_bivariate_funcs(sfreq):
     """Returns a dictionary of bivariate feature functions.
-
-    For each feature function, the corresponding key in the dictionary is
-    an alias for the function.
 
     Parameters
     ----------
@@ -31,16 +27,8 @@ def get_bivariate_funcs(sfreq):
     Returns
     -------
     bivariate_funcs : dict
-        The dictionary of feature functions.
     """
-    bivariate_funcs = dict()
-    bivariate_funcs['max_cross_corr'] = partial(compute_max_cross_corr,
-                                                sfreq)
-    bivariate_funcs['phase_lock_val'] = compute_phase_lock_val
-    bivariate_funcs['nonlin_interdep'] = compute_nonlin_interdep
-    bivariate_funcs['time_corr'] = compute_time_corr
-    bivariate_funcs['spect_corr'] = partial(compute_spect_corr, sfreq)
-    return bivariate_funcs
+    return _get_feature_funcs(sfreq, __name__)
 
 
 @nb.jit([nb.float64[:](nb.float64, nb.float64[:, :], nb.optional(nb.boolean)),
