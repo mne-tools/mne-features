@@ -952,3 +952,22 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
         for l in range(levdec):
             wavelet_energy[j, l] = np.sum(coefs[levdec - l] ** 2)
     return wavelet_energy.ravel()
+
+
+def compute_teager_kaiser_energy(data):
+    """ Compute the Teager-Kaiser energy`.
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    ndarray, shape (n_channels, n_times-2)
+    """
+    n_channels, n_times = data.shape
+    tke = np.zeros((n_channels, n_times - 2))
+    for i in range(n_channels):
+        for j in range(1, n_times - 1):
+            tke[i, j - 1] = data[i, j]**2 - data[i, j - 1] * data[i, j + 1]
+    return tke
