@@ -61,6 +61,7 @@ def get_univariate_funcs(sfreq):
     univariate_funcs['spect_edge_freq'] = partial(compute_spect_edge_freq,
                                                   sfreq)
     univariate_funcs['wavelet_coef_energy'] = compute_wavelet_coef_energy
+    univariate_funcs['teager_kaiser_energy'] = compute_teager_kaiser_energy
     return univariate_funcs
 
 
@@ -964,6 +965,7 @@ def compute_teager_kaiser_energy(data):
     Returns
     -------
     ndarray, shape (n_channels, n_times-2)
+    Alias of the feature function: **teager_kaiser_energy**
     """
     n_channels, n_times = data.shape
     tke = np.zeros((n_channels, n_times - 2))
