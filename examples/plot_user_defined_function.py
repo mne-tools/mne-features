@@ -26,14 +26,13 @@ Proc. IEEE ICASSP Conf. 2018
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
-import numpy as np
 from scipy.signal import medfilt
 
 import mne
 from mne.datasets import sample
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import (cross_val_score, StratifiedKFold)
+from sklearn.model_selection import (train_test_split, StratifiedKFold)
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -65,9 +64,11 @@ labels = epochs.events[:, -1]
 data = epochs.get_data()
 
 ###############################################################################
-# Define a feature function called ``compute_medfilt_data``. Here, the raw
-# data is median filtered and the proposed function used the filtered data as
-# features:
+# Define a feature function called ``compute_medfilt``
+# ----------------------------------------------------
+#
+# Here, the raw data is median filtered and the output signals are used
+# as features.
 
 
 def compute_medfilt(arr):
@@ -85,8 +86,9 @@ def compute_medfilt(arr):
 
 
 ###############################################################################
-# Prepare for the classification task:
-
+# Prepare for the classification task
+# -----------------------------------
+#
 # In addition to the new feature function, we also propose to extract the
 # mean of the data:
 selected_funcs = [('medfilt', compute_medfilt), 'mean']
@@ -100,8 +102,8 @@ skf = StratifiedKFold(n_splits=3, random_state=42)
 y = labels
 
 ###############################################################################
-# Print the cross-validation accuracy score:
+# Print the accuracy score on a test dataset.
 
-scores = cross_val_score(pipe, data, y, cv=skf)
-print('Cross-validation accuracy score = %1.3f (+/- %1.5f)' %
-      (np.mean(scores), np.std(scores)))
+X_train, X_test, y_train, y_test = train_test_split(data, y, test_size=0.2)
+accuracy = pipe.fit(X_train, y_train).score(X_test, y_test)
+print('Accuracy score = %1.3f' % accuracy)
