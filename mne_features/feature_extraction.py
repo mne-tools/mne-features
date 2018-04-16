@@ -2,6 +2,7 @@
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
+"""Feature extraction."""
 
 from inspect import getargs
 
@@ -17,7 +18,7 @@ from .univariate import get_univariate_funcs
 
 
 class FeatureFunctionTransformer(FunctionTransformer):
-    """ Constructs a transformer from a given feature function.
+    """Construct a transformer from a given feature function.
 
     Similarly to :class:`~sklearn.preprocessing.FunctionTransformer`,
     :class:`FeatureFunctionTranformer` applies a feature function to a given
@@ -38,14 +39,16 @@ class FeatureFunctionTransformer(FunctionTransformer):
         If not None, dictionary of additional keyword arguments to pass to the
         feature function.
     """
+
     def __init__(self, func=None, validate=True, params=None):
+        """Instantiate a FeatureFunctionTransformer object."""
         self.params = params
         super(FeatureFunctionTransformer, self).__init__(func=func,
                                                          validate=validate,
                                                          kw_args=params)
 
     def transform(self, X, y='deprecated'):
-        """ Applies the given feature function to the array X.
+        """Apply the given feature function to the array X.
 
         Parameters
         ----------
@@ -67,14 +70,14 @@ class FeatureFunctionTransformer(FunctionTransformer):
         return X_out
 
     def get_feature_names(self):
-        """ Mapping of the feature indices to feature names. """
+        """Mapping of the feature indices to feature names."""
         if not hasattr(self, 'output_shape_'):
             raise ValueError('Call `transform` or `fit_transform` first.')
         else:
             return np.arange(self.output_shape_).astype(str)
 
     def get_params(self, deep=True):
-        """ Get the parameters (if any) of the given feature function.
+        """Get the parameters (if any) of the given feature function.
 
         Parameters
         ----------
@@ -114,7 +117,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
         return func_params
 
     def set_params(self, **new_params):
-        """ Set the parameters (if any) of the given feature function. """
+        """Set the parameters (if any) of the given feature function."""
         valid_params = self.get_params()
         for key in new_params.keys():
             if key not in valid_params:
@@ -131,7 +134,9 @@ class FeatureFunctionTransformer(FunctionTransformer):
 
 
 def _format_as_dataframe(X, feature_names):
-    """ Utility function to format extracted features (X) as a Pandas
+    """Format to Pandas DataFrame.
+
+    Utility function to format extracted features (X) as a Pandas
     DataFrame using names and indexes from ``feature_names``. The index of the
     columns is a MultiIndex with two levels. At level 0, the alias of the
     feature function is given. At level 1, an enumeration of the features is
@@ -160,7 +165,7 @@ def _format_as_dataframe(X, feature_names):
 
 
 def _apply_extractor(extractor, X, return_as_df):
-    """ Utility function to apply features extractor to ndarray X.
+    """Utility function to apply features extractor to ndarray X.
 
     Parameters
     ----------
@@ -186,7 +191,9 @@ def _apply_extractor(extractor, X, return_as_df):
 
 
 def _check_funcs(selected, feature_funcs):
-    """ Checks if the elements of ``selected`` are either strings (alias of a
+    """Selection checker.
+
+    Checks if the elements of ``selected`` are either strings (alias of a
     feature function defined in mne-features) or tuples of the form
     ``(str, callable)`` (user-defined feature function).
 
@@ -242,7 +249,7 @@ def _check_funcs(selected, feature_funcs):
 
 
 class FeatureExtractor(BaseEstimator, TransformerMixin):
-    """ Feature extraction from epoched EEG data.
+    """Feature extraction from epoched EEG data.
 
     The method ``fit_transform`` implemented in this class can be used to
     extract univariate or bivariate features from epoched data
@@ -306,8 +313,10 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     --------
     :func:`extract_features`
     """
+
     def __init__(self, sfreq=256., selected_funcs=None, params=None, n_jobs=1,
                  memory=None):
+        """Instantiate a FeatureExtractor object."""
         self.sfreq = sfreq
         self.selected_funcs = selected_funcs
         self.params = params
@@ -315,11 +324,11 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         self.memory = memory
 
     def fit(self, X, y=None):
-        """ Does not have any effect. """
+        """Do not have any effect."""
         return self
 
     def transform(self, X, y=None):
-        """ Extract features from the array X.
+        """Extract features from the array X.
 
         Parameters
         ----------
@@ -339,18 +348,18 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
                           funcs_params=self.params, n_jobs=self.n_jobs)
 
     def get_params(self, deep=True):
-        """ Get the parameters of the transformer. """
+        """Get the parameters of the transformer."""
         return super(FeatureExtractor, self).get_params(deep=deep)
 
     def set_params(self, **params):
-        """ Set the parameters of the transformer. """
+        """Set the parameters of the transformer."""
         self.params = params
         return self
 
 
 def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
                      return_as_df=False):
-    """ Extraction of temporal or spectral features from epoched EEG signals.
+    """Extraction of temporal or spectral features from epoched EEG signals.
 
     Parameters
     ----------
