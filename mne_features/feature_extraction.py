@@ -235,9 +235,12 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         Sampling rate of the data.
 
     selected_funcs : list of str or None (default: None)
-        Aliases of the feature functions which will be used to extract
-        features from the data. (See the documentation of mne-features for a
-        complete list of available feature functions).
+        The elements of ``selected_features`` are aliases for the feature
+        functions which will be used to extract features from the data.
+        The aliases are built from the feature functions' names removing
+        ``compute_``. Example : The alias of the function
+        :func:`compute_ptp_amp` is ``ptp_amp``. (See the documentation of
+        mne-features for a complete list of available feature functions).
 
     params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to
@@ -326,8 +329,10 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     selected_funcs : list of str
         The elements of ``selected_features`` are aliases for the feature
         functions which will be used to extract features from the data.
-        (See the documentation of mne-features for a complete list of available
-        feature functions).
+        The aliases are built from the feature functions' names removing
+        ``compute_``. Example : The alias of the function
+        :func:`compute_ptp_amp` is ``ptp_amp``. (See the documentation of
+        mne-features for a complete list of available feature functions).
 
     funcs_params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to the feature

@@ -21,23 +21,21 @@ def get_bivariate_funcs(sfreq):
     """ Returns a dictionary of bivariate feature functions. For each feature
     function, the corresponding key in the dictionary is an alias for the
     function.
-
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-
     Returns
     -------
     bivariate_funcs : dict of feature functions
     """
     bivariate_funcs = dict()
-    bivariate_funcs['max_cross_corr'] = partial(compute_max_cross_correlation,
+    bivariate_funcs['max_cross_corr'] = partial(compute_max_cross_corr,
                                                 sfreq)
-    bivariate_funcs['plv'] = compute_phase_locking_value
-    bivariate_funcs['nonlin_interdep'] = compute_nonlinear_interdep
-    bivariate_funcs['time_corr'] = compute_time_corr_coefs
-    bivariate_funcs['spect_corr'] = partial(compute_spect_corr_coefs, sfreq)
+    bivariate_funcs['phase_lock_val'] = compute_phase_lock_val
+    bivariate_funcs['nonlin_interdep'] = compute_nonlin_interdep
+    bivariate_funcs['time_corr'] = compute_time_corr
+    bivariate_funcs['spect_corr'] = partial(compute_spect_corr, sfreq)
     return bivariate_funcs
 
 
@@ -45,14 +43,11 @@ def get_bivariate_funcs(sfreq):
          nb.float32[:](nb.float32, nb.float32[:, :])], nopython=True)
 def _max_cross_corr(sfreq, data):
     """ Utility function for :func:`compute_max_cross_correlation`.
-
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-
     data : ndarray, shape (n_channels, n_times)
-
     Returns
     -------
     output : ndarray, shape (n_channels * (n_channels + 1) / 2,)
@@ -95,24 +90,19 @@ def _max_cross_corr(sfreq, data):
     return max_cc
 
 
-def compute_max_cross_correlation(sfreq, data):
+def compute_max_cross_corr(sfreq, data):
     """ Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
-
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-
     data : ndarray, shape (n_channels, n_times)
-
     Returns
     -------
     output : ndarray, shape (n_channels * (n_channels + 1) / 2,)
-
     Notes
     -----
     Alias of the feature function: **max_cross_corr**
-
     References
     ----------
     .. [Miro08] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
@@ -123,21 +113,17 @@ def compute_max_cross_correlation(sfreq, data):
     return _max_cross_corr(sfreq, data)
 
 
-def compute_phase_locking_value(data):
+def compute_phase_lock_val(data):
     """ Phase Locking Value (PLV) ([Plv]_).
-
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-
     Returns
     -------
     output : ndarray, shape (n_channels * (n_channels + 1) / 2,)
-
     Notes
     -----
-    Alias of the feature function: **plv**
-
+    Alias of the feature function: **phase_lock_val**
     References
     ----------
     .. [Plv] http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf
@@ -157,26 +143,20 @@ def compute_phase_locking_value(data):
     return plv
 
 
-def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
+def compute_nonlin_interdep(data, tau=2, emb=10, nn=5):
     """ Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
-
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-
     tau : int (default: 2)
         Delay.
-
     emb : int (default: 10)
         Embedding dimension.
-
     nn : int (default: 5)
         Number of Nearest Neighbours.
-
     Returns
     -------
     ndarray, shape (n_channels * (n_channels + 1) / 2,)
-
     Notes
     -----
     Alias of the feature function: **nonlin_interdep**
@@ -203,28 +183,23 @@ def compute_nonlinear_interdep(data, tau=2, emb=10, nn=5):
     return nlinterdep
 
 
-def compute_time_corr_coefs(data, with_eigenvalues=True):
+def compute_time_corr(data, with_eigenvalues=True):
     """ Correlation Coefficients (computed in the time domain) ([Tisp]_).
-
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-
     with_eigenvalues : bool (default: True)
         If True, the function also returns the eigenvalues of the correlation
         matrix.
-
     Returns
     -------
     output : ndarray, shape (n_out,)
         If ``with_eigenvalues`` is True, n_out = n_coefs + n_channels (with:
         n_coefs = n_channels * (n_channels + 1) // 2). Otherwise,
         n_out = n_coefs.
-
     Notes
     -----
     Alias of the feature function: **time_corr**
-
     References
     ----------
     .. [Tisp] https://kaggle2.blob.core.windows.net/forum-message-attachments/
@@ -243,35 +218,25 @@ def compute_time_corr_coefs(data, with_eigenvalues=True):
         return coefs
 
 
-def compute_spect_corr_coefs(sfreq, data, db=False, with_eigenvalues=True):
-<<<<<<< HEAD
-    """ Correlation Coefficients (computed from the power spectrum) [1].
-=======
+def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True):
     """ Correlation Coefficients (computed from the power spectrum) ([Tisp]_).
->>>>>>> 380de62d02e430505c52f7bdbcbc0242b28b8944
-
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-
     data : ndarray, shape (n_channels, n_times)
-
     db : bool (default: True)
         If True, the power spectrum returned by the function
         :func:`compute_power_spectrum` is returned in dB/Hz.
-
     with_eigenvalues : bool (default: True)
         If True, the function also returns the eigenvalues of the correlation
         matrix.
-
     Returns
     -------
     output : ndarray, shape (n_out,)
         If ``with_eigenvalues`` is True, n_out = n_coefs + n_channels.
         Otherwise, n_out = n_coefs. With, n_coefs = n_channels *
         (n_channels + 1) // 2.
-
     Notes
     -----
     Alias of the feature function: **spect_corr**
@@ -287,4 +252,4 @@ def compute_spect_corr_coefs(sfreq, data, db=False, with_eigenvalues=True):
         w = np.sort(w)
         return np.r_[coefs, w]
     else:
-        return coefs
+return coefs
