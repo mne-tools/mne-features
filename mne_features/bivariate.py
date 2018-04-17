@@ -19,12 +19,10 @@ from .utils import triu_idx, power_spectrum, embed, _get_feature_funcs
 
 def get_bivariate_funcs(sfreq):
     """Mapping between aliases and bivariate feature functions.
-
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-
     Returns
     -------
     bivariate_funcs : dict
@@ -37,15 +35,12 @@ def get_bivariate_funcs(sfreq):
         nopython=True)
 def _max_cross_corr(sfreq, data, include_diag=False):
     """Utility function for :func:`compute_max_cross_correlation`.
-
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-
     data : ndarray, shape (n_channels, n_times)
         The signals.
-
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
@@ -102,20 +97,16 @@ def _max_cross_corr(sfreq, data, include_diag=False):
 
 def compute_max_cross_corr(sfreq, data, include_diag=False):
     """Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
-
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-
     data : ndarray, shape (n_channels, n_times)
         The signals.
-
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
-
     Returns
     -------
     output : ndarray, shape (n_output,)
@@ -127,7 +118,6 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
     Notes
     -----
     Alias of the feature function: **max_cross_corr**
-
     References
     ----------
     .. [Miro08] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
@@ -140,16 +130,13 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
 
 def compute_phase_lock_val(data, include_diag=False):
     """Phase Locking Value (PLV) ([Plv]_).
-
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
-
     Returns
     -------
     output : ndarray, shape (n_output,)
@@ -186,21 +173,16 @@ def compute_phase_lock_val(data, include_diag=False):
 
 def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
     """Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
-
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
         The signals.
-
     tau : int (default: 2)
         Delay in time samples.
-
     emb : int (default: 10)
         Embedding dimension.
-
     nn : int (default: 5)
         Number of Nearest Neighbors.
-
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
@@ -245,21 +227,17 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
 
 def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
     """Correlation Coefficients (computed in the time domain) ([Tisp]_).
-
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
         The signals.
-
     with_eigenvalues : bool (default: False)
         If True, the function also returns the eigenvalues of the correlation
         matrix.
-
     include_diag : bool (default: True)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
-
     Returns
     -------
     output : ndarray, shape (n_output,)
@@ -268,11 +246,9 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
         ``include_diag`` is True, then
         ``n_coefs = n_channels * (n_channels + 1) // 2`` and
         ``n_coefs = n_channels * (n_channels - 1) // 2`` otherwise.
-
     Notes
     -----
     Alias of the feature function: **time_corr**
-
     References
     ----------
     .. [Tisp] https://kaggle2.blob.core.windows.net/forum-message-attachments/
@@ -294,28 +270,22 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
 def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
                        include_diag=False):
     """Correlation Coefficients (computed from the power spectrum) ([Tisp]_).
-
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
-
     data : ndarray, shape (n_channels, n_times)
         The signals.
-
     db : bool (default: True)
         If True, the power spectrum returned by the function
         :func:`compute_power_spectrum` is returned in dB/Hz.
-
     with_eigenvalues : bool (default: True)
         If True, the function also returns the eigenvalues of the correlation
         matrix.
-
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
-
     Returns
     -------
     output : ndarray, shape (n_output,)
@@ -324,7 +294,6 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
         ``include_diag`` is True, then
         ``n_coefs = n_channels * (n_channels + 1) // 2`` and
         ``n_coefs = n_channels * (n_channels - 1) // 2`` otherwise.
-
     Notes
     -----
     Alias of the feature function: **spect_corr**
@@ -340,4 +309,4 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
         w = np.sort(w)
         return np.r_[coefs, w]
     else:
-        return coefs
+return coefs
