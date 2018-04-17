@@ -922,7 +922,7 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
 
 
 def _wavelet_coefs(data, wavelet_name='db4'):
-    """Energy of Wavelet decomposition coefficients
+    """Compute wavelet decomposition coefficients.
 
     Parameters
     ----------
@@ -935,7 +935,7 @@ def _wavelet_coefs(data, wavelet_name='db4'):
 
     Returns
     -------
-    output : ndarray, shape (levdec,)
+    output : tuple with ndarray, shape (levdec,) and levdec
         The decomposition level (`levdec`) used for the DWT is either 6 or
         the maximum useful decomposition level (given the number of time points
         in the data and chosen wavelet ; see `pywt.dwt_max_level`).
@@ -958,7 +958,7 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
 
     Returns
     -------
-    output : ndarray, shape (n_channels * levdec,)
+    output :list, length (n_channels * levdec,)
         The decomposition level (`levdec`) used for the DWT is either 6 or
         the maximum useful decomposition level (given the number of time points
         in the data and chosen wavelet ; see `pywt.dwt_max_level`).
@@ -976,8 +976,7 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
     return wavelet_energy_list
 
 
-@nb.jit([nb.float64[:, :](nb.float64[:, :]),
-         nb.float32[:, :](nb.float32[:, :])], nopython=True)
+@nb.jit([nb.float64[:, :](nb.float64[:, :])], nopython=True)
 def compute_teager_kaiser_energy(data):
     """ Compute the Teager-Kaiser energy`.
 

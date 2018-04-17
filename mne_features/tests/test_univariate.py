@@ -25,12 +25,14 @@ from mne_features.univariate import (_slope_lstsq, compute_mean,
                                      compute_svd_fisher_info,
                                      compute_energy_freq_bands,
                                      compute_spect_edge_freq,
-                                     compute_wavelet_coef_energy)
+                                     compute_wavelet_coef_energy,
+                                     compute_teager_kaiser_energy)
 
 rng = np.random.RandomState(42)
 sfreq = 256.
 data = rng.standard_normal((10, 20, int(sfreq)))
 n_epochs, n_channels = data.shape[:2]
+n_times = data[0].shape[1]
 
 
 def test_slope_lstsq():
@@ -119,6 +121,10 @@ def test_samp_entropy():
     assert_equal(feat.shape, (n_channels,))
     with assert_raises(ValueError):
         compute_samp_entropy(data[0, :, :], emb=5, metric='sqeuclidean')
+
+def test_shape_output_teager_kaiser_energy():
+    feat = compute_teager_kaiser_energy(data[0, :, :])
+    assert_equal(feat.shape, (n_channels, n_times - 2))
 
 
 if __name__ == '__main__':
