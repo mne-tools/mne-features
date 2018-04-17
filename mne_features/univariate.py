@@ -2,8 +2,8 @@
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
+"""Univariate feature functions."""
 
-from functools import partial
 from math import sqrt, log, floor
 
 import numpy as np
@@ -13,13 +13,11 @@ from scipy.ndimage import convolve1d
 from sklearn.neighbors import KDTree
 
 from .mock_numba import nb
-from .utils import power_spectrum, embed, filt
+from .utils import power_spectrum, embed, filt, _get_feature_funcs
 
 
 def get_univariate_funcs(sfreq):
-    """ Returns a dictionary of univariate feature functions. For each feature
-    function, the corresponding key in the dictionary is an alias for the
-    function.
+    """Mapping between aliases and univariate feature functions.
 
     Parameters
     ----------
@@ -30,6 +28,7 @@ def get_univariate_funcs(sfreq):
     -------
     univariate_funcs : dict
     """
+<<<<<<< HEAD
     univariate_funcs = dict()
     univariate_funcs['mean'] = compute_mean
     univariate_funcs['variance'] = compute_variance
@@ -63,10 +62,13 @@ def get_univariate_funcs(sfreq):
     univariate_funcs['wavelet_coef_energy'] = compute_wavelet_coef_energy
     univariate_funcs['teager_kaiser_energy'] = compute_teager_kaiser_energy
     return univariate_funcs
+=======
+    return _get_feature_funcs(sfreq, __name__)
+>>>>>>> a02185e0277d839ff2ece2a4cdbd7d64c32291ac
 
 
 def _unbiased_autocorr(x):
-    """ Unbiased autocorrelation.
+    """Unbiased autocorrelation.
 
     Parameters
     ----------
@@ -88,8 +90,10 @@ def _unbiased_autocorr(x):
 @nb.jit([nb.float64(nb.float64[:], nb.float64[:]),
          nb.float32(nb.float32[:], nb.float32[:])], nopython=True)
 def _slope_lstsq(x, y):
-    """ Utility function which returns the slope of the linear
-    regression between x and y.
+    """Slope of a 1D least-squares regression.
+
+    Utility function which returns the slope of the linear regression
+    between x and y.
 
     Parameters
     ----------
@@ -134,7 +138,7 @@ def _accumulate_std(x):
 
 
 def compute_mean(data):
-    """ Mean of the data (per channel).
+    """Mean of the data (per channel).
 
     Parameters
     ----------
@@ -152,25 +156,25 @@ def compute_mean(data):
 
 
 def compute_variance(data):
-    """ Variance of the data (per channel).
+    """Variance of the data (per channel).
 
-     Parameters
-     ----------
-     data : shape (n_channels, n_times)
+    Parameters
+    ----------
+    data : shape (n_channels, n_times)
 
-     Returns
-     -------
-     output : ndarray, shape (n_channels,)
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
 
     Notes
     -----
     Alias of the feature function: **variance**
-     """
+    """
     return np.var(data, axis=-1, ddof=1)
 
 
 def compute_std(data):
-    """ Standard deviation of the data.
+    """Standard deviation of the data.
 
     Parameters
     ----------
@@ -188,7 +192,7 @@ def compute_std(data):
 
 
 def compute_ptp_amp(data):
-    """ Peak-to-peak (PTP) amplitude of the data (per channel).
+    """Peak-to-peak (PTP) amplitude of the data (per channel).
 
     Parameters
     ----------
@@ -206,7 +210,7 @@ def compute_ptp_amp(data):
 
 
 def compute_skewness(data):
-    """ Skewness of the data (per channel).
+    """Skewness of the data (per channel).
 
     Parameters
     ----------
@@ -220,13 +224,12 @@ def compute_skewness(data):
     -----
     Alias of the feature function: **skewness**
     """
-
     ndim = data.ndim
     return stats.skew(data, axis=ndim - 1)
 
 
 def compute_kurtosis(data):
-    """ Kurtosis of the data (per channel).
+    """Kurtosis of the data (per channel).
 
     Parameters
     ----------
@@ -240,13 +243,12 @@ def compute_kurtosis(data):
     -----
     Alias of the feature function: **kurtosis**
     """
-
     ndim = data.ndim
     return stats.kurtosis(data, axis=ndim - 1, fisher=False)
 
 
 def compute_hurst_exp(data):
-    """ Hurst exponent of the data (per channel) ([Deva14]_, [HursWiki]_).
+    """Hurst exponent of the data (per channel) ([Deva14]_, [HursWiki]_).
 
     Parameters
     ----------
@@ -284,8 +286,7 @@ def compute_hurst_exp(data):
 
 
 def _app_samp_entropy_helper(data, emb, metric='chebyshev'):
-    """ Utility function for :func:`compute_app_entropy`` and
-    :func:`compute_samp_entropy`.
+    """Utility function for `compute_app_entropy`` and `compute_samp_entropy`.
 
     Parameters
     ----------
@@ -324,7 +325,7 @@ def _app_samp_entropy_helper(data, emb, metric='chebyshev'):
 
 
 def compute_app_entropy(data, emb=2, metric='chebyshev'):
-    """ Approximate Entropy (AppEn, per channel) ([Boro15]_).
+    """Approximate Entropy (AppEn, per channel) ([Boro15]_).
 
     Parameters
     ----------
@@ -357,7 +358,7 @@ def compute_app_entropy(data, emb=2, metric='chebyshev'):
 
 
 def compute_samp_entropy(data, emb=2, metric='chebyshev'):
-    """ Sample Entropy (SampEn, per channel) ([Boro15]_).
+    """Sample Entropy (SampEn, per channel) ([Boro15]_).
 
     Parameters
     ----------
@@ -383,7 +384,7 @@ def compute_samp_entropy(data, emb=2, metric='chebyshev'):
 
 
 def compute_decorr_time(sfreq, data):
-    """ Decorrelation time (per channel) ([Teix11]_).
+    """Decorrelation time (per channel) ([Teix11]_).
 
     Parameters
     ----------
@@ -423,7 +424,7 @@ def compute_decorr_time(sfreq, data):
 def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
                                                              30., 100.]),
                            normalize=True):
-    """ Power Spectrum (computed by frequency bands) ([Teix11]_).
+    """Power Spectrum (computed by frequency bands) ([Teix11]_).
 
     Parameters
     ----------
@@ -464,8 +465,9 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
 
 
 def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
-    """ Hjorth mobility (computed from the power spectrum, per channel)
-    ([Morm06]_, [Teix11]_).
+    """Hjorth mobility (per channel) ([Morm06]_, [Teix11]_).
+
+    Hjorth mobility parameter computed from the Power Spectrum of the data.
 
     Parameters
     ----------
@@ -499,8 +501,9 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
 
 
 def compute_hjorth_complexity_spect(sfreq, data, normalize=False):
-    """ Hjorth complexity (computed from the power spectrum, per channel)
-    ([Morm06]_, [Teix11]_).
+    """Hjorth complexity (per channel) ([Morm06]_, [Teix11]_).
+
+    Hjorth complexity parameter computed from the Power Spectrum of the data.
 
     Parameters
     ----------
@@ -529,7 +532,9 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False):
 
 
 def compute_hjorth_mobility(data):
-    """ Hjorth mobility (computed in the time domain, per channel) ([Paiv05]_).
+    """Hjorth mobility (per channel) ([Paiv05]_).
+
+    Hjorth mobility parameter computed in the time domain.
 
     Parameters
     ----------
@@ -558,8 +563,9 @@ def compute_hjorth_mobility(data):
 
 
 def compute_hjorth_complexity(data):
-    """ Hjorth complexity (computed in the time domain, per channel)
-    ([Paiv05]_).
+    """Hjorth complexity (per channel) ([Paiv05]_).
+
+    Hjorth complexity parameter computed in the time domain.
 
     Parameters
     ----------
@@ -584,7 +590,7 @@ def compute_hjorth_complexity(data):
 @nb.jit([nb.float64[:](nb.float64[:, :], nb.optional(nb.int64)),
          nb.float32[:](nb.float32[:, :], nb.optional(nb.int32))])
 def _higuchi_fd(data, kmax):
-    """ Utility function for :func:`compute_higuchi_fd`.
+    """Utility function for :func:`compute_higuchi_fd`.
 
     Parameters
     ----------
@@ -626,7 +632,7 @@ def _higuchi_fd(data, kmax):
 
 
 def compute_higuchi_fd(data, kmax=10):
-    """ Higuchi Fractal Dimension (per channel) ([Este01a]_, [Paiv05]_).
+    """Higuchi Fractal Dimension (per channel) ([Este01a]_, [Paiv05]_).
 
     Parameters
     ----------
@@ -654,7 +660,7 @@ def compute_higuchi_fd(data, kmax=10):
 
 
 def compute_katz_fd(data):
-    """ Katz Fractal Dimension (per channel) ([Este01a]_).
+    """Katz Fractal Dimension (per channel) ([Este01a]_).
 
     Parameters
     ----------
@@ -679,7 +685,7 @@ def compute_katz_fd(data):
 
 
 def compute_zero_crossings(data):
-    """ Number of zero crossings (per channel).
+    """Number of zero crossings (per channel).
 
     Parameters
     ----------
@@ -697,7 +703,7 @@ def compute_zero_crossings(data):
 
 
 def compute_line_length(data):
-    """ Line length (per channel) ([Este01b]_).
+    """Line length (per channel) ([Este01b]_).
 
     Parameters
     ----------
@@ -723,8 +729,10 @@ def compute_line_length(data):
 
 
 def compute_spect_entropy(sfreq, data):
-    """ Spectral Entropy (Shannon entropy of the power spectrum,
-    per channel) ([Inou91]_).
+    """Spectral Entropy (per channel) ([Inou91]_).
+
+    Spectral Entropy is defined to be the Shannon Entropy of the Power
+    Spectrum of the data.
 
     Parameters
     ----------
@@ -755,7 +763,7 @@ def compute_spect_entropy(sfreq, data):
 
 
 def compute_svd_entropy(data, tau=2, emb=10):
-    """ SVD entropy (per channel) ([Robe99]_).
+    """SVD entropy (per channel) ([Robe99]_).
 
     Parameters
     ----------
@@ -789,7 +797,7 @@ def compute_svd_entropy(data, tau=2, emb=10):
 
 
 def compute_svd_fisher_info(data, tau=2, emb=10):
-    """ SVD Fisher Information (per channel) ([Robe99]_).
+    """SVD Fisher Information (per channel) ([Robe99]_).
 
     Parameters
     ----------
@@ -820,8 +828,7 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
                                                                 13., 30.,
                                                                 100.]),
                               deriv_filt=True):
-    """ Energy (of the signal, filtered by frequency bands ; per channel)
-    ([Khar11]_).
+    """Band energy (per channel) ([Khar11]_).
 
     Parameters
     ----------
@@ -867,7 +874,7 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
 
 
 def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
-    """ Spectal Edge Frequency (per channel) ([Morm06]_).
+    """Spectal Edge Frequency (per channel) ([Morm06]_).
 
     Parameters
     ----------
