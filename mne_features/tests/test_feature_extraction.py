@@ -3,15 +3,18 @@
 # License: BSD 3 clause
 
 
-import numpy as np
 from tempfile import mkdtemp
+
+import numpy as np
 from numpy.testing import assert_equal, assert_raises, assert_almost_equal
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.utils.mocking import CheckingClassifier
+
 from mne_features.feature_extraction import (extract_features,
                                              FeatureFunctionTransformer,
                                              FeatureExtractor)
+from mne_features.mock_numba import nb
 from mne_features.univariate import compute_svd_fisher_info
 
 rng = np.random.RandomState(42)
@@ -127,6 +130,31 @@ def test_memory_feature_extractor():
                         cached_extractor.fit_transform(data, y))
 
 
+def test_user_defined_feature_function():
+    # User-defined feature function
+    @nb.jit()
+    def top_feature(arr, gamma=3.14):
+        return np.sum(np.power(gamma * arr, 3) - np.power(arr / gamma, 2),
+                      axis=-1)
+    # Valid feature extraction
+    selected_funcs = ['mean', ('top_feature', top_feature)]
+    feat = extract_features(data, sfreq, selected_funcs)
+    assert_equal(feat.shape, (n_epochs, 2 * n_channels))
+    # Changing optional parameter ``gamma`` of ``top_feature``
+    feat2 = extract_features(data, sfreq, selected_funcs,
+                             funcs_params={'top_feature__gamma': 1.41})
+    assert_equal(feat2.shape, (n_epochs, 2 * n_channels))
+    # Invalid feature extractions
+    with assert_raises(ValueError):
+        # Alias is already used
+        extract_features(data, sfreq, ['variance', ('mean', top_feature)])
+        # Tuple is not of length 2
+        extract_features(data, sfreq, ['variance', ('top_feature', top_feature,
+                                                    data[:, ::2])])
+        # Invalid type
+        extract_features(data, sfreq, ['mean', top_feature])
+
+
 if __name__ == '__main__':
 
     test_shape_output()
@@ -138,3 +166,4 @@ if __name__ == '__main__':
     test_feature_extractor()
     test_gridsearch_feature_extractor()
     test_memory_feature_extractor()
+    test_user_defined_feature_function()

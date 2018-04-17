@@ -19,3 +19,5 @@
 __version__ = '0.1.dev0'
 
 from . import univariate, bivariate, feature_extraction
+from .univariate import get_univariate_funcs
+from .bivariate import get_bivariate_funcs

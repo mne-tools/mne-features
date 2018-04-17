@@ -32,10 +32,16 @@ def test_psd():
 
 def test_triu_idx():
     n_channels = data.shape[0]
+    # Including diag
     idx0, idx1 = np.triu_indices(n_channels)
     triu_indices = np.array([np.arange(idx0.size), idx0, idx1])
-    triu_indices2 = np.array(list(triu_idx(n_channels)))
+    triu_indices2 = np.array(list(triu_idx(n_channels, True)))
+    # Without diag
+    idx2, idx3 = np.triu_indices(n_channels, 1)
+    triu_indices_nodiag = np.array([np.arange(idx2.size), idx2, idx3])
+    triu_indices2_nodiag = np.array(list(triu_idx(n_channels, False)))
     assert_almost_equal(triu_indices, triu_indices2.transpose())
+    assert_almost_equal(triu_indices_nodiag, triu_indices2_nodiag.transpose())
 
 
 def test_embed():

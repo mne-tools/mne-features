@@ -1,7 +1,8 @@
+"""Feature extraction functions."""
+
 # Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
-
 
 from inspect import getargs
 
@@ -17,7 +18,7 @@ from .univariate import get_univariate_funcs
 
 
 class FeatureFunctionTransformer(FunctionTransformer):
-    """ Constructs a transformer from a given feature function.
+    """Construct a transformer from a given feature function.
 
     Similarly to :class:`~sklearn.preprocessing.FunctionTransformer`,
     :class:`FeatureFunctionTranformer` applies a feature function to a given
@@ -38,14 +39,16 @@ class FeatureFunctionTransformer(FunctionTransformer):
         If not None, dictionary of additional keyword arguments to pass to the
         feature function.
     """
+
     def __init__(self, func=None, validate=True, params=None):
+        """Instantiate a FeatureFunctionTransformer object."""
         self.params = params
         super(FeatureFunctionTransformer, self).__init__(func=func,
                                                          validate=validate,
                                                          kw_args=params)
 
     def transform(self, X, y='deprecated'):
-        """ Applies the given feature function to the array X.
+        """Apply the given feature function to the array X.
 
         Parameters
         ----------
@@ -67,14 +70,14 @@ class FeatureFunctionTransformer(FunctionTransformer):
         return X_out
 
     def get_feature_names(self):
-        """ Mapping of the feature indices to feature names. """
+        """Mapping of the feature indices to feature names."""
         if not hasattr(self, 'output_shape_'):
             raise ValueError('Call `transform` or `fit_transform` first.')
         else:
             return np.arange(self.output_shape_).astype(str)
 
     def get_params(self, deep=True):
-        """ Get the parameters (if any) of the given feature function.
+        """Get the parameters (if any) of the given feature function.
 
         Parameters
         ----------
@@ -114,7 +117,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
         return func_params
 
     def set_params(self, **new_params):
-        """ Set the parameters (if any) of the given feature function. """
+        """Set the parameters (if any) of the given feature function."""
         valid_params = self.get_params()
         for key in new_params.keys():
             if key not in valid_params:
@@ -131,7 +134,9 @@ class FeatureFunctionTransformer(FunctionTransformer):
 
 
 def _format_as_dataframe(X, feature_names):
-    """ Utility function to format extracted features (X) as a Pandas
+    """Format to Pandas DataFrame.
+
+    Utility function to format extracted features (X) as a Pandas
     DataFrame using names and indexes from ``feature_names``. The index of the
     columns is a MultiIndex with two levels. At level 0, the alias of the
     feature function is given. At level 1, an enumeration of the features is
@@ -160,7 +165,7 @@ def _format_as_dataframe(X, feature_names):
 
 
 def _apply_extractor(extractor, X, return_as_df):
-    """ Utility function to apply features extractor to ndarray X.
+    """Utility function to apply features extractor to ndarray X.
 
     Parameters
     ----------
@@ -185,38 +190,66 @@ def _apply_extractor(extractor, X, return_as_df):
     return X, feature_names
 
 
-def _check_func_names(selected, feature_funcs_names):
-    """ Checks if the names of selected feature functions match the available
-    feature functions.
+def _check_funcs(selected, feature_funcs):
+    """Selection checker.
+
+    Checks if the elements of ``selected`` are either strings (alias of a
+    feature function defined in mne-features) or tuples of the form
+    ``(str, callable)`` (user-defined feature function).
 
     Parameters
     ----------
-    selected : list of str
+    selected : list of str or tuples
         Names of the selected feature functions.
 
-    feature_funcs_names : dict-keys or list
-        Names of available feature functions.
+    feature_funcs : dict
+        Dictionary of the feature functions (univariate and bivariate)
+        available in mne-features.
 
     Returns
     -------
-    valid_func_names : list of str
+    valid_funcs : list of tuples
     """
-    valid_func_names = list()
-    for f in selected:
-        if f in feature_funcs_names:
-            valid_func_names.append(f)
+    valid_funcs = list()
+    _intrinsic_func_names = feature_funcs.keys()
+    for s in selected:
+        if isinstance(s, str):
+            # Case of a MNE-feature alias
+            if s in _intrinsic_func_names:
+                valid_funcs.append((s, feature_funcs[s]))
+            else:
+                raise ValueError('The given alias (%s) is not valid. The '
+                                 'valid aliases for feature functions are: %s.'
+                                 % (s, _intrinsic_func_names))
+        elif isinstance(s, tuple):
+            if len(s) != 2:
+                raise ValueError('The given tuple (%s) is not of length 2. '
+                                 'Each user-defined feature function should '
+                                 'be passed as a tuple of the form '
+                                 '`(str, callable)`.' % str(s))
+            else:
+                # Case of a user-defined feature function
+                if s[0] in _intrinsic_func_names:
+                    raise ValueError('A user-defined feature function was '
+                                     'given an alias (%s) which is already '
+                                     'used by mne-features. The list of '
+                                     'aliases used by mne-features is: %s.'
+                                     % (s[0], _intrinsic_func_names))
+                else:
+                    valid_funcs.append(s)
         else:
-            raise ValueError('The given alias (%s) is not valid. The valid '
-                             'aliases for feature functions are: %s.' %
-                             (f, feature_funcs_names))
-    if not valid_func_names:
-        raise ValueError('No valid feature function names given.')
+            # Case where the element is neither a string, nor a tuple
+            raise ValueError('%s is not a valid feature function and cannot '
+                             'be interpreted as a user-defined feature '
+                             'function.' % str(s))
+    if not valid_funcs:
+        raise ValueError('No valid feature function was given.')
     else:
-        return valid_func_names
+        return valid_funcs
 
 
 class FeatureExtractor(BaseEstimator, TransformerMixin):
-    """ Feature extraction from epoched EEG data.
+    """Feature extraction from epoched EEG data.
 
     The method ``fit_transform`` implemented in this class can be used to
     extract univariate or bivariate features from epoched data
@@ -234,13 +267,21 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     sfreq : float (default: 256.)
         Sampling rate of the data.
 
-    selected_funcs : list of str or None (default: None)
-        The elements of ``selected_features`` are aliases for the feature
-        functions which will be used to extract features from the data.
-        The aliases are built from the feature functions' names removing
-        ``compute_``. Example : The alias of the function
-        :func:`compute_ptp_amp` is ``ptp_amp``. (See the documentation of
-        mne-features for a complete list of available feature functions).
+    selected_funcs : list of str or tuples
+        The elements of ``selected_features`` are either strings or tuples of
+        the form ``(str, callable)``. If an element is of type ``str``, it is
+        the alias of a feature function. The aliases are built from the
+        feature functions' names by removing ``compute_``. For instance, the
+        alias of the feature function :func:`compute_ptp_amp` is ``ptp_amp``.
+        (See the documentation of mne-features). If an element is of type
+        ``tuple``, the first element of the tuple should be a string
+        (name/alias given to a user-defined feature function) and the second
+        element should be a  callable (a user-defined feature function which
+        accepts Numpy arrays with shape ``(n_channels, n_times)``). The
+        names/aliases given to user-defined feature functions should not
+        intersect the aliases used by mne-features. If the name given to a
+        user-defined feature function is already used as an alias in
+        mne-features, an error will be raised.
 
     params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to
@@ -272,8 +313,10 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     --------
     :func:`extract_features`
     """
+
     def __init__(self, sfreq=256., selected_funcs=None, params=None, n_jobs=1,
                  memory=None):
+        """Instantiate a FeatureExtractor object."""
         self.sfreq = sfreq
         self.selected_funcs = selected_funcs
         self.params = params
@@ -281,11 +324,11 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         self.memory = memory
 
     def fit(self, X, y=None):
-        """ Does not have any effect. """
+        """Do not have any effect."""
         return self
 
     def transform(self, X, y=None):
-        """ Extract features from the array X.
+        """Extract features from the array X.
 
         Parameters
         ----------
@@ -305,18 +348,18 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
                           funcs_params=self.params, n_jobs=self.n_jobs)
 
     def get_params(self, deep=True):
-        """ Get the parameters of the transformer. """
+        """Get the parameters of the transformer."""
         return super(FeatureExtractor, self).get_params(deep=deep)
 
     def set_params(self, **params):
-        """ Set the parameters of the transformer. """
+        """Set the parameters of the transformer."""
         self.params = params
         return self
 
 
 def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
                      return_as_df=False):
-    """ Extraction of temporal or spectral features from epoched EEG signals.
+    """Extraction of temporal or spectral features from epoched EEG signals.
 
     Parameters
     ----------
@@ -326,13 +369,21 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     sfreq : float
         Sampling rate of the data.
 
-    selected_funcs : list of str
-        The elements of ``selected_features`` are aliases for the feature
-        functions which will be used to extract features from the data.
-        The aliases are built from the feature functions' names removing
-        ``compute_``. Example : The alias of the function
-        :func:`compute_ptp_amp` is ``ptp_amp``. (See the documentation of
-        mne-features for a complete list of available feature functions).
+    selected_funcs : list of str or tuples
+        The elements of ``selected_features`` are either strings or tuples of
+        the form ``(str, callable)``. If an element is of type ``str``, it is
+        the alias of a feature function. The aliases are built from the
+        feature functions' names by removing ``compute_``. For instance, the
+        alias of the feature function :func:`compute_ptp_amp` is ``ptp_amp``.
+        (See the documentation of mne-features). If an element is of type
+        ``tuple``, the first element of the tuple should be a string
+        (name/alias given to a user-defined feature function) and the second
+        element should be a  callable (a user-defined feature function which
+        accepts Numpy arrays with shape ``(n_channels, n_times)``). The
+        names/aliases given to user-defined feature functions should not
+        intersect the aliases used by mne-features. If the name given to a
+        user-defined feature function is already used as an alias in
+        mne-features, an error will be raised.
 
     funcs_params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to the feature
@@ -360,12 +411,11 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     bivariate_funcs = get_bivariate_funcs(sfreq)
     feature_funcs = univariate_funcs.copy()
     feature_funcs.update(bivariate_funcs)
-    sel_funcs = _check_func_names(selected_funcs, feature_funcs.keys())
+    sel_funcs = _check_funcs(selected_funcs, feature_funcs)
 
     # Feature extraction
     n_epochs = X.shape[0]
-    _tr = [(n, FeatureFunctionTransformer(func=feature_funcs[n]))
-           for n in sel_funcs]
+    _tr = [(n, FeatureFunctionTransformer(func=func)) for n, func in sel_funcs]
     extractor = FeatureUnion(transformer_list=_tr)
     if funcs_params is not None:
         extractor.set_params(**funcs_params)
