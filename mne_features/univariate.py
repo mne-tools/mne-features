@@ -921,8 +921,8 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
     return spect_edge_freq.ravel()
 
 
-def compute_wavelet_coef_energy(data, wavelet_name='db4'):
-    """ Energy of Wavelet decomposition coefficients (per channel) ([Teix11]_).
+def _wavelet_coefs(data, wavelet_name='db4'):
+    """Energy of Wavelet decomposition coefficients
 
     Parameters
     ----------
@@ -935,26 +935,49 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
 
     Returns
     -------
+    output : ndarray, shape (levdec,)
+        The decomposition level (`levdec`) used for the DWT is either 6 or
+        the maximum useful decomposition level (given the number of time points
+        in the data and chosen wavelet ; see `pywt.dwt_max_level`).
+    """
+    wavelet = pywt.Wavelet(wavelet_name)
+    levdec = min(pywt.dwt_max_level(data.shape[-1], wavelet.dec_len), 6)
+    coefs = pywt.wavedec(data, wavelet=wavelet, level=levdec)
+    return coefs, levdec
+
+
+def compute_wavelet_coef_energy(data, wavelet_name='db4'):
+    """Energy of Wavelet decomposition coefficients (per channel) ([Teix11]_).
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+    wavelet_name : str (default: db4)
+        Wavelet name (to be used with `pywt.Wavelet`). The full list of Wavelet
+        names are given by: `[name for family in pywt.families() for name in
+        pywt.wavelist(family)]`.
+
+    Returns
+    -------
     output : ndarray, shape (n_channels * levdec,)
         The decomposition level (`levdec`) used for the DWT is either 6 or
         the maximum useful decomposition level (given the number of time points
         in the data and chosen wavelet ; see `pywt.dwt_max_level`).
-
     Notes
     -----
     Alias of the feature function: **wavelet_coef_energy**
     """
     n_channels, n_times = data.shape
-    wavelet = pywt.Wavelet(wavelet_name)
-    levdec = min(pywt.dwt_max_level(n_times, wavelet.dec_len), 6)
-    wavelet_energy = np.zeros((n_channels, levdec))
+    wavelet_energy_list = list()
     for j in range(n_channels):
-        coefs = pywt.wavedec(data[j, :], wavelet, level=levdec)
+        coefs, levdec = _wavelet_coefs(data[j, :], wavelet_name)
         for l in range(levdec):
-            wavelet_energy[j, l] = np.sum(coefs[levdec - l] ** 2)
-    return wavelet_energy.ravel()
+            wavelet_energy = np.sum(coefs[levdec - l] ** 2)
+            wavelet_energy_list.append(wavelet_energy)
+    return wavelet_energy_list
 
 
+@nb.jit([nb.float64[:, :](nb.float64[:, :]),
+         nb.float32[:, :](nb.float32[:, :])], nopython=True)
 def compute_teager_kaiser_energy(data):
     """ Compute the Teager-Kaiser energy`.
 
@@ -965,6 +988,9 @@ def compute_teager_kaiser_energy(data):
     Returns
     -------
     ndarray, shape (n_channels, n_times-2)
+
+    Notes
+    -----
     Alias of the feature function: **teager_kaiser_energy**
     """
     n_channels, n_times = data.shape
