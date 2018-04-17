@@ -4,8 +4,6 @@
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
-"""Feature extraction."""
-
 from inspect import getargs
 
 import numpy as np
