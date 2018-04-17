@@ -1,0 +1,6 @@
+mne_features.bivariate.compute_max_cross_corr
+=============================================
+
+.. currentmodule:: mne_features.bivariate
+
+.. autofunction:: compute_max_cross_corr

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Extract features from MEG time series for classification &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>Extract features using user-defined feature functions. &#8212; mne_features 0.1.dev0 documentation</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -86,7 +86,11 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Extract features from MEG time series for classification</a></li>
+<li><a class="reference internal" href="#">Extract features using user-defined feature functions.</a><ul>
+<li><a class="reference internal" href="#define-a-feature-function-called-compute-medfilt">Define a feature function called <code class="docutils literal"><span class="pre">compute_medfilt</span></code></a></li>
+<li><a class="reference internal" href="#prepare-for-the-classification-task">Prepare for the classification task</a></li>
+</ul>
+</li>
 </ul>
 </ul>
 </li>
@@ -98,7 +102,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/auto_examples/plot_mne_sample_features.rst.txt"
+  <a href="../_sources/auto_examples/plot_user_defined_function.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -120,8 +124,10 @@
 
 <div class="container content-container">
   
-  <div class="section" id="extract-features-from-meg-time-series-for-classification">
-<span id="sphx-glr-auto-examples-plot-mne-sample-features-py"></span><h1>Extract features from MEG time series for classification<a class="headerlink" href="#extract-features-from-meg-time-series-for-classification" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="extract-features-using-user-defined-feature-functions">
+<span id="sphx-glr-auto-examples-plot-user-defined-function-py"></span><h1>Extract features using user-defined feature functions.<a class="headerlink" href="#extract-features-using-user-defined-feature-functions" title="Permalink to this headline">¶</a></h1>
+<p>The example shows how user-defined feature functions can be used in
+MNE-Features along with built-in feature functions.</p>
 <p>The code for this example is based on the method proposed in:</p>
 <p>Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
 Slim ESSID, Alexandre GRAMFORT,
@@ -138,15 +144,17 @@ of auditory vs. visual stimuli).</p>
 <span class="c1">#         Alexandre Gramfort &lt;alexandre.gramfort@inria.fr&gt;</span>
 <span class="c1"># License: BSD 3 clause</span>
 
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">medfilt</span>
+
 <span class="kn">import</span> <span class="nn">mne</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">mne.datasets</span> <span class="kn">import</span> <span class="n">sample</span>
+
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" title="View documentation for sklearn.linear_model.LogisticRegression"><span class="n">LogisticRegression</span></a>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html#sklearn.model_selection.cross_val_score" title="View documentation for sklearn.model_selection.cross_val_score"><span class="n">cross_val_score</span></a><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html#sklearn.model_selection.KFold" title="View documentation for sklearn.model_selection.KFold"><span class="n">KFold</span></a>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="p">(</span><a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html#sklearn.model_selection.train_test_split" title="View documentation for sklearn.model_selection.train_test_split"><span class="n">train_test_split</span></a><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold" title="View documentation for sklearn.model_selection.StratifiedKFold"><span class="n">StratifiedKFold</span></a><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="View documentation for sklearn.pipeline.Pipeline"><span class="n">Pipeline</span></a>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="View documentation for sklearn.preprocessing.StandardScaler"><span class="n">StandardScaler</span></a>
 
-<span class="kn">from</span> <span class="nn">mne_features.feature_extraction</span> <span class="kn">import</span> <a href="../generated/mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="View documentation for mne_features.feature_extraction.extract_features"><span class="n">extract_features</span></a>
+<span class="kn">from</span> <span class="nn">mne_features.feature_extraction</span> <span class="kn">import</span> <a href="../generated/mne_features.feature_extraction.FeatureExtractor.html#mne_features.feature_extraction.FeatureExtractor" title="View documentation for mne_features.feature_extraction.FeatureExtractor"><span class="n">FeatureExtractor</span></a>
 
 <span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
 </pre></div>
@@ -162,7 +170,7 @@ of auditory vs. visual stimuli).</p>
 <span class="n">raw</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_raw_fif</span><span class="p">(</span><span class="n">raw_fname</span><span class="p">,</span> <span class="n">preload</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">raw</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">fir_design</span><span class="o">=</span><span class="s1">&#39;firwin&#39;</span><span class="p">)</span>
 <span class="n">events</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_events</span><span class="p">(</span><span class="n">event_fname</span><span class="p">)</span>
-<span class="n">picks</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">pick_types</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">meg</span><span class="o">=</span><span class="s1">&#39;grad&#39;</span><span class="p">,</span> <span class="n">eeg</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">picks</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">pick_types</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">meg</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">eeg</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="c1"># Read epochs</span>
 <span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
@@ -189,43 +197,64 @@ of auditory vs. visual stimuli).</p>
 <span class="n">l_trans_bandwidth</span> <span class="n">chosen</span> <span class="n">to</span> <span class="n">be</span> <span class="mf">0.5</span> <span class="n">Hz</span>
 <span class="n">Filter</span> <span class="n">length</span> <span class="n">of</span> <span class="mi">991</span> <span class="n">samples</span> <span class="p">(</span><span class="mf">6.600</span> <span class="n">sec</span><span class="p">)</span> <span class="n">selected</span>
 <span class="mi">145</span> <span class="n">matching</span> <span class="n">events</span> <span class="n">found</span>
+<span class="n">Created</span> <span class="n">an</span> <span class="n">SSP</span> <span class="n">operator</span> <span class="p">(</span><span class="n">subspace</span> <span class="n">dimension</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="mi">4</span> <span class="n">projection</span> <span class="n">items</span> <span class="n">activated</span>
 <span class="n">Loading</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">145</span> <span class="n">events</span> <span class="ow">and</span> <span class="mi">106</span> <span class="n">original</span> <span class="n">time</span> <span class="n">points</span> <span class="o">...</span>
 <span class="mi">0</span> <span class="n">bad</span> <span class="n">epochs</span> <span class="n">dropped</span>
 </pre></div>
 </div>
-<p>Prepare for the classification task:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pipe</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="View documentation for sklearn.pipeline.Pipeline"><span class="n">Pipeline</span></a><span class="p">([(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="View documentation for sklearn.preprocessing.StandardScaler"><span class="n">StandardScaler</span></a><span class="p">()),</span>
-                 <span class="p">(</span><span class="s1">&#39;lr&#39;</span><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" title="View documentation for sklearn.linear_model.LogisticRegression"><span class="n">LogisticRegression</span></a><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))])</span>
+<div class="section" id="define-a-feature-function-called-compute-medfilt">
+<h2>Define a feature function called <code class="docutils literal"><span class="pre">compute_medfilt</span></code><a class="headerlink" href="#define-a-feature-function-called-compute-medfilt" title="Permalink to this headline">¶</a></h2>
+<p>Here, the raw data is median filtered and the output signals are used
+as features.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_medfilt</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Median filtered signal as features.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : ndarray, shape (n_channels, n_times)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output : (n_channels * n_times,)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">medfilt</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="prepare-for-the-classification-task">
+<h2>Prepare for the classification task<a class="headerlink" href="#prepare-for-the-classification-task" title="Permalink to this headline">¶</a></h2>
+<p>In addition to the new feature function, we also propose to extract the
+mean of the data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">selected_funcs</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;medfilt&#39;</span><span class="p">,</span> <span class="n">compute_medfilt</span><span class="p">),</span> <span class="s1">&#39;mean&#39;</span><span class="p">]</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="View documentation for sklearn.pipeline.Pipeline"><span class="n">Pipeline</span></a><span class="p">([(</span><span class="s1">&#39;fe&#39;</span><span class="p">,</span> <a href="../generated/mne_features.feature_extraction.FeatureExtractor.html#mne_features.feature_extraction.FeatureExtractor" title="View documentation for mne_features.feature_extraction.FeatureExtractor"><span class="n">FeatureExtractor</span></a><span class="p">(</span><span class="n">sfreq</span><span class="o">=</span><span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">],</span>
+                                         <span class="n">selected_funcs</span><span class="o">=</span><span class="n">selected_funcs</span><span class="p">)),</span>
+                 <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="View documentation for sklearn.preprocessing.StandardScaler"><span class="n">StandardScaler</span></a><span class="p">()),</span>
+                 <span class="p">(</span><span class="s1">&#39;clf&#39;</span><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" title="View documentation for sklearn.linear_model.LogisticRegression"><span class="n">LogisticRegression</span></a><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))])</span>
+<span class="n">skf</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold" title="View documentation for sklearn.model_selection.StratifiedKFold"><span class="n">StratifiedKFold</span></a><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">labels</span>
 </pre></div>
 </div>
-<p>Classification using features (mean, peak-to-peak amplitude,
-standard deviation). See <a class="reference internal" href="../api.html#api-documentation"><span class="std std-ref">API Documentation</span></a> for full list of supported
-features.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">selected_funcs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;ptp_amp&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">}</span>
-<span class="n">X_new</span> <span class="o">=</span> <a href="../generated/mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="View documentation for mne_features.feature_extraction.extract_features"><span class="n">extract_features</span></a><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">],</span> <span class="n">selected_funcs</span><span class="p">)</span>
-<span class="n">kf</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html#sklearn.model_selection.KFold" title="View documentation for sklearn.model_selection.KFold"><span class="n">KFold</span></a><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">scores</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html#sklearn.model_selection.cross_val_score" title="View documentation for sklearn.model_selection.cross_val_score"><span class="n">cross_val_score</span></a><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">X_new</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kf</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Print the cross-validation score:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;Cross-validation accuracy score = </span><span class="si">%1.3f</span><span class="s1"> (+/- </span><span class="si">%1.5f</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.mean.html#numpy.mean" title="View documentation for numpy.mean"><span class="n">np</span><span class="o">.</span><span class="n">mean</span></a><span class="p">(</span><span class="n">scores</span><span class="p">),</span>
-                                                               <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.std.html#numpy.std" title="View documentation for numpy.std"><span class="n">np</span><span class="o">.</span><span class="n">std</span></a><span class="p">(</span><span class="n">scores</span><span class="p">)))</span>
+<p>Print the accuracy score on a test dataset.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html#sklearn.model_selection.train_test_split" title="View documentation for sklearn.model_selection.train_test_split"><span class="n">train_test_split</span></a><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Accuracy score = </span><span class="si">%1.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">accuracy</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Cross</span><span class="o">-</span><span class="n">validation</span> <span class="n">accuracy</span> <span class="n">score</span> <span class="o">=</span> <span class="mf">0.938</span> <span class="p">(</span><span class="o">+/-</span> <span class="mf">0.00060</span><span class="p">)</span>
+<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Accuracy</span> <span class="n">score</span> <span class="o">=</span> <span class="mf">0.966</span>
 </pre></div>
 </div>
-<p><strong>Total running time of the script:</strong> ( 0 minutes  1.285 seconds)</p>
+<p><strong>Total running time of the script:</strong> ( 0 minutes  1.274 seconds)</p>
 <div class="sphx-glr-footer docutils container">
 <div class="sphx-glr-download docutils container">
-<a class="reference download internal" href="../_downloads/plot_mne_sample_features.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_mne_sample_features.py</span></code></a></div>
+<a class="reference download internal" href="../_downloads/plot_user_defined_function.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_user_defined_function.py</span></code></a></div>
 <div class="sphx-glr-download docutils container">
-<a class="reference download internal" href="../_downloads/plot_mne_sample_features.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_mne_sample_features.ipynb</span></code></a></div>
+<a class="reference download internal" href="../_downloads/plot_user_defined_function.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_user_defined_function.ipynb</span></code></a></div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.readthedocs.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
 </div>
 
 

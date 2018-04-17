@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>mne_features.univariate.compute_ptp &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>mne_features.bivariate.compute_nonlin_interdep &#8212; mne_features 0.1.dev0 documentation</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -33,8 +33,8 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_features.univariate.compute_skewness" href="mne_features.univariate.compute_skewness.html" />
-    <link rel="prev" title="mne_features.univariate.compute_std" href="mne_features.univariate.compute_std.html" />
+    <link rel="next" title="mne_features.bivariate.compute_time_corr" href="mne_features.bivariate.compute_time_corr.html" />
+    <link rel="prev" title="mne_features.bivariate.compute_phase_lock_val" href="mne_features.bivariate.compute_phase_lock_val.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -88,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_ptp</a></li>
+<li><a class="reference internal" href="#">mne_features.bivariate.compute_nonlin_interdep</a></li>
 </ul>
 </ul>
 </li>
@@ -100,7 +100,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.univariate.compute_ptp.rst.txt"
+  <a href="../_sources/generated/mne_features.bivariate.compute_nonlin_interdep.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -122,25 +122,56 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-univariate-compute-ptp">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_ptp<a class="headerlink" href="#mne-features-univariate-compute-ptp" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-bivariate-compute-nonlin-interdep">
+<h1>mne_features.bivariate.compute_nonlin_interdep<a class="headerlink" href="#mne-features-bivariate-compute-nonlin-interdep" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.univariate.compute_ptp">
-<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_ptp</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_ptp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Peak-to-peak (PTP) amplitude of the data (per channel).</p>
+<dt id="mne_features.bivariate.compute_nonlin_interdep">
+<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_nonlin_interdep</code><span class="sig-paren">(</span><em>data</em>, <em>tau=2</em>, <em>emb=10</em>, <em>nn=5</em>, <em>include_diag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_nonlin_interdep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure of nonlinear interdependence (<a class="reference internal" href="mne_features.univariate.compute_hjorth_mobility_spect.html#morm06" id="id1">[Morm06]</a>, <a class="reference internal" href="mne_features.bivariate.compute_max_cross_corr.html#miro08" id="id2">[Miro08]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> : ndarray, shape (n_channels, n_times)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
+<blockquote>
+<div><p>The signals.</p>
+</div></blockquote>
+<p><strong>tau</strong> : int (default: 2)</p>
+<blockquote>
+<div><p>Delay in time samples.</p>
+</div></blockquote>
+<p><strong>emb</strong> : int (default: 10)</p>
+<blockquote>
+<div><p>Embedding dimension.</p>
+</div></blockquote>
+<p><strong>nn</strong> : int (default: 5)</p>
+<blockquote>
+<div><p>Number of Nearest Neighbors.</p>
+</div></blockquote>
+<p><strong>include_diag</strong> : bool (default: False)</p>
+<blockquote>
+<div><p>If False, features corresponding to pairs of identical electrodes
+are not computed. In other words, features are not computed from pairs
+of electrodes of the form <code class="docutils literal"><span class="pre">(ch[i],</span> <span class="pre">ch[i])</span></code>.</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>output</strong> : ndarray, shape (n_channels,)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_output,)</p>
+<blockquote class="last">
+<div><p>With <code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
+<code class="docutils literal"><span class="pre">include_diag</span></code> is True and
+<code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
+<code class="docutils literal"><span class="pre">include_diag</span></code> is False.</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p>Alias of the feature function: <strong>nonlin_interdep</strong></p>
 </dd></dl>
 
-<div class="clearer"></div></div>
+</div>
 
 
 </div>

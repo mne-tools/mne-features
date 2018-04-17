@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>mne_features.univariate.compute_hurst_exponent &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>mne_features.univariate.compute_hjorth_mobility_spect &#8212; mne_features 0.1.dev0 documentation</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -33,8 +33,8 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_features.univariate.compute_app_entropy" href="mne_features.univariate.compute_app_entropy.html" />
-    <link rel="prev" title="mne_features.univariate.compute_kurtosis" href="mne_features.univariate.compute_kurtosis.html" />
+    <link rel="next" title="mne_features.univariate.compute_hjorth_complexity_spect" href="mne_features.univariate.compute_hjorth_complexity_spect.html" />
+    <link rel="prev" title="mne_features.univariate.compute_pow_freq_bands" href="mne_features.univariate.compute_pow_freq_bands.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -88,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_hurst_exponent</a></li>
+<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_hjorth_mobility_spect</a></li>
 </ul>
 </ul>
 </li>
@@ -100,7 +100,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.univariate.compute_hurst_exponent.rst.txt"
+  <a href="../_sources/generated/mne_features.univariate.compute_hjorth_mobility_spect.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -122,35 +122,41 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-univariate-compute-hurst-exponent">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_hurst_exponent<a class="headerlink" href="#mne-features-univariate-compute-hurst-exponent" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-univariate-compute-hjorth-mobility-spect">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_hjorth_mobility_spect<a class="headerlink" href="#mne-features-univariate-compute-hjorth-mobility-spect" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.univariate.compute_hurst_exponent">
-<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_hurst_exponent</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_hurst_exponent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Hurst exponent of the data (per channel) (<a class="reference internal" href="#deva14" id="id1">[Deva14]</a>, <a class="reference internal" href="#hurswiki" id="id2">[HursWiki]</a>).</p>
+<dt id="mne_features.univariate.compute_hjorth_mobility_spect">
+<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_hjorth_mobility_spect</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_hjorth_mobility_spect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hjorth mobility (per channel) (<a class="reference internal" href="#morm06" id="id1">[Morm06]</a>, <a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id2">[Teix11]</a>).</p>
+<p>Hjorth mobility parameter computed from the Power Spectrum of the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> : ndarray, shape (n_channels, n_times)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sfreq</strong> : float</p>
+<blockquote>
+<div><p>Sampling rate of the data.</p>
+</div></blockquote>
+<p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
+<p><strong>normalize</strong> : bool (default: False)</p>
+<blockquote>
+<div><p>Normalize the result by the total power (see <a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id3">[Teix11]</a>).</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>output</strong> : ndarray, shape (n_channels,)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>output</strong> : ndarray, shape (n_channels,)</p>
+</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p>Alias of the feature function: <strong>hjorth_mobility_spect</strong></p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="deva14" rules="none">
+<table class="docutils citation" frame="void" id="morm06" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[Deva14]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Devarajan, K. et al. (2014). EEG-Based Epilepsy Detection and
-Prediction. International Journal of Engineering and
-Technology, 6(3), 212.</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="hurswiki" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[HursWiki]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> <a class="reference external" href="https://en.wikipedia.org/wiki/Hurst_exponent">https://en.wikipedia.org/wiki/Hurst_exponent</a></td></tr>
+<tr><td class="label">[Morm06]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> Mormann, F. et al. (2006). Seizure prediction: the long and
+winding road. Brain, 130(2), 314-333.</td></tr>
 </tbody>
 </table>
 </dd></dl>

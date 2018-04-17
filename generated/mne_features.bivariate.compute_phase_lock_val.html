@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>mne_features.bivariate.compute_spect_corr_coefs &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>mne_features.bivariate.compute_phase_lock_val &#8212; mne_features 0.1.dev0 documentation</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -33,7 +33,8 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="mne_features.bivariate.compute_time_corr_coefs" href="mne_features.bivariate.compute_time_corr_coefs.html" />
+    <link rel="next" title="mne_features.bivariate.compute_nonlin_interdep" href="mne_features.bivariate.compute_nonlin_interdep.html" />
+    <link rel="prev" title="mne_features.bivariate.compute_max_cross_corr" href="mne_features.bivariate.compute_max_cross_corr.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -87,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">mne_features.bivariate.compute_spect_corr_coefs</a></li>
+<li><a class="reference internal" href="#">mne_features.bivariate.compute_phase_lock_val</a></li>
 </ul>
 </ul>
 </li>
@@ -99,7 +100,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.bivariate.compute_spect_corr_coefs.rst.txt"
+  <a href="../_sources/generated/mne_features.bivariate.compute_phase_lock_val.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -121,41 +122,43 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-bivariate-compute-spect-corr-coefs">
-<h1>mne_features.bivariate.compute_spect_corr_coefs<a class="headerlink" href="#mne-features-bivariate-compute-spect-corr-coefs" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-bivariate-compute-phase-lock-val">
+<h1>mne_features.bivariate.compute_phase_lock_val<a class="headerlink" href="#mne-features-bivariate-compute-phase-lock-val" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.bivariate.compute_spect_corr_coefs">
-<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_spect_corr_coefs</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>db=False</em>, <em>with_eigenvalues=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_spect_corr_coefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Correlation Coefficients (computed from the power spectrum) (<a class="reference internal" href="mne_features.bivariate.compute_time_corr_coefs.html#tisp" id="id1">[Tisp]</a>).</p>
+<dt id="mne_features.bivariate.compute_phase_lock_val">
+<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_phase_lock_val</code><span class="sig-paren">(</span><em>data</em>, <em>include_diag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_phase_lock_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Phase Locking Value (PLV) (<a class="reference internal" href="#plv" id="id1">[Plv]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sfreq</strong> : float</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
+<p><strong>include_diag</strong> : bool (default: False)</p>
 <blockquote>
-<div><p>Sampling rate of the data.</p>
-</div></blockquote>
-<p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
-<p><strong>db</strong> : bool (default: True)</p>
-<blockquote>
-<div><p>If True, the power spectrum returned by the function
-<code class="xref py py-func docutils literal"><span class="pre">compute_power_spectrum()</span></code> is returned in dB/Hz.</p>
-</div></blockquote>
-<p><strong>with_eigenvalues</strong> : bool (default: True)</p>
-<blockquote>
-<div><p>If True, the function also returns the eigenvalues of the correlation
-matrix.</p>
+<div><p>If False, features corresponding to pairs of identical electrodes
+are not computed. In other words, features are not computed from pairs
+of electrodes of the form <code class="docutils literal"><span class="pre">(ch[i],</span> <span class="pre">ch[i])</span></code>.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_out,)</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_output,)</p>
 <blockquote class="last">
-<div><p>If <code class="docutils literal"><span class="pre">with_eigenvalues</span></code> is True, n_out = n_coefs + n_channels.
-Otherwise, n_out = n_coefs. With, n_coefs = n_channels *
-(n_channels + 1) // 2.</p>
+<div><p>With <code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
+<code class="docutils literal"><span class="pre">include_diag</span></code> is True and
+<code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
+<code class="docutils literal"><span class="pre">include_diag</span></code> is False.</p>
 </div></blockquote>
 </td>
 </tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Alias of the feature function: <strong>phase_lock_val</strong></p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="plv" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Plv]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> <a class="reference external" href="http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf">http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf</a></td></tr>
 </tbody>
 </table>
 </dd></dl>

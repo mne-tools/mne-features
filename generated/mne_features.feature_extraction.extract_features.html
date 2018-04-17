@@ -140,12 +140,22 @@
 <blockquote>
 <div><p>Sampling rate of the data.</p>
 </div></blockquote>
-<p><strong>selected_funcs</strong> : list of str</p>
+<p><strong>selected_funcs</strong> : list of str or tuples</p>
 <blockquote>
-<div><p>The elements of <code class="docutils literal"><span class="pre">selected_features</span></code> are aliases for the feature
-functions which will be used to extract features from the data.
-(See the documentation of mne-features for a complete list of available
-feature functions).</p>
+<div><p>The elements of <code class="docutils literal"><span class="pre">selected_features</span></code> are either strings or tuples of
+the form <code class="docutils literal"><span class="pre">(str,</span> <span class="pre">callable)</span></code>. If an element is of type <code class="docutils literal"><span class="pre">str</span></code>, it is
+the alias of a feature function. The aliases are built from the
+feature functions&#8217; names by removing <code class="docutils literal"><span class="pre">compute_</span></code>. For instance, the
+alias of the feature function <code class="xref py py-func docutils literal"><span class="pre">compute_ptp_amp()</span></code> is <code class="docutils literal"><span class="pre">ptp_amp</span></code>.
+(See the documentation of mne-features). If an element is of type
+<code class="docutils literal"><span class="pre">tuple</span></code>, the first element of the tuple should be a string
+(name/alias given to a user-defined feature function) and the second
+element should be a  callable (a user-defined feature function which
+accepts Numpy arrays with shape <code class="docutils literal"><span class="pre">(n_channels,</span> <span class="pre">n_times)</span></code>). The
+names/aliases given to user-defined feature functions should not
+intersect the aliases used by mne-features. If the name given to a
+user-defined feature function is already used as an alias in
+mne-features, an error will be raised.</p>
 </div></blockquote>
 <p><strong>funcs_params</strong> : dict or None (default: None)</p>
 <blockquote>

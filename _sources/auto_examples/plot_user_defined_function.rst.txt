@@ -1,11 +1,14 @@
 
 
-.. _sphx_glr_auto_examples_plot_mne_sample_features.py:
+.. _sphx_glr_auto_examples_plot_user_defined_function.py:
 
 
-========================================================
-Extract features from MEG time series for classification
-========================================================
+======================================================
+Extract features using user-defined feature functions.
+======================================================
+
+The example shows how user-defined feature functions can be used in
+MNE-Features along with built-in feature functions.
 
 The code for this example is based on the method proposed in:
 
@@ -31,15 +34,17 @@ Proc. IEEE ICASSP Conf. 2018
     #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
     # License: BSD 3 clause
 
+    from scipy.signal import medfilt
+
     import mne
-    import numpy as np
     from mne.datasets import sample
+
     from sklearn.linear_model import LogisticRegression
-    from sklearn.model_selection import cross_val_score, KFold
+    from sklearn.model_selection import (train_test_split, StratifiedKFold)
     from sklearn.pipeline import Pipeline
     from sklearn.preprocessing import StandardScaler
 
-    from mne_features.feature_extraction import extract_features
+    from mne_features.feature_extraction import FeatureExtractor
 
     print(__doc__)
 
@@ -66,7 +71,7 @@ Let us import the data using MNE-Python and epoch it:
     raw = mne.io.read_raw_fif(raw_fname, preload=True)
     raw.filter(.5, None, fir_design='firwin')
     events = mne.read_events(event_fname)
-    picks = mne.pick_types(raw.info, meg='grad', eeg=False)
+    picks = mne.pick_types(raw.info, meg=False, eeg=True)
 
     # Read epochs
     epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks, proj=True,
@@ -99,20 +104,61 @@ Let us import the data using MNE-Python and epoch it:
     l_trans_bandwidth chosen to be 0.5 Hz
     Filter length of 991 samples (6.600 sec) selected
     145 matching events found
+    Created an SSP operator (subspace dimension = 1)
     4 projection items activated
     Loading data for 145 events and 106 original time points ...
     0 bad epochs dropped
 
 
-Prepare for the classification task:
+Define a feature function called ``compute_medfilt``
+----------------------------------------------------
+
+Here, the raw data is median filtered and the output signals are used
+as features.
 
 
 
 .. code-block:: python
 
 
-    pipe = Pipeline([('scaler', StandardScaler()),
-                     ('lr', LogisticRegression(random_state=42))])
+
+    def compute_medfilt(arr):
+        """Median filtered signal as features.
+
+        Parameters
+        ----------
+        arr : ndarray, shape (n_channels, n_times)
+
+        Returns
+        -------
+        output : (n_channels * n_times,)
+        """
+        return medfilt(arr, kernel_size=(1, 5)).ravel()
+
+
+
+
+
+
+
+
+Prepare for the classification task
+-----------------------------------
+
+In addition to the new feature function, we also propose to extract the
+mean of the data:
+
+
+
+.. code-block:: python
+
+    selected_funcs = [('medfilt', compute_medfilt), 'mean']
+
+    pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
+                                             selected_funcs=selected_funcs)),
+                     ('scaler', StandardScaler()),
+                     ('clf', LogisticRegression(random_state=42))])
+    skf = StratifiedKFold(n_splits=3, random_state=42)
     y = labels
 
 
@@ -121,35 +167,16 @@ Prepare for the classification task:
 
 
 
-Classification using features (mean, peak-to-peak amplitude,
-standard deviation). See :ref:`api_documentation` for full list of supported
-features.
+Print the accuracy score on a test dataset.
 
 
 
 .. code-block:: python
 
 
-    selected_funcs = {'mean', 'ptp_amp', 'std'}
-    X_new = extract_features(data, raw.info['sfreq'], selected_funcs)
-    kf = KFold(n_splits=3, random_state=42)
-    scores = cross_val_score(pipe, X_new, y, scoring='accuracy', cv=kf)
-
-
-
-
-
-
-
-Print the cross-validation score:
-
-
-
-.. code-block:: python
-
-
-    print('Cross-validation accuracy score = %1.3f (+/- %1.5f)' % (np.mean(scores),
-                                                                   np.std(scores)))
+    X_train, X_test, y_train, y_test = train_test_split(data, y, test_size=0.2)
+    accuracy = pipe.fit(X_train, y_train).score(X_test, y_test)
+    print('Accuracy score = %1.3f' % accuracy)
 
 
 
@@ -158,10 +185,10 @@ Print the cross-validation score:
 
  Out::
 
-    Cross-validation accuracy score = 0.938 (+/- 0.00060)
+    Accuracy score = 0.966
 
 
-**Total running time of the script:** ( 0 minutes  1.285 seconds)
+**Total running time of the script:** ( 0 minutes  1.274 seconds)
 
 
 
@@ -172,13 +199,13 @@ Print the cross-validation score:
 
   .. container:: sphx-glr-download
 
-     :download:`Download Python source code: plot_mne_sample_features.py <plot_mne_sample_features.py>`
+     :download:`Download Python source code: plot_user_defined_function.py <plot_user_defined_function.py>`
 
 
 
   .. container:: sphx-glr-download
 
-     :download:`Download Jupyter notebook: plot_mne_sample_features.ipynb <plot_mne_sample_features.ipynb>`
+     :download:`Download Jupyter notebook: plot_user_defined_function.ipynb <plot_user_defined_function.ipynb>`
 
 
 .. only:: html

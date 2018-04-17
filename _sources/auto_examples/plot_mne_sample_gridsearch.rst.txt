@@ -122,7 +122,8 @@ Prepare for the classification task:
 
     pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                              selected_funcs=['app_entropy',
-                                                             'mean'])),
+                                                             'mean'],
+                                             memory='.')),
                      ('scaler', StandardScaler()),
                      ('clf', LogisticRegression(random_state=42))])
     skf = StratifiedKFold(n_splits=3, random_state=42)
@@ -154,6 +155,30 @@ for `compute_app_entropy`):
 
  Out::
 
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  6.193789e-12, ...,  -1.395502e-12],
+            ..., 
+            [  3.197965e-12, ...,  -1.221891e-12]],
+
+           ..., 
+           [[ -1.863622e-12, ...,   7.081302e-12],
+            ..., 
+            [ -1.839283e-12, ...,   2.817538e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params=None)
+    _________________________________________________extract_features - 8.2s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  5.256817e-12, ...,   1.098767e-11],
+            ..., 
+            [  2.650032e-12, ...,   7.262601e-12]],
+
+           ..., 
+           [[  3.707438e-12, ...,   7.565477e-12],
+            ..., 
+            [ -2.589417e-12, ...,   2.492014e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params=None)
+    _________________________________________________extract_features - 4.0s, 0.1min
     Cross-validation accuracy score (with default parameters) = 0.828 (+/- 0.01071)
 
 
@@ -184,6 +209,90 @@ GridSearchCV.
 
  Out::
 
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  2.297636e-11, ...,   3.022934e-12],
+            ..., 
+            [  1.016190e-11, ...,  -1.012862e-12]],
+
+           ..., 
+           [[  3.707438e-12, ...,   7.565477e-12],
+            ..., 
+            [ -2.589417e-12, ...,   2.492014e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 2})
+    _________________________________________________extract_features - 5.9s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  6.193789e-12, ...,  -1.395502e-12],
+            ..., 
+            [  3.197965e-12, ...,  -1.221891e-12]],
+
+           ..., 
+           [[ -4.372232e-12, ...,   3.161050e-12],
+            ..., 
+            [ -1.893307e-13, ...,  -1.851915e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 2})
+    _________________________________________________extract_features - 6.2s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  2.297636e-11, ...,   3.022934e-12],
+            ..., 
+            [  1.016190e-11, ...,  -1.012862e-12]],
+
+           ..., 
+           [[  3.707438e-12, ...,   7.565477e-12],
+            ..., 
+            [ -2.589417e-12, ...,   2.492014e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    _________________________________________________extract_features - 5.9s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  6.193789e-12, ...,  -1.395502e-12],
+            ..., 
+            [  3.197965e-12, ...,  -1.221891e-12]],
+
+           ..., 
+           [[ -4.372232e-12, ...,   3.161050e-12],
+            ..., 
+            [ -1.893307e-13, ...,  -1.851915e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    _________________________________________________extract_features - 6.2s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  2.297636e-11, ...,   3.022934e-12],
+            ..., 
+            [  1.016190e-11, ...,  -1.012862e-12]],
+
+           ..., 
+           [[  3.707438e-12, ...,   7.565477e-12],
+            ..., 
+            [ -2.589417e-12, ...,   2.492014e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 4})
+    _________________________________________________extract_features - 6.0s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  6.193789e-12, ...,  -1.395502e-12],
+            ..., 
+            [  3.197965e-12, ...,  -1.221891e-12]],
+
+           ..., 
+           [[ -4.372232e-12, ...,   3.161050e-12],
+            ..., 
+            [ -1.893307e-13, ...,  -1.851915e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 4})
+    _________________________________________________extract_features - 6.4s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  6.193789e-12, ...,  -1.395502e-12],
+            ..., 
+            [  3.197965e-12, ...,  -1.221891e-12]],
+
+           ..., 
+           [[  3.707438e-12, ...,   7.565477e-12],
+            ..., 
+            [ -2.589417e-12, ...,   2.492014e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    ________________________________________________extract_features - 12.3s, 0.2min
     {'fe__app_entropy__emb': 3}
 
 
@@ -230,10 +339,82 @@ Cross-validation accuracy score with optimized parameters:
 
  Out::
 
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  1.540954e-11, ...,  -6.295133e-12],
+            ..., 
+            [  1.325555e-11, ...,   1.026145e-11]],
+
+           ..., 
+           [[  3.707438e-12, ...,   7.565477e-12],
+            ..., 
+            [ -2.589417e-12, ...,   2.492014e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    _________________________________________________extract_features - 8.2s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  6.193789e-12, ...,  -1.395502e-12],
+            ..., 
+            [  3.197965e-12, ...,  -1.221891e-12]],
+
+           ..., 
+           [[ -2.267405e-12, ...,   6.823774e-12],
+            ..., 
+            [ -2.694724e-12, ...,   4.481624e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    _________________________________________________extract_features - 4.2s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  6.193789e-12, ...,  -1.395502e-12],
+            ..., 
+            [  3.197965e-12, ...,  -1.221891e-12]],
+
+           ..., 
+           [[  3.707438e-12, ...,   7.565477e-12],
+            ..., 
+            [ -2.589417e-12, ...,   2.492014e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    _________________________________________________extract_features - 7.9s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  1.540954e-11, ...,  -6.295133e-12],
+            ..., 
+            [  1.325555e-11, ...,   1.026145e-11]],
+
+           ..., 
+           [[ -1.863622e-12, ...,   7.081302e-12],
+            ..., 
+            [ -1.839283e-12, ...,   2.817538e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    _________________________________________________extract_features - 4.1s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  6.193789e-12, ...,  -1.395502e-12],
+            ..., 
+            [  3.197965e-12, ...,  -1.221891e-12]],
+
+           ..., 
+           [[ -1.863622e-12, ...,   7.081302e-12],
+            ..., 
+            [ -1.839283e-12, ...,   2.817538e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    _________________________________________________extract_features - 8.2s, 0.1min
+    ________________________________________________________________________________
+    [Memory] Calling mne_features.feature_extraction.extract_features...
+    extract_features(array([[[  5.256817e-12, ...,   1.098767e-11],
+            ..., 
+            [  2.650032e-12, ...,   7.262601e-12]],
+
+           ..., 
+           [[  3.707438e-12, ...,   7.565477e-12],
+            ..., 
+            [ -2.589417e-12, ...,   2.492014e-12]]]), 
+    150.15374755859375, ['app_entropy', 'mean'], n_jobs=1, funcs_params={ 'app_entropy__emb': 3})
+    _________________________________________________extract_features - 4.1s, 0.1min
     Cross-validation accuracy score (with optimized parameters) = 0.890 (+/- 0.01036)
 
 
-**Total running time of the script:** ( 3 minutes  10.574 seconds)
+**Total running time of the script:** ( 1 minutes  40.502 seconds)
 
 
 

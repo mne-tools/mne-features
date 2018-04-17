@@ -70,7 +70,7 @@ y = labels
 # standard deviation). See :ref:`api_documentation` for full list of supported
 # features.
 
-selected_funcs = {'mean', 'ptp_amplitude', 'std'}
+selected_funcs = {'mean', 'ptp_amp', 'std'}
 X_new = extract_features(data, raw.info['sfreq'], selected_funcs)
 kf = KFold(n_splits=3, random_state=42)
 scores = cross_val_score(pipe, X_new, y, scoring='accuracy', cv=kf)

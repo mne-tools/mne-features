@@ -37,17 +37,16 @@ Functions
    compute_mean
    compute_variance
    compute_std
-   compute_ptp
+   compute_ptp_amp
    compute_skewness
    compute_kurtosis
-   compute_hurst_exponent
+   compute_hurst_exp
    compute_app_entropy
    compute_samp_entropy
    compute_decorr_time
-   power_spectrum
-   compute_power_spectrum_freq_bands
-   compute_spect_hjorth_mobility
-   compute_spect_hjorth_complexity
+   compute_pow_freq_bands
+   compute_hjorth_mobility_spect
+   compute_hjorth_complexity_spect
    compute_hjorth_mobility
    compute_hjorth_complexity
    compute_higuchi_fd
@@ -72,8 +71,8 @@ Functions
    :toctree: generated/
 
    get_bivariate_funcs
-   compute_max_cross_correlation
-   compute_phase_locking_value
-   compute_nonlinear_interdep
-   compute_time_corr_coefs
-   compute_spect_corr_coefs
+   compute_max_cross_corr
+   compute_phase_lock_val
+   compute_nonlin_interdep
+   compute_time_corr
+   compute_spect_corr

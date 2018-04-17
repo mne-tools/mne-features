@@ -127,8 +127,7 @@
 <dl class="function">
 <dt id="mne_features.univariate.compute_energy_freq_bands">
 <code class="descclassname">mne_features.univariate.</code><code class="descname">compute_energy_freq_bands</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>freq_bands=array([   0.5</em>, <em>4.</em>, <em>8.</em>, <em>13.</em>, <em>30.</em>, <em>100. ])</em>, <em>deriv_filt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_energy_freq_bands" title="Permalink to this definition">¶</a></dt>
-<dd><p>Energy (of the signal, filtered by frequency bands ; per channel)
-(<a class="reference internal" href="#khar11" id="id1">[Khar11]</a>).</p>
+<dd><p>Band energy (per channel) (<a class="reference internal" href="#khar11" id="id1">[Khar11]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -156,6 +155,8 @@ filtering (see Notes).</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p>Alias of the feature function: <strong>energy_freq_bands</strong></p>
 <p class="rubric">References</p>
 <table class="docutils citation" frame="void" id="khar11" rules="none">
 <colgroup><col class="label" /><col /></colgroup>

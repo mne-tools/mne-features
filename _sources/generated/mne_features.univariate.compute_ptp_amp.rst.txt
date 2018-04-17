@@ -1,0 +1,10 @@
+:mod:`mne_features.univariate`.compute_ptp_amp
+=====================================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_ptp_amp
+
+.. raw:: html
+
+    <div class="clearer"></div>

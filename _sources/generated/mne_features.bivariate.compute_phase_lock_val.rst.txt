@@ -1,0 +1,6 @@
+mne_features.bivariate.compute_phase_lock_val
+=============================================
+
+.. currentmodule:: mne_features.bivariate
+
+.. autofunction:: compute_phase_lock_val

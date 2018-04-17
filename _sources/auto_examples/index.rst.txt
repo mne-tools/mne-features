@@ -33,6 +33,26 @@ Examples Gallery
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="The example shows how user-defined feature functions can be used in MNE-Features along with bui...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_user_defined_function_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_user_defined_function.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_user_defined_function
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="The example shows how :class:`~sklearn.model_selection.GridSearchCV` can be used for parameter ...">
 
 .. only:: html

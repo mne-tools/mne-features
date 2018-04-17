@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>mne_features.univariate.compute_spect_hjorth_complexity &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>mne_features.bivariate.compute_max_cross_corr &#8212; mne_features 0.1.dev0 documentation</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -33,8 +33,8 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_features.univariate.compute_hjorth_mobility" href="mne_features.univariate.compute_hjorth_mobility.html" />
-    <link rel="prev" title="mne_features.univariate.compute_spect_hjorth_mobility" href="mne_features.univariate.compute_spect_hjorth_mobility.html" />
+    <link rel="next" title="mne_features.bivariate.compute_phase_lock_val" href="mne_features.bivariate.compute_phase_lock_val.html" />
+    <link rel="prev" title="mne_features.bivariate.get_bivariate_funcs" href="mne_features.bivariate.get_bivariate_funcs.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -88,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_spect_hjorth_complexity</a></li>
+<li><a class="reference internal" href="#">mne_features.bivariate.compute_max_cross_corr</a></li>
 </ul>
 </ul>
 </li>
@@ -100,7 +100,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.univariate.compute_spect_hjorth_complexity.rst.txt"
+  <a href="../_sources/generated/mne_features.bivariate.compute_max_cross_corr.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -122,13 +122,12 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-univariate-compute-spect-hjorth-complexity">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_spect_hjorth_complexity<a class="headerlink" href="#mne-features-univariate-compute-spect-hjorth-complexity" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-bivariate-compute-max-cross-corr">
+<h1>mne_features.bivariate.compute_max_cross_corr<a class="headerlink" href="#mne-features-bivariate-compute-max-cross-corr" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.univariate.compute_spect_hjorth_complexity">
-<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_spect_hjorth_complexity</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_spect_hjorth_complexity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Hjorth complexity (computed from the power spectrum, per channel)
-(<a class="reference internal" href="mne_features.univariate.compute_spect_hjorth_mobility.html#morm06" id="id1">[Morm06]</a>, <a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id2">[Teix11]</a>).</p>
+<dt id="mne_features.bivariate.compute_max_cross_corr">
+<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_max_cross_corr</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>include_diag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_max_cross_corr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum linear cross-correlation (<a class="reference internal" href="mne_features.univariate.compute_hjorth_mobility_spect.html#morm06" id="id1">[Morm06]</a>, <a class="reference internal" href="#miro08" id="id2">[Miro08]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -138,20 +137,43 @@
 <div><p>Sampling rate of the data.</p>
 </div></blockquote>
 <p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
-<p><strong>normalize</strong> : bool (default: False)</p>
 <blockquote>
-<div><p>Normalize the result by the total power (see [2]).</p>
+<div><p>The signals.</p>
+</div></blockquote>
+<p><strong>include_diag</strong> : bool (default: False)</p>
+<blockquote>
+<div><p>If False, features corresponding to pairs of identical electrodes
+are not computed. In other words, features are not computed from pairs
+of electrodes of the form <code class="docutils literal"><span class="pre">(ch[i],</span> <span class="pre">ch[i])</span></code>.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>output</strong> : ndarray, shape (n_channels,)</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_output,)</p>
+<blockquote class="last">
+<div><p>With <code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
+<code class="docutils literal"><span class="pre">include_diag</span></code> is True and
+<code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
+<code class="docutils literal"><span class="pre">include_diag</span></code> is False.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p>Alias of the feature function: <strong>max_cross_corr</strong></p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="miro08" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Miro08]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
+networks for epileptic seizure prediction from intracranial
+EEG. Machine Learning for Signal Processing, 2008. IEEE
+Workshop on (pp. 244-249). IEEE.</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
-<div class="clearer"></div></div>
+</div>
 
 
 </div>

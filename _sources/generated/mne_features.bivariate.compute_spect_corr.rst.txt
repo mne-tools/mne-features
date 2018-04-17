@@ -1,0 +1,6 @@
+mne_features.bivariate.compute_spect_corr
+=========================================
+
+.. currentmodule:: mne_features.bivariate
+
+.. autofunction:: compute_spect_corr

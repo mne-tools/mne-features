@@ -1,9 +1,9 @@
-:mod:`mne_features.univariate`.compute_hurst_exponent
+:mod:`mne_features.univariate`.compute_pow_freq_bands
 ============================================================
 
 .. currentmodule:: mne_features.univariate
 
-.. autofunction:: compute_hurst_exponent
+.. autofunction:: compute_pow_freq_bands
 
 .. raw:: html
 

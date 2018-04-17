@@ -127,8 +127,9 @@
 <dl class="function">
 <dt id="mne_features.univariate.compute_spect_entropy">
 <code class="descclassname">mne_features.univariate.</code><code class="descname">compute_spect_entropy</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_spect_entropy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spectral Entropy (Shannon entropy of the power spectrum,
-per channel) (<a class="reference internal" href="#inou91" id="id1">[Inou91]</a>).</p>
+<dd><p>Spectral Entropy (per channel) (<a class="reference internal" href="#inou91" id="id1">[Inou91]</a>).</p>
+<p>Spectral Entropy is defined to be the Shannon Entropy of the Power
+Spectrum of the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -145,6 +146,8 @@ per channel) (<a class="reference internal" href="#inou91" id="id1">[Inou91]</a>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p>Alias of the feature function: <strong>spect_entropy</strong></p>
 <p class="rubric">References</p>
 <table class="docutils citation" frame="void" id="inou91" rules="none">
 <colgroup><col class="label" /><col /></colgroup>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>mne_features.univariate.power_spectrum &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>mne_features.univariate.compute_ptp_amp &#8212; mne_features 0.1.dev0 documentation</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -33,8 +33,8 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_features.univariate.compute_power_spectrum_freq_bands" href="mne_features.univariate.compute_power_spectrum_freq_bands.html" />
-    <link rel="prev" title="mne_features.univariate.compute_decorr_time" href="mne_features.univariate.compute_decorr_time.html" />
+    <link rel="next" title="mne_features.univariate.compute_skewness" href="mne_features.univariate.compute_skewness.html" />
+    <link rel="prev" title="mne_features.univariate.compute_std" href="mne_features.univariate.compute_std.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -88,7 +88,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.power_spectrum</a></li>
+<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_ptp_amp</a></li>
 </ul>
 </ul>
 </li>
@@ -100,7 +100,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.univariate.power_spectrum.rst.txt"
+  <a href="../_sources/generated/mne_features.univariate.compute_ptp_amp.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -122,54 +122,24 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-univariate-power-spectrum">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.power_spectrum<a class="headerlink" href="#mne-features-univariate-power-spectrum" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-univariate-compute-ptp-amp">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_ptp_amp<a class="headerlink" href="#mne-features-univariate-compute-ptp-amp" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.univariate.power_spectrum">
-<code class="descclassname">mne_features.univariate.</code><code class="descname">power_spectrum</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>return_db=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.power_spectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Utility function to compute the [one sided] Power Spectrum (<a class="reference internal" href="#hein02" id="id1">[Hein02]</a>,
-<a class="reference internal" href="#math" id="id2">[Math]</a>).</p>
+<dt id="mne_features.univariate.compute_ptp_amp">
+<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_ptp_amp</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_ptp_amp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Peak-to-peak (PTP) amplitude of the data (per channel).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sfreq</strong> : float</p>
-<blockquote>
-<div><p>Sampling rate of the data.</p>
-</div></blockquote>
-<p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
-<p><strong>return_db</strong> : bool (default: False)</p>
-<blockquote>
-<div><p>If True, the result is returned in dB/Hz.</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> : ndarray, shape (n_channels, n_times)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ps</strong> : ndarray, shape (n_channels, n_times // 2 + 1)</p>
-<p><strong>freqs</strong> : ndarray, shape (n_channels, n_times // 2 + 1)</p>
-<blockquote class="last">
-<div><p>Array of frequency bins.</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>output</strong> : ndarray, shape (n_channels,)</td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="hein02" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[Hein02]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Heinzel, G. et al. (2002). Spectrum and spectral density
-estimation by the Discrete Fourier transform (DFT), including
-a comprehensive list of window functions and some new at-top
-windows.</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="math" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[Math]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> <a class="reference external" href="http://fr.mathworks.com/help/signal/ug/power-spectral-density">http://fr.mathworks.com/help/signal/ug/power-spectral-density</a>-
-estimates-using-fft.html</td></tr>
-</tbody>
-</table>
+<p class="rubric">Notes</p>
+<p>Alias of the feature function: <strong>ptp_amp</strong></p>
 </dd></dl>
 
 <div class="clearer"></div></div>

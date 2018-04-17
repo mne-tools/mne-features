@@ -1,6 +1,6 @@
-mne_features.bivariate.compute_time_corr_coefs
+mne_features.bivariate.compute_nonlin_interdep
 ==============================================
 
 .. currentmodule:: mne_features.bivariate
 
-.. autofunction:: compute_time_corr_coefs
+.. autofunction:: compute_nonlin_interdep

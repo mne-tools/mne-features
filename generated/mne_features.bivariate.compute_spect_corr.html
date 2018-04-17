@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>mne_features.univariate.compute_power_spectrum_freq_bands &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>mne_features.bivariate.compute_spect_corr &#8212; mne_features 0.1.dev0 documentation</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -33,8 +33,7 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_features.univariate.compute_spect_hjorth_mobility" href="mne_features.univariate.compute_spect_hjorth_mobility.html" />
-    <link rel="prev" title="mne_features.univariate.power_spectrum" href="mne_features.univariate.power_spectrum.html" />
+    <link rel="prev" title="mne_features.bivariate.compute_time_corr" href="mne_features.bivariate.compute_time_corr.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -88,7 +87,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_power_spectrum_freq_bands</a></li>
+<li><a class="reference internal" href="#">mne_features.bivariate.compute_spect_corr</a></li>
 </ul>
 </ul>
 </li>
@@ -100,7 +99,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.univariate.compute_power_spectrum_freq_bands.rst.txt"
+  <a href="../_sources/generated/mne_features.bivariate.compute_spect_corr.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -122,12 +121,12 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-univariate-compute-power-spectrum-freq-bands">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_power_spectrum_freq_bands<a class="headerlink" href="#mne-features-univariate-compute-power-spectrum-freq-bands" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-bivariate-compute-spect-corr">
+<h1>mne_features.bivariate.compute_spect_corr<a class="headerlink" href="#mne-features-bivariate-compute-spect-corr" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.univariate.compute_power_spectrum_freq_bands">
-<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_power_spectrum_freq_bands</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>freq_bands=array([   0.5</em>, <em>4.</em>, <em>8.</em>, <em>13.</em>, <em>30.</em>, <em>100. ])</em>, <em>normalize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_power_spectrum_freq_bands" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power Spectrum (computed by frequency bands) (<a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id1">[Teix11]</a>).</p>
+<dt id="mne_features.bivariate.compute_spect_corr">
+<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_spect_corr</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>db=False</em>, <em>with_eigenvalues=True</em>, <em>include_diag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_spect_corr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correlation Coefficients (computed from the power spectrum) (<a class="reference internal" href="mne_features.bivariate.compute_time_corr.html#tisp" id="id1">[Tisp]</a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -137,27 +136,44 @@
 <div><p>Sampling rate of the data.</p>
 </div></blockquote>
 <p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
-<p><strong>freq_bands</strong> : ndarray, shape (n_freqs,) (default:</p>
-<p><strong>np.array([0.5, 4., 8., 13., 30., 100.]))</strong></p>
 <blockquote>
-<div><p>Array defining the frequency bands. The j-th frequency band is defined
-as: <code class="docutils literal"><span class="pre">[freq_bands[j],</span> <span class="pre">freq_bands[j</span> <span class="pre">+</span> <span class="pre">1]]</span></code> (0 &lt;= j &lt;= n_freqs - 1).</p>
+<div><p>The signals.</p>
 </div></blockquote>
-<p><strong>normalize</strong> : bool (default: True)</p>
+<p><strong>db</strong> : bool (default: True)</p>
 <blockquote>
-<div><p>If True, the average power in each frequency band is normalized by
-the total power.</p>
+<div><p>If True, the power spectrum returned by the function
+<code class="xref py py-func docutils literal"><span class="pre">compute_power_spectrum()</span></code> is returned in dB/Hz.</p>
+</div></blockquote>
+<p><strong>with_eigenvalues</strong> : bool (default: True)</p>
+<blockquote>
+<div><p>If True, the function also returns the eigenvalues of the correlation
+matrix.</p>
+</div></blockquote>
+<p><strong>include_diag</strong> : bool (default: False)</p>
+<blockquote>
+<div><p>If False, features corresponding to pairs of identical electrodes
+are not computed. In other words, features are not computed from pairs
+of electrodes of the form <code class="docutils literal"><span class="pre">(ch[i],</span> <span class="pre">ch[i])</span></code>.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>output</strong> : ndarray, shape (n_channels * (n_freqs - 1),)</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_output,)</p>
+<blockquote class="last">
+<div><p>Where <code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_coefs</span> <span class="pre">+</span> <span class="pre">n_channels</span></code> if <code class="docutils literal"><span class="pre">with_eigenvalues</span></code> is
+True and <code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_coefs</span></code> if <code class="docutils literal"><span class="pre">with_eigenvalues</span></code> is False. If
+<code class="docutils literal"><span class="pre">include_diag</span></code> is True, then
+<code class="docutils literal"><span class="pre">n_coefs</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">//</span> <span class="pre">2</span></code> and
+<code class="docutils literal"><span class="pre">n_coefs</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">//</span> <span class="pre">2</span></code> otherwise.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Notes</p>
+<p>Alias of the feature function: <strong>spect_corr</strong></p>
 </dd></dl>
 
-<div class="clearer"></div></div>
+</div>
 
 
 </div>

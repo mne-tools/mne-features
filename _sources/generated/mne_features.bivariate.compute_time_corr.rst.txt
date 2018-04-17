@@ -1,0 +1,6 @@
+mne_features.bivariate.compute_time_corr
+========================================
+
+.. currentmodule:: mne_features.bivariate
+
+.. autofunction:: compute_time_corr
