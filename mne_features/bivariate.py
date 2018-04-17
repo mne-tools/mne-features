@@ -111,7 +111,6 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
-
     Returns
     -------
     output : ndarray, shape (n_output,)
@@ -136,7 +135,6 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
 
 def compute_phase_lock_val(data, include_diag=False):
     """Phase Locking Value (PLV) ([Plv]_).
-
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
@@ -144,7 +142,6 @@ def compute_phase_lock_val(data, include_diag=False):
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
-
     Returns
     -------
     output : ndarray, shape (n_output,)
@@ -181,7 +178,6 @@ def compute_phase_lock_val(data, include_diag=False):
 
 def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
     """Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
-
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
@@ -300,7 +296,6 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
-
     Returns
     -------
     output : ndarray, shape (n_output,)
