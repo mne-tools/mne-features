@@ -42,8 +42,10 @@ def _max_cross_corr(sfreq, data, include_diag=False):
     ----------
     sfreq : float
         Sampling rate of the data.
+
     data : ndarray, shape (n_channels, n_times)
         The signals.
+
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
@@ -105,12 +107,15 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
     ----------
     sfreq : float
         Sampling rate of the data.
+
     data : ndarray, shape (n_channels, n_times)
         The signals.
+
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
+
     Returns
     -------
     output : ndarray, shape (n_output,)
@@ -135,6 +140,7 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
 
 def compute_phase_lock_val(data, include_diag=False):
     """Phase Locking Value (PLV) ([Plv]_).
+
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
@@ -142,6 +148,7 @@ def compute_phase_lock_val(data, include_diag=False):
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
+
     Returns
     -------
     output : ndarray, shape (n_output,)
@@ -178,16 +185,21 @@ def compute_phase_lock_val(data, include_diag=False):
 
 def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
     """Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
+
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
         The signals.
+
     tau : int (default: 2)
         Delay in time samples.
+
     emb : int (default: 10)
         Embedding dimension.
+
     nn : int (default: 5)
         Number of Nearest Neighbors.
+
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
@@ -237,9 +249,11 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
     ----------
     data : ndarray, shape (n_channels, n_times)
         The signals.
+
     with_eigenvalues : bool (default: False)
         If True, the function also returns the eigenvalues of the correlation
         matrix.
+
     include_diag : bool (default: True)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
@@ -284,18 +298,23 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
     ----------
     sfreq : float
         Sampling rate of the data.
+
     data : ndarray, shape (n_channels, n_times)
         The signals.
+
     db : bool (default: True)
         If True, the power spectrum returned by the function
         :func:`compute_power_spectrum` is returned in dB/Hz.
+
     with_eigenvalues : bool (default: True)
         If True, the function also returns the eigenvalues of the correlation
         matrix.
+
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
+
     Returns
     -------
     output : ndarray, shape (n_output,)
