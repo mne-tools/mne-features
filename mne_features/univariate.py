@@ -28,43 +28,7 @@ def get_univariate_funcs(sfreq):
     -------
     univariate_funcs : dict
     """
-<<<<<<< HEAD
-    univariate_funcs = dict()
-    univariate_funcs['mean'] = compute_mean
-    univariate_funcs['variance'] = compute_variance
-    univariate_funcs['std'] = compute_std
-    univariate_funcs['ptp_amp'] = compute_ptp_amp
-    univariate_funcs['skewness'] = compute_skewness
-    univariate_funcs['kurtosis'] = compute_kurtosis
-    univariate_funcs['hurst_exp'] = compute_hurst_exp
-    univariate_funcs['decorr_time'] = partial(compute_decorr_time, sfreq)
-    univariate_funcs['hjorth_mobility_spect'] = partial(
-        compute_hjorth_mobility_spect, sfreq)
-    univariate_funcs['hjorth_complexity_spect'] = partial(
-        compute_hjorth_complexity_spect, sfreq)
-    univariate_funcs['app_entropy'] = compute_app_entropy
-    univariate_funcs['samp_entropy'] = compute_samp_entropy
-    univariate_funcs['hjorth_mobility'] = compute_hjorth_mobility
-    univariate_funcs['hjorth_complexity'] = compute_hjorth_complexity
-    univariate_funcs['higuchi_fd'] = compute_higuchi_fd
-    univariate_funcs['katz_fd'] = compute_katz_fd
-    univariate_funcs['pow_freq_bands'] = partial(
-        compute_pow_freq_bands, sfreq)
-    univariate_funcs['energy_freq_bands'] = partial(compute_energy_freq_bands,
-                                                    sfreq)
-    univariate_funcs['zero_crossings'] = compute_zero_crossings
-    univariate_funcs['line_length'] = compute_line_length
-    univariate_funcs['spect_entropy'] = partial(compute_spect_entropy, sfreq)
-    univariate_funcs['svd_entropy'] = compute_svd_entropy
-    univariate_funcs['svd_fisher_info'] = compute_svd_fisher_info
-    univariate_funcs['spect_edge_freq'] = partial(compute_spect_edge_freq,
-                                                  sfreq)
-    univariate_funcs['wavelet_coef_energy'] = compute_wavelet_coef_energy
-    univariate_funcs['teager_kaiser_energy'] = compute_teager_kaiser_energy
-    return univariate_funcs
-=======
     return _get_feature_funcs(sfreq, __name__)
->>>>>>> a02185e0277d839ff2ece2a4cdbd7d64c32291ac
 
 
 def _unbiased_autocorr(x):
