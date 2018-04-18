@@ -932,7 +932,7 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
     output :list, length (n_channels * levdec,)
         The decomposition level (`levdec`) used for the DWT is either 6 or
         the maximum useful decomposition level (given the number of time points
-        in the data and wavelet_coef_energychosen wavelet ;
+        in the data and chosen wavelet ;
         see `pywt.dwt_max_level`).
      Notes
      -----

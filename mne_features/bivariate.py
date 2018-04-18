@@ -38,7 +38,7 @@ def get_bivariate_funcs(sfreq):
 def _max_cross_corr(sfreq, data, include_diag=False):
     """Utility function for :func:`compute_max_cross_correlation`.
 
-    arameters
+    Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
