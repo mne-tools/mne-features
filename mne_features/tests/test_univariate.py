@@ -25,13 +25,13 @@ from mne_features.univariate import (_slope_lstsq, compute_mean,
                                      compute_svd_fisher_info,
                                      compute_energy_freq_bands,
                                      compute_spect_edge_freq,
-                                     compute_wavelet_coef_energy)
+                                     compute_teager_kaiser_energy)
 
 rng = np.random.RandomState(42)
 sfreq = 256.
 data = rng.standard_normal((10, 20, int(sfreq)))
 n_epochs, n_channels = data.shape[:2]
-
+n_times = data[0].shape[1]
 
 def test_slope_lstsq():
     x = rng.standard_normal((100,))
@@ -102,11 +102,6 @@ def test_shape_output_spect_edge_freq():
         assert_equal(feat.shape, (n_channels * 4,))
 
 
-def test_shape_output_wavelet_coef_energy():
-    feat = compute_wavelet_coef_energy(data[0, :, :], wavelet_name='haar')
-    assert_equal(feat.shape, (n_channels * 6,))
-
-
 def test_app_entropy():
     feat = compute_app_entropy(data[0, :, :], emb=5)
     assert_equal(feat.shape, (n_channels,))
@@ -121,6 +116,11 @@ def test_samp_entropy():
         compute_samp_entropy(data[0, :, :], emb=5, metric='sqeuclidean')
 
 
+def test_shape_output_teager_kaiser_energy():
+    feat = compute_teager_kaiser_energy(data[0, :, :])
+    assert_equal(feat.shape, (n_channels, n_times - 2))
+
+
 if __name__ == '__main__':
 
     test_slope_lstsq()
@@ -130,6 +130,6 @@ if __name__ == '__main__':
     test_shape_output_spect_entropy()
     test_shape_output_energy_freq_bands()
     test_shape_output_spect_edge_freq()
-    test_shape_output_wavelet_coef_energy()
     test_app_entropy()
     test_samp_entropy()
+    test_shape_output_teager_kaiser_energy()
