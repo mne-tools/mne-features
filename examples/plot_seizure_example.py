@@ -9,7 +9,7 @@ is used. The dataset which is used in this example consists in 300 iEEG samples
 (200 are seizure-free segments and 100 correspond to ictal activity). The data
 was recorded at 173.61Hz on a single channel.
 
-The code for this example is based on the method proposed in:
+Some of the features used in this example were used in:
 
 Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
 Slim ESSID, Alexandre GRAMFORT,
@@ -39,26 +39,39 @@ References
 # License: BSD 3 clause
 
 import os
-import numpy as np
 import os.path as op
+
+from download import download
+
+import numpy as np
 import pandas as pd
-from tempfile import mkdtemp
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold, cross_val_score
-
 from sklearn.pipeline import Pipeline
 
 from mne_features.feature_extraction import FeatureExtractor
-from mne_features.utils import download_bonn_ieeg
+
 print(__doc__)
 
 ###############################################################################
 # Let us download the iEEG data from the Bonn dataset:
 
+
+def download_bonn_ieeg(path, verbose=False):
+    base_url = 'http://epileptologie-bonn.de/cms/upload/workgroup/lehnertz/'
+    urls = [('setC', 'N.zip'), ('setD', 'F.zip'), ('setE', 'S.zip')]
+    paths = list()
+    for set_name, url_suffix in urls:
+        _path = download(op.join(base_url, url_suffix),
+                         op.join(path, set_name), kind='zip', replace=False,
+                         verbose=verbose)
+        paths.append(_path)
+    return paths
+
+
 # Download the data to ``./bonn_data``:
-data_path = mkdtemp()
-paths = download_bonn_ieeg(data_path)
+paths = download_bonn_ieeg('./bonn_data')
 
 # Read the data from ``.txt`` files. Only the iEEG epochs in
 # ``./bonn_data/setE`` correspond to ictal
@@ -83,13 +96,14 @@ print(data.shape)
 
 ###############################################################################
 # Prepare for the classification task:
-selected_funcs = ['mean', 'line_length']
+selected_funcs = ['line_length', 'kurtosis', 'ptp_amp', 'skewness']
 
 pipe = Pipeline([('fe', FeatureExtractor(sfreq=sfreq,
                                          selected_funcs=selected_funcs)),
-                 ('clf', RandomForestClassifier(n_estimators=500,
+                 ('clf', RandomForestClassifier(n_estimators=100,
+                                                max_depth=4,
                                                 random_state=42))])
-skf = StratifiedKFold(n_splits=5, random_state=42)
+skf = StratifiedKFold(n_splits=3, random_state=42)
 
 ###############################################################################
 # Print the cross-validation accuracy score:
