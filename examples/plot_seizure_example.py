@@ -42,6 +42,7 @@ import os
 import numpy as np
 import os.path as op
 import pandas as pd
+from tempfile import mkdtemp
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold, cross_val_score
@@ -56,7 +57,7 @@ print(__doc__)
 # Let us download the iEEG data from the Bonn dataset:
 
 # Download the data to ``./bonn_data``:
-data_path = op.join(op.dirname(__file__), 'bonn_data')
+data_path = mkdtemp()
 paths = download_bonn_ieeg(data_path)
 
 # Read the data from ``.txt`` files. Only the iEEG epochs in
@@ -76,7 +77,6 @@ for path in paths:
         labels.append(np.zeros((len(fnames),)))
 data = np.concatenate(data_segments)
 y = np.concatenate(labels, axis=0)
-os.removedirs(data_path)
 
 # Shape of extracted data:
 print(data.shape)

@@ -6,8 +6,11 @@
 import numpy as np
 from numpy.testing import assert_almost_equal, assert_equal
 from scipy import signal
+from tempfile import mkdtemp
+import os.path as op
 
-from mne_features.utils import triu_idx, power_spectrum, embed, filt
+from mne_features.utils import (triu_idx, power_spectrum, embed, filt,
+                                download_bonn_ieeg)
 
 rng = np.random.RandomState(42)
 sfreq = 256.
@@ -60,6 +63,12 @@ def test_filt():
     assert_equal(filt_bandpass.shape, data.shape)
 
 
+def test_download_bonn_data():
+    tmpdir = mkdtemp()
+    paths = download_bonn_ieeg(tmpdir)
+    assert_equal([len(paths)], [3])
+
+
 if __name__ == '__main__':
 
     test_power_spectrum()
@@ -67,3 +76,4 @@ if __name__ == '__main__':
     test_triu_idx()
     test_embed()
     test_filt()
+    test_download_bonn_data()

@@ -205,7 +205,7 @@ def _get_feature_funcs(sfreq, module_name):
     return feature_funcs
 
 
-def download_bonn_ieeg(path, timeout=100.):
+def download_bonn_ieeg(path, timeout=100., verbose=False):
     """ Download Bonn iEEG sets.
 
     Utility function to download Epileptologie Bonn iEEG sets (C, D, E).
@@ -219,6 +219,10 @@ def download_bonn_ieeg(path, timeout=100.):
 
     timeout : float (default: 100.)
         The URL open timeout.
+
+    verbose : bool (default: False)
+        Verbosity parameter. If True, the function prints the download status
+        of the files.
 
     Notes
     -----
@@ -237,6 +241,6 @@ def download_bonn_ieeg(path, timeout=100.):
     for set_name, url_suffix in urls:
         _path = download(op.join(base_url, url_suffix),
                          op.join(path, set_name), kind='zip', replace=False,
-                         timeout=timeout, verbose=True)
+                         timeout=timeout, verbose=verbose)
         paths.append(_path)
     return paths

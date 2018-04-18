@@ -21,7 +21,7 @@ install:
       fi
     - conda install --yes --quiet nose coverage
     - pip install flake8 check-manifest
-    - pip install mne PyWavelets coverage coveralls
+    - pip install mne PyWavelets download coverage coveralls
     - python setup.py develop --no-deps
 script:
     - make
