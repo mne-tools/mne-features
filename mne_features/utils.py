@@ -4,13 +4,15 @@
 
 """Utility functions."""
 
+import os.path as op
+import sys
+from functools import partial
+from inspect import getmembers, isfunction, getargs
 from math import floor
 from warnings import warn
-import sys
-from inspect import getmembers, isfunction, getargs
-from functools import partial
 
 import numpy as np
+from download import download
 from mne.filter import filter_data
 
 from .mock_numba import nb
@@ -201,3 +203,40 @@ def _get_feature_funcs(sfreq, module_name):
             else:
                 feature_funcs[alias] = func
     return feature_funcs
+
+
+def download_bonn_ieeg(path, timeout=100.):
+    """ Download Bonn iEEG sets.
+
+    Utility function to download Epileptologie Bonn iEEG sets (C, D, E).
+
+    Parameters
+    ----------
+    path : str
+        Path to a folder in which the data will be downloaded. In ``path``,
+        the function will create a different folder for each set, namely
+        ``path/setC``, ``path/setD``, ``path/setE``.
+
+    timeout : float (default: 100.)
+        The URL open timeout.
+
+    Notes
+    -----
+    If the function raises a ``RuntimeError`` (``Error: timed out``), you
+    might want to try again with a larger value for the ``timeout`` parameter.
+
+
+    Returns
+    -------
+    paths : list of str
+        List of paths to folders in which the data was extracted.
+    """
+    base_url = 'http://epileptologie-bonn.de/cms/upload/workgroup/lehnertz/'
+    urls = [('setC', 'N.zip'), ('setD', 'F.zip'), ('setE', 'S.zip')]
+    paths = list()
+    for set_name, url_suffix in urls:
+        _path = download(op.join(base_url, url_suffix),
+                         op.join(path, set_name), kind='zip', replace=False,
+                         timeout=timeout, verbose=True)
+        paths.append(_path)
+    return paths
