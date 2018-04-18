@@ -59,5 +59,6 @@ if __name__ == "__main__":
           platforms='any',
           packages=package_tree('mne_features'),
           install_requires=['numpy', 'scipy', 'numba', 'scikit-learn', 'mne',
-                            'PyWavelets', 'pandas', 'download']
+                            'PyWavelets', 'pandas'],
+          dependency_links=['https://github.com/choldgraf/download/master']
           )
