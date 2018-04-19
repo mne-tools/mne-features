@@ -188,7 +188,7 @@ Print the accuracy score on a test dataset.
     Accuracy score = 0.966
 
 
-**Total running time of the script:** ( 0 minutes  1.274 seconds)
+**Total running time of the script:** ( 0 minutes  1.377 seconds)
 
 
 

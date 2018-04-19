@@ -53,6 +53,26 @@ Examples Gallery
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="The example is aimed at showing how MNE-Features can be used to design an efficient seizure det...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_seizure_example_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_seizure_example.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_seizure_example
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="The example shows how :class:`~sklearn.model_selection.GridSearchCV` can be used for parameter ...">
 
 .. only:: html
