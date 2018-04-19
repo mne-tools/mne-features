@@ -22,7 +22,7 @@ install:
     - conda install --yes --quiet nose coverage
     - pip install flake8 check-manifest
     - pip install mne PyWavelets coverage coveralls
-    - pip install "git+https://github.com/choldgraf/download"
+    - pip install "git+https://github.com/choldgraf/download" tqdm
     - python setup.py develop --no-deps
 script:
     - make
