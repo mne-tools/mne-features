@@ -9,6 +9,7 @@ from scipy import signal
 
 from mne_features.utils import triu_idx, power_spectrum, embed, filt
 
+
 rng = np.random.RandomState(42)
 sfreq = 256.
 data = rng.standard_normal((20, int(sfreq)))

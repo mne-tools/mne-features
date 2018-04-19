@@ -4,11 +4,11 @@
 
 """Utility functions."""
 
+import sys
+from functools import partial
+from inspect import getmembers, isfunction, getargs
 from math import floor
 from warnings import warn
-import sys
-from inspect import getmembers, isfunction, getargs
-from functools import partial
 
 import numpy as np
 from mne.filter import filter_data
