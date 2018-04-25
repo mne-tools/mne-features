@@ -934,18 +934,21 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
         the maximum useful decomposition level (given the number of time points
         in the data and chosen wavelet ; see `pywt.dwt_max_level`).
 
-     Notes
-     -----
-     Alias of the feature function: **wavelet_coef_energy**
-     """
-     n_channels, n_times = data.shape
-     wavelet_energy_list = list()
-     for j in range(n_channels):
-         coefs, levdec = _wavelet_coefs(data[j, :], wavelet_name)
-          for l in range(levdec):
+    Notes
+    -----
+    Alias of the feature function: **wavelet_coef_energy**
+    """
+    n_channels, n_times = data.shape
+    wavelet_energy_dict = dict()
+    for j in range(n_channels):
+        coefs, levdec = _wavelet_coefs(data[j, :], wavelet_name)
+        wavelet_energy_list = list()
+        for l in range(levdec):
             wavelet_energy = np.sum(coefs[levdec - l] ** 2)
             wavelet_energy_list.append(wavelet_energy)
-    return wavelet_energy_list
+        name = 'Channel_' + str(j)
+        wavelet_energy_dict[name] = wavelet_energy_list
+    return wavelet_energy_dict
 
 
 @nb.jit([nb.float64[:, :](nb.float64[:, :])], nopython=True)
@@ -954,19 +957,25 @@ def compute_teager_kaiser_energy(data):
 
     Parameters
     ----------
-    data : ndarray, shape (n_channels, n_times)
+    data : dict, nb_keys = n_channels, len(val) = levdec
 
     Returns
     -------
-    ndarray, shape (n_channels, n_times-2)
+    ndarray, shape (n_channels, levdec-2)
 
     Notes
     -----
     Alias of the feature function: **teager_kaiser_energy**
+
     """
-    n_channels, n_times = data.shape
-    tke = np.zeros((n_channels, n_times - 2))
-    for i in range(n_channels):
-        for j in range(1, n_times - 1):
-            tke[i, j - 1] = data[i, j]**2 - data[i, j - 1] * data[i, j + 1]
-    return tke
+    keys = list(data.keys())
+    n_channels, n_times = len(data), len(data[keys[0]])
+    if n_times > 2:
+        tke = np.zeros((n_channels, n_times - 2))
+        for i, key in enumerate(keys):
+            for j in range(1, n_times - 1):
+                tke[i, j - 1] = (data[key][j]**2 - data[key][j - 1]
+                                 * data[key][j + 1])
+        return tke
+    else:
+        raise ValueError('Not enough values to compute Teager-Kaiser energy.')
