@@ -11,6 +11,7 @@ from inspect import getmembers, isfunction, getargs
 from functools import partial
 
 import numpy as np
+import pywt
 from mne.filter import filter_data
 
 from .mock_numba import nb
@@ -201,3 +202,28 @@ def _get_feature_funcs(sfreq, module_name):
             else:
                 feature_funcs[alias] = func
     return feature_funcs
+
+
+def _wavelet_coefs(data, wavelet_name='db4'):
+    """Compute Discrete Wavelet Transform coefficients.
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    wavelet_name : str (default: db4)
+         Wavelet name (to be used with ``pywt.Wavelet``). The full list of
+         Wavelet names are given by: ``[name for family in pywt.families() for
+         name in pywt.wavelist(family)]``.
+
+    Returns
+    -------
+    coefs : list of ndarray
+         Coefficients of a DWT (Discrete Wavelet Transform). ``coefs[0]`` is
+         the array of approximation coefficient and ``coefs[1:]`` is the list
+         of detail coefficients.
+    """
+    wavelet = pywt.Wavelet(wavelet_name)
+    levdec = min(pywt.dwt_max_level(data.shape[-1], wavelet.dec_len), 6)
+    coefs = pywt.wavedec(data, wavelet=wavelet, level=levdec)
+    return coefs

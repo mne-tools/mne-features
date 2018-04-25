@@ -339,4 +339,4 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
         w = np.sort(w)
         return np.r_[coefs, w]
     else:
-return coefs
+        return coefs
