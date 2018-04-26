@@ -144,7 +144,6 @@ def compute_phase_lock_val(data, include_diag=False):
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
-
     include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs

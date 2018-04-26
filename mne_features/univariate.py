@@ -7,13 +7,13 @@
 from math import sqrt, log, floor
 
 import numpy as np
-import pywt
 from scipy import stats, signal
 from scipy.ndimage import convolve1d
 from sklearn.neighbors import KDTree
 
 from .mock_numba import nb
-from .utils import power_spectrum, embed, filt, _get_feature_funcs
+from .utils import (power_spectrum, embed, filt, _get_feature_funcs,
+                    _wavelet_coefs)
 
 
 def get_univariate_funcs(sfreq):
@@ -900,27 +900,86 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
     data : ndarray, shape (n_channels, n_times)
 
     wavelet_name : str (default: db4)
-        Wavelet name (to be used with `pywt.Wavelet`). The full list of Wavelet
-        names are given by: `[name for family in pywt.families() for name in
-        pywt.wavelist(family)]`.
+        Wavelet name (to be used with ``pywt.Wavelet``). The full list of
+        Wavelet names are given by: ``[name for family in pywt.families() for
+        name in pywt.wavelist(family)]``.
 
     Returns
     -------
     output : ndarray, shape (n_channels * levdec,)
-        The decomposition level (`levdec`) used for the DWT is either 6 or
+        The decomposition level (``levdec``) used for the DWT is either 6 or
         the maximum useful decomposition level (given the number of time points
-        in the data and chosen wavelet ; see `pywt.dwt_max_level`).
+        in the data and chosen wavelet ; see ``pywt.dwt_max_level``).
 
     Notes
     -----
     Alias of the feature function: **wavelet_coef_energy**
     """
     n_channels, n_times = data.shape
-    wavelet = pywt.Wavelet(wavelet_name)
-    levdec = min(pywt.dwt_max_level(n_times, wavelet.dec_len), 6)
+    coefs = _wavelet_coefs(data, wavelet_name)
+    levdec = len(coefs) - 1
     wavelet_energy = np.zeros((n_channels, levdec))
     for j in range(n_channels):
-        coefs = pywt.wavedec(data[j, :], wavelet, level=levdec)
         for l in range(levdec):
-            wavelet_energy[j, l] = np.sum(coefs[levdec - l] ** 2)
+            wavelet_energy[j, l] = np.sum(coefs[levdec - l][j, :] ** 2)
     return wavelet_energy.ravel()
+
+
+@nb.jit([nb.float64[:, :](nb.float64[:, :]),
+         nb.float32[:, :](nb.float32[:, :])], nopython=True)
+def _tk_energy(data):
+    """Teager-Kaiser Energy.
+
+    Utility function for :func:`compute_taeger_kaiser_energy`.
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels, n_times - 2)
+    """
+    n_channels, n_times = data.shape
+    tke = np.empty((n_channels, n_times - 2), dtype=data.dtype)
+    for j in range(n_channels):
+        for i in range(1, n_times - 1):
+            tke[j, i - 1] = data[j, i] ** 2 - data[j, i - 1] * data[j, i + 1]
+    return tke
+
+
+def compute_teager_kaiser_energy(data, wavelet_name='db4'):
+    """Compute the Teager-Kaiser energy ([Bada17]_).
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    wavelet_name : str (default: 'db4')
+        Wavelet name (to be used with ``pywt.Wavelet``). The full list of
+        Wavelet names are given by: ``[name for family in pywt.families() for
+        name in pywt.wavelist(family)]``.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels * (levdec + 1) * 2,)
+
+    Notes
+    -----
+    Alias of the feature function: **teager_kaiser_energy**
+
+    References
+    ----------
+    .. [Bada17] Badani, S. et al. (2017). Detection of epilepsy based on
+                discrete wavelet transform and Teager-Kaiser energy operator.
+                In Calcutta Conference (CALCON). 2017 IEEE (pp. 164-167).
+    """
+    n_channels, n_times = data.shape
+    coefs = _wavelet_coefs(data, wavelet_name)
+    levdec = len(coefs) - 1
+    tke = np.empty((n_channels, levdec + 1, 2))
+    for l in range(levdec + 1):
+        tk_energy = _tk_energy(coefs[l])
+        tke[:, l, 0] = np.mean(tk_energy, axis=-1)
+        tke[:, l, 1] = np.std(tk_energy, ddof=1, axis=-1)
+    return tke.ravel()

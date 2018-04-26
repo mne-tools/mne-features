@@ -59,6 +59,7 @@ Functions
    compute_energy_freq_bands
    compute_spect_edge_freq
    compute_wavelet_coef_energy
+   compute_teager_kaiser_energy
 
 Bivariate features
 ==================
