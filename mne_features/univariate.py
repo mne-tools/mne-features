@@ -953,7 +953,7 @@ def compute_teager_kaiser_energy(data, wavelet_name='db4'):
 
     Parameters
     ----------
-    data : ndarray (n_channels, n_times)
+    data : ndarray, shape (n_channels, n_times)
 
     wavelet_name : str (default: 'db4')
         Wavelet name (to be used with ``pywt.Wavelet``). The full list of
@@ -966,13 +966,13 @@ def compute_teager_kaiser_energy(data, wavelet_name='db4'):
 
     Notes
     -----
-    Alias of the feature function: **tk_energy**
+    Alias of the feature function: **teager_kaiser_energy**
 
     References
     ----------
     .. [Bada17] Badani, S. et al. (2017). Detection of epilepsy based on
-    discrete wavelet transform and Teager-Kaiser energy operator. In Calcutta
-    Conference (CALCON). 2017 IEEE (pp. 164-167)
+                discrete wavelet transform and Teager-Kaiser energy operator.
+                In Calcutta Conference (CALCON). 2017 IEEE (pp. 164-167).
     """
     n_channels, n_times = data.shape
     coefs = _wavelet_coefs(data, wavelet_name)
