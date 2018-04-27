@@ -648,6 +648,29 @@ def compute_katz_fd(data):
     return katz
 
 
+@nb.jit([nb.float64[:](nb.float64[:, :]), nb.float32[:](nb.float32[:, :])],
+        nopython=True)
+def _zero_crossings(data):
+    """Utility function for :func:`compute_zero_crossings`.
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+    """
+    n_channels, n_times = data.shape
+    zc = np.zeros((n_channels,), dtype=data.dtype)
+    for j in range(n_channels):
+        for i in range(n_times - 1):
+            if data[j, i] == 0 or data[j, i] * data[j, i + 1] < 0:
+                zc[j] += 1
+        zc[j] += int(data[j, n_times - 1] == 0)
+    return zc
+
+
 def compute_zero_crossings(data):
     """Number of zero crossings (per channel).
 
@@ -663,7 +686,7 @@ def compute_zero_crossings(data):
     -----
     Alias of the feature function: **zero_crossings**
     """
-    return np.sum(np.diff(np.sign(data), axis=-1) != 0, axis=-1)
+    return _zero_crossings(data)
 
 
 def compute_line_length(data):
@@ -689,7 +712,7 @@ def compute_line_length(data):
                  International Conference of the IEEE (Vol. 2, pp. 1707-1710).
                  IEEE.
     """
-    return np.sum(np.abs(np.diff(data, axis=-1)), axis=-1)
+    return np.mean(np.abs(np.diff(data, axis=-1)), axis=-1)
 
 
 def compute_spect_entropy(sfreq, data):
