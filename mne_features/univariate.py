@@ -4,10 +4,10 @@
 
 """Univariate feature functions."""
 
-from math import sqrt, log, floor
+from math import sqrt, log, floor, gamma
 
 import numpy as np
-from scipy import stats, signal
+from scipy import stats
 from scipy.ndimage import convolve1d
 from sklearn.neighbors import KDTree
 
@@ -31,24 +31,30 @@ def get_univariate_funcs(sfreq):
     return _get_feature_funcs(sfreq, __name__)
 
 
-def _unbiased_autocorr(x):
-    """Unbiased autocorrelation.
+def _unbiased_autocorr(x, lags=50):
+    """Unbiased autocorrelation function.
+    
+    The autocorrelation function is computed using the FFT of the signal.
 
     Parameters
     ----------
     x : ndarray, shape (n_times,)
+    
+    lags : int (default: 50)
+        Number of lags for the autocorrelation function.
 
     Returns
     -------
-    ndarray, shape (2 * n_times + 1,)
+    ndarray, shape (n_lags,)
     """
-    m = x.shape[0] - 1
-    lags = np.arange(-m, m + 1)
-    s = np.add(m, - np.abs(lags))
-    s[np.where(s <= 0)] = 1
-    autocorr = signal.fftconvolve(x, x[::-1], mode='full')
-    autocorr /= s
-    return autocorr
+    n_times = x.shape[0]
+    xm = x - np.mean(x)
+    dnorm = np.r_[np.arange(1, n_times + 1), np.arange(n_times - 1, 0, -1)]
+    fft = np.fft.fft(xm, n=n_times)
+    acf = np.fft.ifft(fft * np.conjugate(fft))[:n_times]
+    acf /= dnorm[n_times - 1:]
+    acf = acf.real
+    return acf[:(lags + 1)] / acf[0]
 
 
 @nb.jit([nb.float64(nb.float64[:], nb.float64[:]),
@@ -98,6 +104,32 @@ def _accumulate_std(x):
             s += (x[k] - m) ** 2
         s /= j
         r[j] = sqrt(s)
+    return r
+
+
+@nb.jit([nb.float64[:](nb.float64[:]), nb.float32[:](nb.float32[:])],
+        nopython=True)
+def _accumulate_max(x):
+    r = np.zeros((x.shape[0],), dtype=x.dtype)
+    for j in range(x.shape[0]):
+        m = -np.inf
+        for k in range(j + 1):
+            if x[k] >= m:
+                m = x[k]
+        r[j] = m
+    return r
+
+
+@nb.jit([nb.float64[:](nb.float64[:]), nb.float32[:](nb.float32[:])],
+        nopython=True)
+def _accumulate_min(x):
+    r = np.zeros((x.shape[0],), dtype=x.dtype)
+    for j in range(x.shape[0]):
+        m = np.inf
+        for k in range(j + 1):
+            if x[k] <= m:
+                m = x[k]
+        r[j] = m
     return r
 
 
@@ -211,8 +243,84 @@ def compute_kurtosis(data):
     return stats.kurtosis(data, axis=ndim - 1, fisher=False)
 
 
+@nb.jit([nb.float64[:, :](nb.float64[:, :]),
+         nb.float32[:, :](nb.float32[:, :])], nopython=True)
+def _hurst_exp_compute_rs(x):
+    """Utility function for :func:`compute_hurst_exp`.
+    
+    Parameters
+    ----------
+    x : ndarray, shape (n_seqs, n_times)
+    
+    Returns
+    -------
+    output : ndarray, shape (n_seqs, n_times - 1)
+    """
+    n_seqs, n_times = x.shape
+    rs = np.zeros((n_seqs, n_times - 1), dtype=x.dtype)
+    for j in range(n_seqs):
+        m = 0
+        for k in range(n_times):
+            m += x[j, k]
+        m /= n_times
+        y = np.empty((n_times,))
+        for k in range(n_times):
+            y[k] = x[j, k] - m
+        z = np.empty((n_times,))
+        z[0] = y[0]
+        for k in range(1, n_times):
+            z[k] = z[k - 1] + y[k]
+        r = _accumulate_max(z) - _accumulate_min(z)
+        s = _accumulate_std(x[j, :])
+        for k in range(1, n_times):
+            if s[k] == 0:
+                rs[j, k - 1] = np.nan
+            else:
+                rs[j, k - 1] = r[k] / s[k]
+    return rs
+
+
+def _hurst_exp_helper(x, n_splits=20):
+    """Helper function for :func:`compute_hurst_exp`.
+    
+    Compute the Hurst exponent from a univariate time series. The Hurst 
+    exponent is defined as the slope of the least-squares regression line 
+    going through a cloud of `n_splits` points. Each point is obtained by 
+    considering sub-series of `x` of `n_splits` different lenghts.  
+    
+    Parameters
+    ----------
+    x : ndarray, shape (n_times,)
+    
+    Returns
+    -------
+    output : ndarray, shape (n_splits,)
+    """
+    n_times = x.shape[0]
+    _splits = np.floor(np.logspace(start=4, stop=np.log2(n_times / 2),
+                                   num=n_splits, base=2.))
+    splits = np.unique(_splits).astype(int)
+    reg = np.zeros((splits.size,))
+    for j, n in enumerate(splits):
+        a = x.copy()
+        d = int(floor(n_times / n))
+        a = np.lib.stride_tricks.as_strided(a, shape=(d, n),
+                                            strides=(n * a.strides[-1],
+                                                     a.strides[-1]))
+        _rs = _hurst_exp_compute_rs(a)
+        _rs = _rs[~np.isnan(_rs)]
+        reg[j] = np.log(np.mean(_rs))
+        s = sum([sqrt((n - i) / i) for i in range(1, n)]) * ((n - 0.5) / n)
+        if n <= 340:
+            corr = (gamma((n - 1) / 2.) / (sqrt(np.pi) * gamma(n / 2.))) * s
+        else:
+            corr = ((n - 0.5) / n) * (1. / sqrt(np.pi * n / 2.)) * s
+        reg[j] -= (np.log(corr) - np.log(n) / 2)
+    return _slope_lstsq(np.log(splits), reg)
+
+
 def compute_hurst_exp(data):
-    """Hurst exponent of the data (per channel) ([Deva14]_, [HursWiki]_).
+    """Hurst exponent of the data (per channel) ([Rash04]_, [Deva14]_).
 
     Parameters
     ----------
@@ -228,28 +336,23 @@ def compute_hurst_exp(data):
 
     References
     ----------
+    .. [Rash04] Rasheed, B. Q. K. et al. (2004). Hurst exponent and financial
+                market predictability. In IASTED conference on Financial
+                Engineering and Applications (FEA 2004) (pp. 203-209).
+
     .. [Deva14] Devarajan, K. et al. (2014). EEG-Based Epilepsy Detection and
                 Prediction. International Journal of Engineering and
                 Technology, 6(3), 212.
-
-    .. [HursWiki] https://en.wikipedia.org/wiki/Hurst_exponent
     """
-    n_channels = data.shape[0]
-    hurst_exponent = np.empty((n_channels,))
+    n_channels, n_times = data.shape
+    hurst = np.empty((n_channels,))
     for j in range(n_channels):
-        m = np.mean(data[j, :])
-        y = data[j, :] - m
-        z = np.cumsum(y)
-        r = (np.maximum.accumulate(z) - np.minimum.accumulate(z))[1:]
-        s = _accumulate_std(data[j, :])[1:]
-        s[np.where(s == 0)] = 1e-12  # avoid dividing by 0
-        y_reg = np.log(r / s)
-        x_reg = np.log(np.arange(1, y_reg.shape[0] + 1))
-        hurst_exponent[j] = _slope_lstsq(x_reg, y_reg)
-    return hurst_exponent.ravel()
+        hurst[j] = _hurst_exp_helper(data[j, :])
+    return hurst
 
 
-def _app_samp_entropy_helper(data, emb, metric='chebyshev'):
+def _app_samp_entropy_helper(data, emb, metric='chebyshev',
+                             approximate=True):
     """Utility function for `compute_app_entropy`` and `compute_samp_entropy`.
 
     Parameters
@@ -262,6 +365,11 @@ def _app_samp_entropy_helper(data, emb, metric='chebyshev'):
     metric : str (default: chebyshev)
         Name of the metric function used with KDTree. The list of available
         metric functions is given by: ``KDTree.valid_metrics``.
+        
+    approximate : bool (default: True)
+        If True, the returned values will be used to compute the 
+        Approximate Entropy (AppEn). Otherwise, the values are used to compute 
+        the Sample Entropy (SampEn). 
 
     Returns
     -------
@@ -276,20 +384,28 @@ def _app_samp_entropy_helper(data, emb, metric='chebyshev'):
     for j in range(n_channels):
         r = 0.2 * np.std(data[j, :], axis=-1, ddof=1)
         # compute phi(emb, r)
-        emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
-        count = KDTree(emb_data1, metric=metric).query_radius(
+        _emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
+        if approximate:
+            emb_data1 = _emb_data1
+        else:
+            emb_data1 = _emb_data1[:-1, :]
+        count1 = KDTree(emb_data1, metric=metric).query_radius(
             emb_data1, r, count_only=True).astype(np.float64)
-        phi[j, 0] = np.mean(np.log(count / emb_data1.shape[0]))
         # compute phi(emb + 1, r)
         emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
-        count = KDTree(emb_data2, metric=metric).query_radius(
+        count2 = KDTree(emb_data2, metric=metric).query_radius(
             emb_data2, r, count_only=True).astype(np.float64)
-        phi[j, 1] = np.mean(np.log(count / emb_data2.shape[0]))
+        if approximate:
+            phi[j, 0] = np.mean(np.log(count1 / emb_data1.shape[0]))
+            phi[j, 1] = np.mean(np.log(count2 / emb_data2.shape[0]))
+        else:
+            phi[j, 0] = np.mean((count1 - 1) / (emb_data1.shape[0] - 1))
+            phi[j, 1] = np.mean((count2 - 1) / (emb_data2.shape[0] - 1))
     return phi
 
 
 def compute_app_entropy(data, emb=2, metric='chebyshev'):
-    """Approximate Entropy (AppEn, per channel) ([Boro15]_).
+    """Approximate Entropy (AppEn, per channel) ([Rich00]_).
 
     Parameters
     ----------
@@ -313,16 +429,18 @@ def compute_app_entropy(data, emb=2, metric='chebyshev'):
 
     References
     ----------
-    .. [Boro15] Borowska, M. (2015). Entropy-based algorithms in the analysis
-                of biomedical signals. Studies in Logic, Grammar and Rhetoric,
-                43(1), 21-32.
+    .. [Rich00] Richman, J. S. et al. (2000). Physiological time-series 
+                analysis using approximate entropy and sample entropy. 
+                American Journal of Physiology-Heart and Circulatory 
+                Physiology, 278(6), H2039-H2049.
     """
-    phi = _app_samp_entropy_helper(data, emb=emb, metric=metric)
+    phi = _app_samp_entropy_helper(data, emb=emb, metric=metric,
+                                   approximate=True)
     return np.subtract(phi[:, 0], phi[:, 1])
 
 
 def compute_samp_entropy(data, emb=2, metric='chebyshev'):
-    """Sample Entropy (SampEn, per channel) ([Boro15]_).
+    """Sample Entropy (SampEn, per channel) ([Rich00]_).
 
     Parameters
     ----------
@@ -343,8 +461,12 @@ def compute_samp_entropy(data, emb=2, metric='chebyshev'):
     -----
     Alias of the feature function: **samp_entropy**
     """
-    phi = _app_samp_entropy_helper(data, emb=emb, metric=metric)
-    return np.log(np.divide(phi[:, 0], phi[:, 1]))
+    phi = _app_samp_entropy_helper(data, emb=emb, metric=metric,
+                                   approximate=False)
+    if np.allclose(phi[:, 0], 0) or np.allclose(phi[:, 1], 0):
+        raise ValueError('Sample Entropy is not defined.')
+    else:
+        return -np.log(np.divide(phi[:, 1], phi[:, 0]))
 
 
 def compute_decorr_time(sfreq, data):
@@ -374,10 +496,10 @@ def compute_decorr_time(sfreq, data):
     n_channels, n_times = data.shape
     decorrelation_times = np.empty((n_channels,))
     for j in range(n_channels):
-        ac_channel = _unbiased_autocorr(data[j, :])
-        zero_cross = ac_channel[(n_times - 1):] <= 0
-        if np.any(zero_cross):
-            decorr_time = np.argmax(zero_cross)
+        _acf = _unbiased_autocorr(data[j, :])
+        zc = np.diff(np.sign(_acf)) != 0
+        if np.any(zc):
+            decorr_time = np.argmax(zc) + 1
             decorr_time /= sfreq
         else:
             decorr_time = -1
