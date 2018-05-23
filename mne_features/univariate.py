@@ -33,13 +33,13 @@ def get_univariate_funcs(sfreq):
 
 def _unbiased_autocorr(x, lags=50):
     """Unbiased autocorrelation function.
-    
+
     The autocorrelation function is computed using the FFT of the signal.
 
     Parameters
     ----------
     x : ndarray, shape (n_times,)
-    
+
     lags : int (default: 50)
         Number of lags for the autocorrelation function.
 
@@ -247,11 +247,11 @@ def compute_kurtosis(data):
          nb.float32[:, :](nb.float32[:, :])], nopython=True)
 def _hurst_exp_compute_rs(x):
     """Utility function for :func:`compute_hurst_exp`.
-    
+
     Parameters
     ----------
     x : ndarray, shape (n_seqs, n_times)
-    
+
     Returns
     -------
     output : ndarray, shape (n_seqs, n_times - 1)
@@ -282,16 +282,16 @@ def _hurst_exp_compute_rs(x):
 
 def _hurst_exp_helper(x, n_splits=20):
     """Helper function for :func:`compute_hurst_exp`.
-    
-    Compute the Hurst exponent from a univariate time series. The Hurst 
-    exponent is defined as the slope of the least-squares regression line 
-    going through a cloud of `n_splits` points. Each point is obtained by 
-    considering sub-series of `x` of `n_splits` different lenghts.  
-    
+
+    Compute the Hurst exponent from a univariate time series. The Hurst
+    exponent is defined as the slope of the least-squares regression line
+    going through a cloud of `n_splits` points. Each point is obtained by
+    considering sub-series of `x` of `n_splits` different lenghts.
+
     Parameters
     ----------
     x : ndarray, shape (n_times,)
-    
+
     Returns
     -------
     output : ndarray, shape (n_splits,)
@@ -365,11 +365,11 @@ def _app_samp_entropy_helper(data, emb, metric='chebyshev',
     metric : str (default: chebyshev)
         Name of the metric function used with KDTree. The list of available
         metric functions is given by: ``KDTree.valid_metrics``.
-        
+
     approximate : bool (default: True)
-        If True, the returned values will be used to compute the 
-        Approximate Entropy (AppEn). Otherwise, the values are used to compute 
-        the Sample Entropy (SampEn). 
+        If True, the returned values will be used to compute the
+        Approximate Entropy (AppEn). Otherwise, the values are used to compute
+        the Sample Entropy (SampEn).
 
     Returns
     -------
@@ -429,9 +429,9 @@ def compute_app_entropy(data, emb=2, metric='chebyshev'):
 
     References
     ----------
-    .. [Rich00] Richman, J. S. et al. (2000). Physiological time-series 
-                analysis using approximate entropy and sample entropy. 
-                American Journal of Physiology-Heart and Circulatory 
+    .. [Rich00] Richman, J. S. et al. (2000). Physiological time-series
+                analysis using approximate entropy and sample entropy.
+                American Journal of Physiology-Heart and Circulatory
                 Physiology, 278(6), H2039-H2049.
     """
     phi = _app_samp_entropy_helper(data, emb=emb, metric=metric,

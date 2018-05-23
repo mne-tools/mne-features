@@ -3,8 +3,9 @@
 # License: BSD 3 clause
 
 
+from math import sqrt, log, cos
+
 import numpy as np
-from math import sqrt, log
 from numpy.testing import assert_equal, assert_almost_equal, assert_raises
 
 from mne_features.univariate import (_slope_lstsq, _accumulate_std,
@@ -35,6 +36,9 @@ sfreq = 512.
 data1 = np.array([[0., 0., 2., -2., 0., -1., -1., 0.],
                   [1., 1., -1., -1., 0., 1., 1., 0.]])
 data2 = rng.standard_normal((20, int(sfreq)))
+_tp = 2 * np.pi * np.arange(int(sfreq)) / sfreq
+_data_sin = 0.1 * np.sin(5 * _tp) + 0.05 * np.sin(33 * _tp)
+data_sin = _data_sin[None, :]
 data = rng.standard_normal((10, 20, int(sfreq)))
 n_epochs, n_channels = data.shape[:2]
 
@@ -107,18 +111,18 @@ def test_zero_crossings():
 
 def test_hurst_exp():
     """Test for :func:`compute_hurst_exp`.
-    
-    According to [Felle51]_ and [Anis76]_, the Hurst exponent for white noise 
+
+    According to [Felle51]_ and [Anis76]_, the Hurst exponent for white noise
     is asymptotically equal to 0.5.
-    
+
     References
     ----------
-    .. [Felle51] Feller, W. (1951). The asymptotic distribution of the range 
-                 of sums of independent random variables. The Annals of 
+    .. [Felle51] Feller, W. (1951). The asymptotic distribution of the range
+                 of sums of independent random variables. The Annals of
                  Mathematical Statistics, 427-432.
 
-    .. [Anis76] Annis, A. A., & Lloyd, E. H. (1976). The expected value of the 
-                adjusted rescaled Hurst range of independent normal summands. 
+    .. [Anis76] Annis, A. A., & Lloyd, E. H. (1976). The expected value of the
+                adjusted rescaled Hurst range of independent normal summands.
                 Biometrika, 63(1), 111-116.
     """
     expected = 0.5 * np.ones((n_channels,))
@@ -139,14 +143,14 @@ def test_app_entropy():
 
 
 def test_samp_entropy():
-    data3 = np.array([[1, -1, 1, -1, 0, 1, -1, 1]])
+    _data = np.array([[1, -1, 1, -1, 0, 1, -1, 1]])
     expected = np.array([log(3)])
-    assert_almost_equal(compute_samp_entropy(data3), expected)
+    assert_almost_equal(compute_samp_entropy(_data), expected)
     with assert_raises(ValueError):
         # Data for which SampEn is not defined:
         compute_samp_entropy(data1)
         # Wrong `metric` parameter:
-        compute_samp_entropy(data3, metric='sqeuclidean')
+        compute_samp_entropy(_data, metric='sqeuclidean')
 
 
 def test_decorr_time():
@@ -157,33 +161,76 @@ def test_decorr_time():
     assert_equal(np.all(compute_decorr_time(sfreq, data2) > 0), True)
 
 
+def test_pow_freq_bands():
+    expected = np.array([0, 0.005, 0, 0, 0.00125]) / 0.00625
+    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin), expected)
+
+
+def test_hjorth_mobility_spect():
+    expected = 0.005 * (5 ** 2) + 0.00125 * (33 ** 2)
+    assert_almost_equal(compute_hjorth_mobility_spect(sfreq, data_sin),
+                        expected)
+
+
+def test_hjorth_complexity_spect():
+    expected = 0.005 * (5 ** 4) + 0.00125 * (33 ** 4)
+    assert_almost_equal(compute_hjorth_complexity_spect(sfreq, data_sin),
+                        expected)
+
+
+def test_hjorth_mobility():
+    expected = np.array([(6 * sqrt(26)) / (sqrt(7) * sqrt(43)),
+                         (6 * sqrt(8)) / (5 * sqrt(7))])
+    assert_almost_equal(compute_hjorth_mobility(data1), expected)
+
+
+def test_hjorth_complexity():
+    expected = np.array([sqrt(29885) / 156, (5 * sqrt(103)) / 48])
+    compute_hjorth_complexity(data1)
+    assert_almost_equal(compute_hjorth_complexity(data1), expected)
+
+
+def test_higuchi_fd():
+    """Test for :func:`compute_higuchi_fd`.
+
+    According to [Este01a]_, the Weierstrass Cosine Function (WCF) with
+    parameter H (such that 0 < H < 1) can be used to produce a signal whose
+    fractal dimension equals 2 - H.
+
+    References
+    ----------
+    .. [Este01a] Esteller, R. et al. (2001). A comparison of waveform fractal
+                 dimension algorithms. IEEE Transactions on Circuits and
+                 Systems I: Fundamental Theory and Applications, 48(2),
+                 177-183.
+    """
+    t = np.linspace(0, 1, 1024)
+    _wcf = np.empty((1024,))
+    H = 0.5  # WCF parameter
+    for j in range(1024):
+        _wcf[j] = sum([(5 ** (-H * i) * cos(2 * np.pi * (5 ** i) * t[j]))
+                       for i in range(26)])
+    wcf = np.array(_wcf)[None, :]
+    assert_almost_equal(compute_higuchi_fd(wcf), 2 - H, decimal=1)
+
+
+def test_katz_fd():
+    """Test for :func:`compute_katz_fd`.
+
+    As discussed in [Este01a]_, Katz fractal dimension is not as accurate as
+    Higuchi fractal dimension when tested on synthetic data (see
+    :func:`test_higuchi_fd`).
+    """
+    expected = np.array([log(7, 10.) / (log(2. / 10, 10.) + log(7, 10.)),
+                         log(7, 10.) / (log(2. / 5, 10.) + log(7, 10.))])
+    assert_almost_equal(compute_katz_fd(data1), expected)
+
+
 def test_shape_output():
-    for func in (compute_hjorth_complexity,
-                 compute_hjorth_mobility, compute_higuchi_fd, compute_katz_fd,
-                 compute_svd_entropy, compute_svd_fisher_info):
+    for func in (compute_svd_entropy, compute_svd_fisher_info):
         for j in range(n_epochs):
             feat = func(data[j, :, :])
             assert_equal(feat.shape, (n_channels,))
-
-
-def test_shape_output_pow_freq_bands():
-    fb = np.array([0.1, 4, 8, 12, 30])
-    n_freqs = fb.shape[0]
-    for j in range(n_epochs):
-        feat = compute_pow_freq_bands(sfreq, data[j, :, :], freq_bands=fb)
-        assert_equal(feat.shape, (n_channels * (n_freqs - 1),))
-
-
-def test_shape_output_hjorth_mobility_spect():
-    for j in range(n_epochs):
-        feat = compute_hjorth_mobility_spect(sfreq, data[j, :, :])
-        assert_equal(feat.shape, (n_channels,))
-
-
-def test_shape_output_hjorth_complexity_spect():
-    for j in range(n_epochs):
-        feat = compute_hjorth_complexity_spect(sfreq, data[j, :, :])
-        assert_equal(feat.shape, (n_channels,))
 
 
 def test_shape_output_spect_entropy():
@@ -235,12 +282,15 @@ if __name__ == '__main__':
     test_app_entropy()
     test_samp_entropy()
     test_decorr_time()
+    test_pow_freq_bands()
+    test_hjorth_mobility_spect()
+    test_hjorth_complexity_spect()
+    test_hjorth_mobility()
+    test_hjorth_complexity()
+    test_higuchi_fd()
+    test_katz_fd()
     test_shape_output()
-    test_shape_output_pow_freq_bands()
     test_shape_output_spect_entropy()
-    test_shape_output_energy_freq_bands()
     test_shape_output_spect_edge_freq()
     test_shape_output_wavelet_coef_energy()
-    test_app_entropy()
-    test_samp_entropy()
     test_shape_output_teager_kaiser_energy()
