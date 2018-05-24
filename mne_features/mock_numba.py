@@ -1,4 +1,8 @@
-# Function to mock numba and let the code work on any system
+"""Mock Numba and let mne-features work on any system."""
+
+# Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
+#         Alexandre Gramfort <alexandre.gramfort@inria.fr>
+# License: BSD 3 clause
 
 from warnings import warn
 

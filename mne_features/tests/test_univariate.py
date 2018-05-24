@@ -226,32 +226,51 @@ def test_katz_fd():
     assert_almost_equal(compute_katz_fd(data1), expected)
 
 
-def test_shape_output():
-    for func in (compute_svd_entropy, compute_svd_fisher_info):
-        for j in range(n_epochs):
-            feat = func(data[j, :, :])
-            assert_equal(feat.shape, (n_channels,))
+def test_energy_freq_bands():
+    """Test for :func:`compute_energy_freq_bands`.
+
+    For `data_sin` (signal x(t) = 0.1 * sin(5t) + 0.05 * sin(33t), on
+    [0, 2 * pi], at sfreq = 512Hz), the 512-points FFT is everywhere zero,
+    except for the bins corresponding to frequencies +/-5Hz and +/-33Hz.
+    Therefore, all the power/energy of the signal should be in the [1Hz - 40Hz]
+    frequency band. As a result, this test passes if more than 98% of the
+    energy of the signal lies in the [1Hz - 40Hz] band.
+    """
+    band_energy = compute_energy_freq_bands(sfreq, data_sin,
+                                            freq_bands=np.array([1., 40.]),
+                                            deriv_filt=False)
+    tot_energy = np.sum(data_sin ** 2, axis=-1)
+    assert_equal(band_energy > 0.98 * tot_energy, True)
 
 
-def test_shape_output_spect_entropy():
-    for j in range(n_epochs):
-        feat = compute_spect_entropy(sfreq, data[j, :, :])
-        assert_equal(feat.shape, (n_channels,))
+def test_spect_entropy():
+    expected = -(0.005 / 0.00625) * log(0.005 / 0.00625, 2.) - \
+        (0.00125 / 0.00625) * log(0.00125 / 0.00625, 2.)
+    assert_almost_equal(compute_spect_entropy(sfreq, data_sin), expected)
 
 
-def test_shape_output_energy_freq_bands():
-    fb = np.array([0.1, 4, 8, 12, 30])
-    n_freqs = fb.shape[0]
-    for j in range(n_epochs):
-        feat = compute_energy_freq_bands(sfreq, data[j, :, :], freq_bands=fb)
-        assert_equal(feat.shape, (n_channels * (n_freqs - 1),))
+def test_spect_edge_freq():
+    """Test for :func:`compute_spect_edge_freq`.
+
+    For `data_sin` (signal x(t) = 0.1 * sin(5t) + 0.05 * sin(33t), on
+    [0, 2 * pi], at sfreq = 512Hz), the minimum frequency at which more than
+    50% (resp. 80%) of the spectral power up to ref_freq = 15Hz
+    (resp. ref_freq = 50Hz) is contained in the signal is 5Hz (resp. 33HZ).
+    """
+    expected = 5.
+    assert_almost_equal(compute_spect_edge_freq(sfreq, data_sin, ref_freq=15,
+                                                edge=[50]), expected)
+    expected = 33.
+    assert_almost_equal(compute_spect_edge_freq(sfreq, data_sin, ref_freq=50,
+                                                edge=[80]), expected)
 
 
-def test_shape_output_spect_edge_freq():
-    edge = [50., 80., 85., 95.]
-    for j in range(n_epochs):
-        feat = compute_spect_edge_freq(sfreq, data[j, :, :], edge=edge)
-        assert_equal(feat.shape, (n_channels * 4,))
+def test_svd_entropy():
+    assert_equal(compute_svd_entropy(data2, tau=2, emb=2) > 0, True)
+
+
+def test_svd_fisher_info():
+    assert_equal(compute_svd_fisher_info(data2, tau=2, emb=2) > 0, True)
 
 
 def test_shape_output_wavelet_coef_energy():
@@ -289,8 +308,10 @@ if __name__ == '__main__':
     test_hjorth_complexity()
     test_higuchi_fd()
     test_katz_fd()
-    test_shape_output()
-    test_shape_output_spect_entropy()
-    test_shape_output_spect_edge_freq()
+    test_energy_freq_bands()
+    test_spect_entropy()
+    test_spect_edge_freq()
+    test_svd_entropy()
+    test_svd_fisher_info()
     test_shape_output_wavelet_coef_energy()
     test_shape_output_teager_kaiser_energy()
