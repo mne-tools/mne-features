@@ -509,7 +509,7 @@ def compute_decorr_time(sfreq, data):
 
 def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
                                                              30., 100.]),
-                           normalize=True):
+                           normalize=True, ratios=None):
     """Power Spectrum (computed by frequency bands) ([Teix11]_).
 
     Parameters
@@ -527,6 +527,16 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
     normalize : bool (default: True)
         If True, the average power in each frequency band is normalized by
         the total power.
+
+    ratios : str or None (default: None)
+        If not None, the possible values for the parameter ``ratios`` are:
+        ``all`` or ``only``. If ``all``, the function will return the power
+        (computed in the given frequency bands) as well as the ratios between
+        power in different frequency bands. All the possible pairs of distinct
+        frequency bands are considered (if n_freq_bands are given,
+        n_freq_bands * (n_freq_bands - 1) are computed). If ``only``, the
+        function returns only the ratios of power in bands. If None, no
+        ratio is computed.
 
     Returns
     -------
@@ -547,7 +557,27 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
     if normalize:
         pow_freq_bands = np.divide(pow_freq_bands,
                                    np.sum(ps, axis=-1)[:, None])
-    return pow_freq_bands.ravel()
+    if ratios is None:
+        return pow_freq_bands.ravel()
+    elif ratios not in ['all', 'only']:
+        raise ValueError('The given value (%s) for the parameter `ratios` '
+                         'is not valid. Valid values are: `all` or `only`.'
+                         % str(ratios))
+    elif ratios is None:
+        return pow_freq_bands.ravel()
+    else:
+        n_freq_bands = n_freqs - 1
+        band_ratios = np.empty((n_channels, n_freq_bands * (n_freq_bands - 1)))
+        pos = 0
+        for idx in np.ndindex((n_freq_bands, n_freq_bands)):
+            if idx[0] != idx[1]:
+                band_ratios[:, pos] = np.divide(pow_freq_bands[:, idx[0]],
+                                                pow_freq_bands[:, idx[1]])
+                pos += 1
+        if ratios == 'all':
+            return np.r_[pow_freq_bands.ravel(), band_ratios.ravel()]
+        else:
+            return band_ratios.ravel()
 
 
 def compute_hjorth_mobility_spect(sfreq, data, normalize=False):

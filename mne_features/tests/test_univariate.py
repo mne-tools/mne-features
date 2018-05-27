@@ -164,6 +164,11 @@ def test_decorr_time():
 def test_pow_freq_bands():
     expected = np.array([0, 0.005, 0, 0, 0.00125]) / 0.00625
     assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin), expected)
+    # ratios of power in band:
+    pow_with_ratios = compute_pow_freq_bands(sfreq, data2, ratios='all')
+    assert_equal(pow_with_ratios.shape, (n_channels * 5 + n_channels * 20,))
+    pow_only = compute_pow_freq_bands(sfreq, data2, ratios='only')
+    assert_equal(pow_only.shape, (n_channels * 20,))
 
 
 def test_hjorth_mobility_spect():
