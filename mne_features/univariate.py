@@ -13,7 +13,7 @@ from sklearn.neighbors import KDTree
 
 from .mock_numba import nb
 from .utils import (power_spectrum, embed, filt, _get_feature_funcs,
-                    _wavelet_coefs)
+                    _wavelet_coefs, idxiter)
 
 
 def get_univariate_funcs(sfreq):
@@ -507,6 +507,45 @@ def compute_decorr_time(sfreq, data):
     return decorrelation_times
 
 
+def _freq_bands_helper(sfreq, freq_bands):
+    """Utility function to define frequency bands.
+
+    This utility function is to be used with :func:`compute_pow_freq_bands` and
+    :func:`compute_energy_freq_bands`. It essentially checks if the given
+    parameter ``freq_bands`` is valid and raises an error if not.
+
+    Parameters
+    ----------
+    sfreq : float
+        Sampling rate of the data.
+
+    freq_bands : ndarray, shape (n_freq_bands + 1,) or (n_freq_bands, 2)
+        Array defining frequency bands.
+
+    Returns
+    -------
+    valid_freq_bands : ndarray, shape (n_freq_bands, 2)
+    """
+    if not np.logical_and(freq_bands >= 0, freq_bands <= sfreq / 2).all():
+        raise ValueError('The entries of the given `freq_bands` parameter '
+                         '(%s) must be positive and less than the Nyquist '
+                         'frequency.' % str(freq_bands))
+    else:
+        if freq_bands.ndim == 1:
+            n_freq_bands = freq_bands.shape[0] - 1
+            valid_freq_bands = np.empty((n_freq_bands, 2))
+            for j in range(n_freq_bands):
+                valid_freq_bands[j, :] = freq_bands[j:j + 2]
+        elif freq_bands.ndim == 2 and freq_bands.shape[-1] == 2:
+            valid_freq_bands = freq_bands
+        else:
+            raise ValueError('The given value (%s) for the `freq_bands` '
+                             'parameter is not valid. Only 1D or 2D arrays '
+                             'with shape (n_freq_bands, 2) are accepted.'
+                             % str(freq_bands))
+        return valid_freq_bands
+
+
 def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
                                                              30., 100.]),
                            normalize=True, ratios=None):
@@ -519,10 +558,17 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
 
     data : ndarray, shape (n_channels, n_times)
 
-    freq_bands : ndarray, shape (n_freqs,) (default:
-    np.array([0.5, 4., 8., 13., 30., 100.]))
-        Array defining the frequency bands. The j-th frequency band is defined
-        as: ``[freq_bands[j], freq_bands[j + 1]]`` (0 <= j <= n_freqs - 1).
+    freq_bands : ndarray, shape (n_freq_bands + 1,) or (n_freq_bands, 2)
+        Array defining the frequency bands. If ``freq_bands`` has shape
+        ``(n_freq_bands + 1,)`` the entries of ``freq_bands`` define
+        ``n_freq_bands`` **contiguous** frequency bands as follows: the i-th
+        frequency bands is defined as [freq_bands[i], freq_bands[i + 1]]
+        (0 <= i <= n_freq_bands - 1). If ``freq_bands`` has shape
+        ``(n_freq_bands, 2)``, the rows of ``freq_bands`` define
+        ``n_freq_bands`` **non-contiguous** frequency bands. By default,
+        ``freq_bands`` is: ``np.array([0.5, 4., 8., 13., 30., 100.])``.
+        The entries of ``freq_bands`` should be between 0 and sfreq / 2 (the
+        Nyquist frequency) as the function uses the one-sided PSD.
 
     normalize : bool (default: True)
         If True, the average power in each frequency band is normalized by
@@ -547,13 +593,14 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
     Alias of the feature function: **pow_freq_bands**
     """
     n_channels = data.shape[0]
-    n_freqs = freq_bands.shape[0]
+    fb = _freq_bands_helper(sfreq, freq_bands)
+    n_freq_bands = fb.shape[0]
     ps, freqs = power_spectrum(sfreq, data, return_db=False)
-    idx_freq_bands = np.digitize(freqs, freq_bands)
-    pow_freq_bands = np.empty((n_channels, n_freqs - 1))
-    for j in range(1, n_freqs):
-        ps_band = ps[:, idx_freq_bands == j]
-        pow_freq_bands[:, j - 1] = np.sum(ps_band, axis=-1)
+    pow_freq_bands = np.empty((n_channels, n_freq_bands))
+    for j in range(n_freq_bands):
+        mask = np.logical_and(freqs >= fb[j, 0], freqs <= fb[j, 1])
+        ps_band = ps[:, mask]
+        pow_freq_bands[:, j] = np.sum(ps_band, axis=-1)
     if normalize:
         pow_freq_bands = np.divide(pow_freq_bands,
                                    np.sum(ps, axis=-1)[:, None])
@@ -563,17 +610,10 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
         raise ValueError('The given value (%s) for the parameter `ratios` '
                          'is not valid. Valid values are: `all` or `only`.'
                          % str(ratios))
-    elif ratios is None:
-        return pow_freq_bands.ravel()
     else:
-        n_freq_bands = n_freqs - 1
         band_ratios = np.empty((n_channels, n_freq_bands * (n_freq_bands - 1)))
-        pos = 0
-        for idx in np.ndindex((n_freq_bands, n_freq_bands)):
-            if idx[0] != idx[1]:
-                band_ratios[:, pos] = np.divide(pow_freq_bands[:, idx[0]],
-                                                pow_freq_bands[:, idx[1]])
-                pos += 1
+        for pos, i, j in idxiter(n_freq_bands, triu=False):
+            band_ratios[:, pos] = (pow_freq_bands[:, i] / pow_freq_bands[:, j])
         if ratios == 'all':
             return np.r_[pow_freq_bands.ravel(), band_ratios.ravel()]
         else:
@@ -976,10 +1016,17 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
 
     data : ndarray, shape (n_channels, n_times)
 
-    freq_bands : ndarray, shape (n_freqs,)
-        (default: np.array([0.5, 4., 8., 13., 30., 100.]))
-        Array defining the frequency bands. The j-th frequency band is defined
-        as: [freq_bands[j], freq_bands[j + 1]] (0 <= j <= n_freqs - 1).
+    freq_bands : ndarray, shape (n_freq_bands + 1,) or (n_freq_bands, 2)
+        Array defining the frequency bands. If ``freq_bands`` has shape
+        ``(n_freq_bands + 1,)`` the entries of ``freq_bands`` define
+        ``n_freq_bands`` **contiguous** frequency bands as follows: the i-th
+        frequency bands is defined as [freq_bands[i], freq_bands[i + 1]]
+        (0 <= i <= n_freq_bands - 1). If ``freq_bands`` has shape
+        ``(n_freq_bands, 2)``, the rows of ``freq_bands`` define
+        ``n_freq_bands`` **non-contiguous** frequency bands. By default,
+        ``freq_bands`` is: ``np.array([0.5, 4., 8., 13., 30., 100.])``.
+        The entries of ``freq_bands`` should be between 0 and sfreq / 2 (the
+        Nyquist frequency) as the function uses the one-sided PSD.
 
     deriv_filt : bool (default: False)
         If True, a derivative filter is applied to the input data before
@@ -999,16 +1046,17 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
                 detection using intracranial EEG. Epilepsy & Behavior, 22,
                 S29-S35.
     """
-    n_freqs = freq_bands.shape[0]
     n_channels = data.shape[0]
-    band_energy = np.empty((n_channels, n_freqs - 1))
+    fb = _freq_bands_helper(sfreq, freq_bands)
+    n_freq_bands = fb.shape[0]
+    band_energy = np.empty((n_channels, n_freq_bands))
     if deriv_filt:
         _data = convolve1d(data, [1., 0., -1.], axis=-1, mode='nearest')
     else:
         _data = data
-    for j in range(1, n_freqs):
-        filtered_data = filt(sfreq, _data, freq_bands[(j - 1):(j + 1)])
-        band_energy[:, j - 1] = np.sum(filtered_data ** 2, axis=-1)
+    for j in range(n_freq_bands):
+        filtered_data = filt(sfreq, _data, fb[j, :])
+        band_energy[:, j] = np.sum(filtered_data ** 2, axis=-1)
     return band_energy.ravel()
 
 

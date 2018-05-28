@@ -7,7 +7,7 @@ import numpy as np
 from numpy.testing import assert_almost_equal, assert_equal
 from scipy import signal
 
-from mne_features.utils import triu_idx, power_spectrum, embed, filt
+from mne_features.utils import idxiter, power_spectrum, embed, filt
 
 
 rng = np.random.RandomState(42)
@@ -33,16 +33,23 @@ def test_psd():
 
 def test_triu_idx():
     n_channels = data.shape[0]
-    # Including diag
+    # Upper-triangular part, including diag
     idx0, idx1 = np.triu_indices(n_channels)
     triu_indices = np.array([np.arange(idx0.size), idx0, idx1])
-    triu_indices2 = np.array(list(triu_idx(n_channels, True)))
-    # Without diag
+    triu_indices2 = np.array(list(idxiter(n_channels, include_diag=True)))
+    # Upper-triangular part, without diag
     idx2, idx3 = np.triu_indices(n_channels, 1)
     triu_indices_nodiag = np.array([np.arange(idx2.size), idx2, idx3])
-    triu_indices2_nodiag = np.array(list(triu_idx(n_channels, False)))
+    triu_indices2_nodiag = np.array(list(idxiter(n_channels,
+                                                 include_diag=False)))
     assert_almost_equal(triu_indices, triu_indices2.transpose())
     assert_almost_equal(triu_indices_nodiag, triu_indices2_nodiag.transpose())
+    # Upper and lower-triangular parts, without diag
+    expected = [(i, j) for _, (i, j) in
+                enumerate(np.ndindex((n_channels, n_channels))) if i != j]
+    assert_equal(np.array([(i, j) for _, i, j in idxiter(n_channels,
+                                                         triu=False)]),
+                 expected)
 
 
 def test_embed():
