@@ -31,7 +31,7 @@ def test_psd():
     assert_almost_equal(pxx, ps)
 
 
-def test_triu_idx():
+def test_idxiter():
     n_channels = data.shape[0]
     # Upper-triangular part, including diag
     idx0, idx1 = np.triu_indices(n_channels)
@@ -72,6 +72,6 @@ if __name__ == '__main__':
 
     test_power_spectrum()
     test_psd()
-    test_triu_idx()
+    test_idxiter()
     test_embed()
     test_filt()
