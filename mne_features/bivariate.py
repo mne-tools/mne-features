@@ -14,7 +14,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import scale
 
 from .mock_numba import nb
-from .utils import idxiter, power_spectrum, embed, _get_feature_funcs
+from .utils import _idxiter, power_spectrum, _embed, _get_feature_funcs
 
 
 def get_bivariate_funcs(sfreq):
@@ -67,7 +67,7 @@ def _max_cross_corr(sfreq, data, include_diag=False):
     else:
         n_coefs = n_channels * (n_channels - 1) // 2
     max_cc = np.empty((n_coefs,), dtype=data.dtype)
-    for s, k, l in idxiter(n_channels, include_diag=include_diag):
+    for s, k, l in _idxiter(n_channels, include_diag=include_diag):
         max_cc_ij = np.empty((2 * n_tau,))
         for tau in taus:
             if tau < 0:
@@ -171,7 +171,7 @@ def compute_phase_lock_val(data, include_diag=False):
     else:
         n_coefs = n_channels * (n_channels - 1) // 2
     plv = np.empty((n_coefs,))
-    for s, i, j in idxiter(n_channels, include_diag=include_diag):
+    for s, i, j in _idxiter(n_channels, include_diag=include_diag):
         if i == j:
             plv[j] = 1
         else:
@@ -223,9 +223,9 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
     else:
         n_coefs = n_channels * (n_channels - 1) // 2
     nlinterdep = np.empty((n_coefs,))
-    for s, i, j in idxiter(n_channels, include_diag=include_diag):
-        emb_x = embed(data[i, None], d=emb, tau=tau)[0, :, :]
-        emb_y = embed(data[j, None], d=emb, tau=tau)[0, :, :]
+    for s, i, j in _idxiter(n_channels, include_diag=include_diag):
+        emb_x = _embed(data[i, None], d=emb, tau=tau)[0, :, :]
+        emb_y = _embed(data[j, None], d=emb, tau=tau)[0, :, :]
         knn = NearestNeighbors(n_neighbors=nn, algorithm='kd_tree')
         idx_x = clone(knn).fit(emb_x).kneighbors(emb_x, return_distance=False)
         idx_y = clone(knn).fit(emb_y).kneighbors(emb_y, return_distance=False)

@@ -18,7 +18,7 @@ from .mock_numba import nb
 
 
 @nb.jit()
-def idxiter(n, triu=True, include_diag=False):
+def _idxiter(n, triu=True, include_diag=False):
     """Enumeration of the upper-triangular part of a squre matrix.
 
     Utility function to generate an enumeration (C-order) of the pairs of
@@ -52,7 +52,7 @@ def idxiter(n, triu=True, include_diag=False):
                 yield pos, i, j
 
 
-def embed(x, d, tau):
+def _embed(x, d, tau):
     """Time-delay embedding.
 
     Parameters
@@ -134,7 +134,7 @@ def power_spectrum(sfreq, data, return_db=False):
         return ps, freqs
 
 
-def filt(sfreq, data, filter_freqs, verbose=False):
+def _filt(sfreq, data, filter_freqs, verbose=False):
     """Filter data.
 
     Utility function to filter data which acts as a wrapper for

@@ -12,8 +12,8 @@ from scipy.ndimage import convolve1d
 from sklearn.neighbors import KDTree
 
 from .mock_numba import nb
-from .utils import (power_spectrum, embed, filt, _get_feature_funcs,
-                    _wavelet_coefs, idxiter)
+from .utils import (power_spectrum, _embed, _filt, _get_feature_funcs,
+                    _wavelet_coefs, _idxiter)
 
 
 def get_univariate_funcs(sfreq):
@@ -384,7 +384,7 @@ def _app_samp_entropy_helper(data, emb, metric='chebyshev',
     for j in range(n_channels):
         r = 0.2 * np.std(data[j, :], axis=-1, ddof=1)
         # compute phi(emb, r)
-        _emb_data1 = embed(data[j, None], emb, 1)[0, :, :]
+        _emb_data1 = _embed(data[j, None], emb, 1)[0, :, :]
         if approximate:
             emb_data1 = _emb_data1
         else:
@@ -392,7 +392,7 @@ def _app_samp_entropy_helper(data, emb, metric='chebyshev',
         count1 = KDTree(emb_data1, metric=metric).query_radius(
             emb_data1, r, count_only=True).astype(np.float64)
         # compute phi(emb + 1, r)
-        emb_data2 = embed(data[j, None], emb + 1, 1)[0, :, :]
+        emb_data2 = _embed(data[j, None], emb + 1, 1)[0, :, :]
         count2 = KDTree(emb_data2, metric=metric).query_radius(
             emb_data2, r, count_only=True).astype(np.float64)
         if approximate:
@@ -612,7 +612,7 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
                          % str(ratios))
     else:
         band_ratios = np.empty((n_channels, n_freq_bands * (n_freq_bands - 1)))
-        for pos, i, j in idxiter(n_freq_bands, triu=False):
+        for pos, i, j in _idxiter(n_freq_bands, triu=False):
             band_ratios[:, pos] = (pow_freq_bands[:, i] / pow_freq_bands[:, j])
         if ratios == 'all':
             return np.r_[pow_freq_bands.ravel(), band_ratios.ravel()]
@@ -969,7 +969,7 @@ def compute_svd_entropy(data, tau=2, emb=10):
                 interfacing. Medical & biological engineering & computing,
                 37(1), 93-98.
     """
-    _, sv, _ = np.linalg.svd(embed(data, d=emb, tau=tau))
+    _, sv, _ = np.linalg.svd(_embed(data, d=emb, tau=tau))
     m = np.sum(sv, axis=-1)
     sv_norm = np.divide(sv, m[:, None])
     return -np.sum(np.multiply(sv_norm, np.log2(sv_norm)), axis=-1)
@@ -996,7 +996,7 @@ def compute_svd_fisher_info(data, tau=2, emb=10):
     -----
     Alias of the feature function: **svd_fisher_info**
     """
-    _, sv, _ = np.linalg.svd(embed(data, d=emb, tau=tau))
+    _, sv, _ = np.linalg.svd(_embed(data, d=emb, tau=tau))
     m = np.sum(sv, axis=-1)
     sv_norm = np.divide(sv, m[:, None])
     aux = np.divide(np.diff(sv_norm, axis=-1) ** 2, sv_norm[:, :-1])
@@ -1055,7 +1055,7 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
     else:
         _data = data
     for j in range(n_freq_bands):
-        filtered_data = filt(sfreq, _data, fb[j, :])
+        filtered_data = _filt(sfreq, _data, fb[j, :])
         band_energy[:, j] = np.sum(filtered_data ** 2, axis=-1)
     return band_energy.ravel()
 
