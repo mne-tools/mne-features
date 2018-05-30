@@ -18,15 +18,21 @@ from .mock_numba import nb
 
 
 @nb.jit()
-def triu_idx(n, include_diag=False):
+def _idxiter(n, triu=True, include_diag=False):
     """Enumeration of the upper-triangular part of a squre matrix.
 
-    Utility function to generate an enumeration of the pairs of indices
-    (i,j) corresponding to the upper triangular part of a (n, n) array.
+    Utility function to generate an enumeration (C-order) of the pairs of
+    indices (i,j) corresponding to the upper triangular part of a (n, n) array.
 
     Parameters
     ----------
     n : int
+
+    triu : bool (default: True)
+        If True, the returned generator is an enumeration of the upper
+        triangular part of a (n, n) array. If False, it is an enumeration of
+        all the entries in the array (except for diagonal entries if
+        ``include_diag`` is False).
 
     include_diag : bool (default: False)
         If False, the pairs of indices corresponding to the diagonal are
@@ -38,12 +44,15 @@ def triu_idx(n, include_diag=False):
     """
     pos = -1
     for i in range(n):
-        for j in range(i + 1 - int(include_diag), n):
-            pos += 1
-            yield pos, i, j
+        for j in range(i * int(triu), n):
+            if not include_diag and i == j:
+                continue
+            else:
+                pos += 1
+                yield pos, i, j
 
 
-def embed(x, d, tau):
+def _embed(x, d, tau):
     """Time-delay embedding.
 
     Parameters
@@ -125,7 +134,7 @@ def power_spectrum(sfreq, data, return_db=False):
         return ps, freqs
 
 
-def filt(sfreq, data, filter_freqs, verbose=False):
+def _filt(sfreq, data, filter_freqs, verbose=False):
     """Filter data.
 
     Utility function to filter data which acts as a wrapper for
