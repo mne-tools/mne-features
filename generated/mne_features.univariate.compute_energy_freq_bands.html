@@ -1,17 +1,13 @@
 
 <!DOCTYPE html>
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>mne_features.univariate.compute_energy_freq_bands &#8212; mne_features 0.1.dev0 documentation</title>
-    
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -25,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -41,7 +37,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body role="document">
+  <body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -126,8 +122,8 @@
 <h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_energy_freq_bands<a class="headerlink" href="#mne-features-univariate-compute-energy-freq-bands" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="mne_features.univariate.compute_energy_freq_bands">
-<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_energy_freq_bands</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>freq_bands=array([   0.5</em>, <em>4.</em>, <em>8.</em>, <em>13.</em>, <em>30.</em>, <em>100. ])</em>, <em>deriv_filt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_energy_freq_bands" title="Permalink to this definition">¶</a></dt>
-<dd><p>Band energy (per channel) (<a class="reference internal" href="#khar11" id="id1">[Khar11]</a>).</p>
+<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_energy_freq_bands</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>freq_bands=array([  0.5</em>, <em>4.</em>, <em>8.</em>, <em>13.</em>, <em>30.</em>, <em>100. ])</em>, <em>deriv_filt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_energy_freq_bands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Band energy (per channel).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -137,11 +133,18 @@
 <div><p>Sampling rate of the data.</p>
 </div></blockquote>
 <p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
-<p><strong>freq_bands</strong> : ndarray, shape (n_freqs,)</p>
+<p><strong>freq_bands</strong> : ndarray, shape (n_freq_bands + 1,) or (n_freq_bands, 2)</p>
 <blockquote>
-<div><p>(default: np.array([0.5, 4., 8., 13., 30., 100.]))
-Array defining the frequency bands. The j-th frequency band is defined
-as: [freq_bands[j], freq_bands[j + 1]] (0 &lt;= j &lt;= n_freqs - 1).</p>
+<div><p>Array defining the frequency bands. If <code class="docutils literal"><span class="pre">freq_bands</span></code> has shape
+<code class="docutils literal"><span class="pre">(n_freq_bands</span> <span class="pre">+</span> <span class="pre">1,)</span></code> the entries of <code class="docutils literal"><span class="pre">freq_bands</span></code> define
+<code class="docutils literal"><span class="pre">n_freq_bands</span></code> <strong>contiguous</strong> frequency bands as follows: the i-th
+frequency bands is defined as [freq_bands[i], freq_bands[i + 1]]
+(0 &lt;= i &lt;= n_freq_bands - 1). If <code class="docutils literal"><span class="pre">freq_bands</span></code> has shape
+<code class="docutils literal"><span class="pre">(n_freq_bands,</span> <span class="pre">2)</span></code>, the rows of <code class="docutils literal"><span class="pre">freq_bands</span></code> define
+<code class="docutils literal"><span class="pre">n_freq_bands</span></code> <strong>non-contiguous</strong> frequency bands. By default,
+<code class="docutils literal"><span class="pre">freq_bands</span></code> is: <code class="docutils literal"><span class="pre">np.array([0.5,</span> <span class="pre">4.,</span> <span class="pre">8.,</span> <span class="pre">13.,</span> <span class="pre">30.,</span> <span class="pre">100.])</span></code>.
+The entries of <code class="docutils literal"><span class="pre">freq_bands</span></code> should be between 0 and sfreq / 2 (the
+Nyquist frequency) as the function uses the one-sided PSD.</p>
 </div></blockquote>
 <p><strong>deriv_filt</strong> : bool (default: False)</p>
 <blockquote>
@@ -156,14 +159,13 @@ filtering (see Notes).</p>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Alias of the feature function: <strong>energy_freq_bands</strong></p>
+<p>Alias of the feature function: <strong>energy_freq_bands</strong>. See <a class="reference internal" href="#r7979" id="id1">[R7979]</a>.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="khar11" rules="none">
+<table class="docutils citation" frame="void" id="r7979" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[Khar11]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Kharbouch, A. et al. (2011). An algorithm for seizure onset
-detection using intracranial EEG. Epilepsy &amp; Behavior, 22,
-S29-S35.</td></tr>
+<tr><td class="label">[R7979]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Kharbouch, A. et al. (2011). An algorithm for seizure onset 
+detection using intracranial EEG. Epilepsy &amp; Behavior, 22, S29-S35.</td></tr>
 </tbody>
 </table>
 </dd></dl>
@@ -186,7 +188,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2018, MNE-Features developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.<br/>
     </p>
   </div>
 </footer>

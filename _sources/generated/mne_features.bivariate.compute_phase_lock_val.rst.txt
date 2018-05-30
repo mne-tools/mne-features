@@ -1,5 +1,5 @@
-mne_features.bivariate.compute_phase_lock_val
-=============================================
+mne\_features\.bivariate\.compute\_phase\_lock\_val
+===================================================
 
 .. currentmodule:: mne_features.bivariate
 

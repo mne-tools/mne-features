@@ -1,17 +1,13 @@
 
 <!DOCTYPE html>
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Use scikit-learn GridSearchCV with FeatureExtractor for setting parameters &#8212; mne_features 0.1.dev0 documentation</title>
-    
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -25,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -39,7 +35,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body role="document">
+  <body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -120,7 +116,11 @@
 
 <div class="container content-container">
   
-  <div class="section" id="use-scikit-learn-gridsearchcv-with-featureextractor-for-setting-parameters">
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-mne-sample-gridsearch-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="use-scikit-learn-gridsearchcv-with-featureextractor-for-setting-parameters">
 <span id="sphx-glr-auto-examples-plot-mne-sample-gridsearch-py"></span><h1>Use scikit-learn GridSearchCV with FeatureExtractor for setting parameters<a class="headerlink" href="#use-scikit-learn-gridsearchcv-with-featureextractor-for-setting-parameters" title="Permalink to this headline">¶</a></h1>
 <p>The example shows how <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV" title="(in scikit-learn v0.19.1)"><code class="xref py py-class docutils literal"><span class="pre">GridSearchCV</span></code></a>
 can be used for parameter tuning in a pipeline which sequentially
@@ -131,8 +131,8 @@ and classification (with <a class="reference external" href="http://scikit-learn
 <p>The code for this example is based on the method proposed in:</p>
 <p>Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
 Slim ESSID, Alexandre GRAMFORT,
-&#8220;An ensemble learning approach to detect epileptic seizures from long
-intracranial EEG recordings&#8221;
+“An ensemble learning approach to detect epileptic seizures from long
+intracranial EEG recordings”
 Proc. IEEE ICASSP Conf. 2018</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -156,7 +156,7 @@ of auditory vs. visual stimuli).</p>
                                      <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold" title="View documentation for sklearn.model_selection.StratifiedKFold"><span class="n">StratifiedKFold</span></a><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="View documentation for sklearn.pipeline.Pipeline"><span class="n">Pipeline</span></a>
 
-<span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Let us import the data using MNE-Python and epoch it:</p>
@@ -182,8 +182,7 @@ of auditory vs. visual stimuli).</p>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Successfully</span> <span class="n">extracted</span> <span class="n">to</span><span class="p">:</span> <span class="p">[</span><span class="s1">u&#39;/data/jbschiratti/mne_data/MNE-sample-data&#39;</span><span class="p">]</span>
-<span class="n">Opening</span> <span class="n">raw</span> <span class="n">data</span> <span class="n">file</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">jbschiratti</span><span class="o">/</span><span class="n">mne_data</span><span class="o">/</span><span class="n">MNE</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">MEG</span><span class="o">/</span><span class="n">sample</span><span class="o">/</span><span class="n">sample_audvis_filt</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="mi">40</span><span class="n">_raw</span><span class="o">.</span><span class="n">fif</span><span class="o">...</span>
+<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Opening</span> <span class="n">raw</span> <span class="n">data</span> <span class="n">file</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">jbschiratti</span><span class="o">/</span><span class="n">mne_data</span><span class="o">/</span><span class="n">MNE</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">MEG</span><span class="o">/</span><span class="n">sample</span><span class="o">/</span><span class="n">sample_audvis_filt</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="mi">40</span><span class="n">_raw</span><span class="o">.</span><span class="n">fif</span><span class="o">...</span>
     <span class="n">Read</span> <span class="n">a</span> <span class="n">total</span> <span class="n">of</span> <span class="mi">4</span> <span class="n">projection</span> <span class="n">items</span><span class="p">:</span>
         <span class="n">PCA</span><span class="o">-</span><span class="n">v1</span> <span class="p">(</span><span class="mi">1</span> <span class="n">x</span> <span class="mi">102</span><span class="p">)</span>  <span class="n">idle</span>
         <span class="n">PCA</span><span class="o">-</span><span class="n">v2</span> <span class="p">(</span><span class="mi">1</span> <span class="n">x</span> <span class="mi">102</span><span class="p">)</span>  <span class="n">idle</span>
@@ -197,6 +196,8 @@ of auditory vs. visual stimuli).</p>
 <span class="n">l_trans_bandwidth</span> <span class="n">chosen</span> <span class="n">to</span> <span class="n">be</span> <span class="mf">0.5</span> <span class="n">Hz</span>
 <span class="n">Filter</span> <span class="n">length</span> <span class="n">of</span> <span class="mi">991</span> <span class="n">samples</span> <span class="p">(</span><span class="mf">6.600</span> <span class="n">sec</span><span class="p">)</span> <span class="n">selected</span>
 <span class="mi">145</span> <span class="n">matching</span> <span class="n">events</span> <span class="n">found</span>
+<span class="n">No</span> <span class="n">baseline</span> <span class="n">correction</span> <span class="n">applied</span>
+<span class="n">Not</span> <span class="n">setting</span> <span class="n">metadata</span>
 <span class="mi">4</span> <span class="n">projection</span> <span class="n">items</span> <span class="n">activated</span>
 <span class="n">Loading</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">145</span> <span class="n">events</span> <span class="ow">and</span> <span class="mi">106</span> <span class="n">original</span> <span class="n">time</span> <span class="n">points</span> <span class="o">...</span>
 <span class="mi">0</span> <span class="n">bad</span> <span class="n">epochs</span> <span class="n">dropped</span>
@@ -205,8 +206,7 @@ of auditory vs. visual stimuli).</p>
 <p>Prepare for the classification task:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pipe</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="View documentation for sklearn.pipeline.Pipeline"><span class="n">Pipeline</span></a><span class="p">([(</span><span class="s1">&#39;fe&#39;</span><span class="p">,</span> <a href="../generated/mne_features.feature_extraction.FeatureExtractor.html#mne_features.feature_extraction.FeatureExtractor" title="View documentation for mne_features.feature_extraction.FeatureExtractor"><span class="n">FeatureExtractor</span></a><span class="p">(</span><span class="n">sfreq</span><span class="o">=</span><span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">],</span>
                                          <span class="n">selected_funcs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;app_entropy&#39;</span><span class="p">,</span>
-                                                         <span class="s1">&#39;mean&#39;</span><span class="p">],</span>
-                                         <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)),</span>
+                                                         <span class="s1">&#39;mean&#39;</span><span class="p">])),</span>
                  <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="View documentation for sklearn.preprocessing.StandardScaler"><span class="n">StandardScaler</span></a><span class="p">()),</span>
                  <span class="p">(</span><span class="s1">&#39;clf&#39;</span><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" title="View documentation for sklearn.linear_model.LogisticRegression"><span class="n">LogisticRegression</span></a><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))])</span>
 <span class="n">skf</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold" title="View documentation for sklearn.model_selection.StratifiedKFold"><span class="n">StratifiedKFold</span></a><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
@@ -231,7 +231,8 @@ GridSearchCV.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">params_grid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fe__app_entropy__emb&#39;</span><span class="p">:</span> <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.arange.html#numpy.arange" title="View documentation for numpy.arange"><span class="n">np</span><span class="o">.</span><span class="n">arange</span></a><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)}</span>
 
 <span class="n">gs</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV" title="View documentation for sklearn.model_selection.GridSearchCV"><span class="n">GridSearchCV</span></a><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">params_grid</span><span class="p">,</span>
-                  <span class="n">cv</span><span class="o">=</span><a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold" title="View documentation for sklearn.model_selection.StratifiedKFold"><span class="n">StratifiedKFold</span></a><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                  <span class="n">cv</span><span class="o">=</span><a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold" title="View documentation for sklearn.model_selection.StratifiedKFold"><span class="n">StratifiedKFold</span></a><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">return_train_score</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">gs</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
 <span class="c1"># Best parameters obtained with GridSearchCV:</span>
@@ -249,9 +250,9 @@ GridSearchCV.</p>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">params</span>  <span class="n">mean_test_score</span>  <span class="n">mean_train_score</span>
-<span class="mi">0</span>  <span class="p">{</span><span class="s1">u&#39;fe__app_entropy__emb&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>         <span class="mf">0.820690</span>               <span class="mf">1.0</span>
-<span class="mi">1</span>  <span class="p">{</span><span class="s1">u&#39;fe__app_entropy__emb&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>         <span class="mf">0.875862</span>               <span class="mf">1.0</span>
-<span class="mi">2</span>  <span class="p">{</span><span class="s1">u&#39;fe__app_entropy__emb&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>         <span class="mf">0.855172</span>               <span class="mf">1.0</span>
+<span class="mi">0</span>  <span class="p">{</span><span class="sa">u</span><span class="s1">&#39;fe__app_entropy__emb&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>         <span class="mf">0.820690</span>               <span class="mf">1.0</span>
+<span class="mi">1</span>  <span class="p">{</span><span class="sa">u</span><span class="s1">&#39;fe__app_entropy__emb&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>         <span class="mf">0.875862</span>               <span class="mf">1.0</span>
+<span class="mi">2</span>  <span class="p">{</span><span class="sa">u</span><span class="s1">&#39;fe__app_entropy__emb&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>         <span class="mf">0.855172</span>               <span class="mf">1.0</span>
 </pre></div>
 </div>
 <p>Cross-validation accuracy score with optimized parameters:</p>
@@ -266,8 +267,8 @@ GridSearchCV.</p>
 <div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Cross</span><span class="o">-</span><span class="n">validation</span> <span class="n">accuracy</span> <span class="n">score</span> <span class="p">(</span><span class="k">with</span> <span class="n">optimized</span> <span class="n">parameters</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.890</span> <span class="p">(</span><span class="o">+/-</span> <span class="mf">0.01036</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>Total running time of the script:</strong> ( 0 minutes  2.701 seconds)</p>
-<div class="sphx-glr-footer docutils container">
+<p><strong>Total running time of the script:</strong> ( 3 minutes  7.379 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-mne-sample-gridsearch-py">
 <div class="sphx-glr-download docutils container">
 <a class="reference download internal" href="../_downloads/plot_mne_sample_gridsearch.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_mne_sample_gridsearch.py</span></code></a></div>
 <div class="sphx-glr-download docutils container">
@@ -292,7 +293,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2018, MNE-Features developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.<br/>
     </p>
   </div>
 </footer>

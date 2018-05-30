@@ -1,17 +1,13 @@
 
 <!DOCTYPE html>
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>mne_features.feature_extraction.FeatureExtractor &#8212; mne_features 0.1.dev0 documentation</title>
-    
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -25,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -41,7 +37,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body role="document">
+  <body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -131,7 +127,7 @@
 <p>The method <code class="docutils literal"><span class="pre">fit_transform</span></code> implemented in this class can be used to
 extract univariate or bivariate features from epoched data
 (see example below). The method <code class="docutils literal"><span class="pre">fit</span></code> does not have any effect and is
-implemented for compatibility with Scikit-learn&#8217;s API. As a result, the
+implemented for compatibility with Scikit-learn’s API. As a result, the
 class <code class="docutils literal"><span class="pre">FeatureExtractor</span></code> can be used as a step in a Pipeline (see
 <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.19.1)"><code class="xref py py-class docutils literal"><span class="pre">Pipeline</span></code></a> and MNE-features examples). The class
 also accepts a <code class="docutils literal"><span class="pre">memory</span></code> parameter which allows for caching the result of
@@ -151,7 +147,7 @@ to <a class="reference internal" href="mne_features.feature_extraction.extract_f
 <div><p>The elements of <code class="docutils literal"><span class="pre">selected_features</span></code> are either strings or tuples of
 the form <code class="docutils literal"><span class="pre">(str,</span> <span class="pre">callable)</span></code>. If an element is of type <code class="docutils literal"><span class="pre">str</span></code>, it is
 the alias of a feature function. The aliases are built from the
-feature functions&#8217; names by removing <code class="docutils literal"><span class="pre">compute_</span></code>. For instance, the
+feature functions’ names by removing <code class="docutils literal"><span class="pre">compute_</span></code>. For instance, the
 alias of the feature function <code class="xref py py-func docutils literal"><span class="pre">compute_ptp_amp()</span></code> is <code class="docutils literal"><span class="pre">ptp_amp</span></code>.
 (See the documentation of mne-features). If an element is of type
 <code class="docutils literal"><span class="pre">tuple</span></code>, the first element of the tuple should be a string
@@ -213,7 +209,7 @@ advantageous when feature extraction is time consuming.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="mne_features.feature_extraction.FeatureExtractor.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>([sfreq,&nbsp;selected_funcs,&nbsp;params,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="mne_features.feature_extraction.FeatureExtractor.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>([sfreq,&nbsp;selected_funcs,&nbsp;params,&nbsp;…])</td>
 <td>Instantiate a FeatureExtractor object.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code>(X[,&nbsp;y])</td>
@@ -225,7 +221,7 @@ advantageous when feature extraction is time consuming.</p>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">get_params</span></code>([deep])</td>
 <td>Get the parameters of the transformer.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">set_params</span></code>(\*\*params)</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">set_params</span></code>(**params)</td>
 <td>Set the parameters of the transformer.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">transform</span></code>(X[,&nbsp;y])</td>
@@ -253,7 +249,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2018, MNE-Features developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.<br/>
     </p>
   </div>
 </footer>

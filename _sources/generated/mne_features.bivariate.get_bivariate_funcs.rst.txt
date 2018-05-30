@@ -1,5 +1,5 @@
-mne_features.bivariate.get_bivariate_funcs
-==========================================
+mne\_features\.bivariate\.get\_bivariate\_funcs
+===============================================
 
 .. currentmodule:: mne_features.bivariate
 

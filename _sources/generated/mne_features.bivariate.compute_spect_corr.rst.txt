@@ -1,5 +1,5 @@
-mne_features.bivariate.compute_spect_corr
-=========================================
+mne\_features\.bivariate\.compute\_spect\_corr
+==============================================
 
 .. currentmodule:: mne_features.bivariate
 

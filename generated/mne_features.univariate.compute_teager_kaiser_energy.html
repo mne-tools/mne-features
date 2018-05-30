@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mne_features.univariate.compute_std &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>mne_features.univariate.compute_teager_kaiser_energy &#8212; mne_features 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
@@ -29,8 +29,8 @@
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_features.univariate.compute_ptp_amp" href="mne_features.univariate.compute_ptp_amp.html" />
-    <link rel="prev" title="mne_features.univariate.compute_variance" href="mne_features.univariate.compute_variance.html" />
+    <link rel="next" title="mne_features.bivariate.get_bivariate_funcs" href="mne_features.bivariate.get_bivariate_funcs.html" />
+    <link rel="prev" title="mne_features.univariate.compute_wavelet_coef_energy" href="mne_features.univariate.compute_wavelet_coef_energy.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -84,7 +84,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_std</a></li>
+<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_teager_kaiser_energy</a></li>
 </ul>
 </ul>
 </li>
@@ -96,7 +96,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/generated/mne_features.univariate.compute_std.rst.txt"
+  <a href="../_sources/generated/mne_features.univariate.compute_teager_kaiser_energy.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -118,24 +118,41 @@
 
 <div class="container content-container">
   
-  <div class="section" id="mne-features-univariate-compute-std">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_std<a class="headerlink" href="#mne-features-univariate-compute-std" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-features-univariate-compute-teager-kaiser-energy">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_teager_kaiser_energy<a class="headerlink" href="#mne-features-univariate-compute-teager-kaiser-energy" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="mne_features.univariate.compute_std">
-<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_std</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_std" title="Permalink to this definition">¶</a></dt>
-<dd><p>Standard deviation of the data.</p>
+<dt id="mne_features.univariate.compute_teager_kaiser_energy">
+<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_teager_kaiser_energy</code><span class="sig-paren">(</span><em>data</em>, <em>wavelet_name='db4'</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_teager_kaiser_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Teager-Kaiser energy.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> : shape (n_channels, n_times)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
+<p><strong>wavelet_name</strong> : str (default: ‘db4’)</p>
+<blockquote>
+<div><p>Wavelet name (to be used with <code class="docutils literal"><span class="pre">pywt.Wavelet</span></code>). The full list of
+Wavelet names are given by: <code class="docutils literal"><span class="pre">[name</span> <span class="pre">for</span> <span class="pre">family</span> <span class="pre">in</span> <span class="pre">pywt.families()</span> <span class="pre">for</span>
+<span class="pre">name</span> <span class="pre">in</span> <span class="pre">pywt.wavelist(family)]</span></code>.</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>output</strong> : ndarray, shape (n_channels)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>output</strong> : ndarray, shape (n_channels * (levdec + 1) * 2,)</p>
+</td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Alias of the feature function: <strong>std</strong></p>
+<p>Alias of the feature function: <strong>teager_kaiser_energy</strong>. See <a class="reference internal" href="#r117117" id="id1">[R117117]</a>.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r117117" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R117117]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Badani, S. et al. (2017). Detection of epilepsy based on discrete 
+wavelet transform and Teager-Kaiser energy operator. In Calcutta 
+Conference (CALCON). 2017 IEEE (pp. 164-167).</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div class="clearer"></div></div>

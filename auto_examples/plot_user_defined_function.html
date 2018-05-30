@@ -1,17 +1,13 @@
 
 <!DOCTYPE html>
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Extract features using user-defined feature functions. &#8212; mne_features 0.1.dev0 documentation</title>
-    
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -25,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -39,7 +35,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body role="document">
+  <body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -124,15 +120,19 @@
 
 <div class="container content-container">
   
-  <div class="section" id="extract-features-using-user-defined-feature-functions">
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-user-defined-function-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="extract-features-using-user-defined-feature-functions">
 <span id="sphx-glr-auto-examples-plot-user-defined-function-py"></span><h1>Extract features using user-defined feature functions.<a class="headerlink" href="#extract-features-using-user-defined-feature-functions" title="Permalink to this headline">¶</a></h1>
 <p>The example shows how user-defined feature functions can be used in
 MNE-Features along with built-in feature functions.</p>
 <p>The code for this example is based on the method proposed in:</p>
 <p>Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
 Slim ESSID, Alexandre GRAMFORT,
-&#8220;An ensemble learning approach to detect epileptic seizures from long
-intracranial EEG recordings&#8221;
+“An ensemble learning approach to detect epileptic seizures from long
+intracranial EEG recordings”
 Proc. IEEE ICASSP Conf. 2018</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -156,7 +156,7 @@ of auditory vs. visual stimuli).</p>
 
 <span class="kn">from</span> <span class="nn">mne_features.feature_extraction</span> <span class="kn">import</span> <a href="../generated/mne_features.feature_extraction.FeatureExtractor.html#mne_features.feature_extraction.FeatureExtractor" title="View documentation for mne_features.feature_extraction.FeatureExtractor"><span class="n">FeatureExtractor</span></a>
 
-<span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Let us import the data using MNE-Python and epoch it:</p>
@@ -182,8 +182,7 @@ of auditory vs. visual stimuli).</p>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Successfully</span> <span class="n">extracted</span> <span class="n">to</span><span class="p">:</span> <span class="p">[</span><span class="s1">u&#39;/data/jbschiratti/mne_data/MNE-sample-data&#39;</span><span class="p">]</span>
-<span class="n">Opening</span> <span class="n">raw</span> <span class="n">data</span> <span class="n">file</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">jbschiratti</span><span class="o">/</span><span class="n">mne_data</span><span class="o">/</span><span class="n">MNE</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">MEG</span><span class="o">/</span><span class="n">sample</span><span class="o">/</span><span class="n">sample_audvis_filt</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="mi">40</span><span class="n">_raw</span><span class="o">.</span><span class="n">fif</span><span class="o">...</span>
+<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Opening</span> <span class="n">raw</span> <span class="n">data</span> <span class="n">file</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">jbschiratti</span><span class="o">/</span><span class="n">mne_data</span><span class="o">/</span><span class="n">MNE</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">MEG</span><span class="o">/</span><span class="n">sample</span><span class="o">/</span><span class="n">sample_audvis_filt</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="mi">40</span><span class="n">_raw</span><span class="o">.</span><span class="n">fif</span><span class="o">...</span>
     <span class="n">Read</span> <span class="n">a</span> <span class="n">total</span> <span class="n">of</span> <span class="mi">4</span> <span class="n">projection</span> <span class="n">items</span><span class="p">:</span>
         <span class="n">PCA</span><span class="o">-</span><span class="n">v1</span> <span class="p">(</span><span class="mi">1</span> <span class="n">x</span> <span class="mi">102</span><span class="p">)</span>  <span class="n">idle</span>
         <span class="n">PCA</span><span class="o">-</span><span class="n">v2</span> <span class="p">(</span><span class="mi">1</span> <span class="n">x</span> <span class="mi">102</span><span class="p">)</span>  <span class="n">idle</span>
@@ -197,6 +196,8 @@ of auditory vs. visual stimuli).</p>
 <span class="n">l_trans_bandwidth</span> <span class="n">chosen</span> <span class="n">to</span> <span class="n">be</span> <span class="mf">0.5</span> <span class="n">Hz</span>
 <span class="n">Filter</span> <span class="n">length</span> <span class="n">of</span> <span class="mi">991</span> <span class="n">samples</span> <span class="p">(</span><span class="mf">6.600</span> <span class="n">sec</span><span class="p">)</span> <span class="n">selected</span>
 <span class="mi">145</span> <span class="n">matching</span> <span class="n">events</span> <span class="n">found</span>
+<span class="n">No</span> <span class="n">baseline</span> <span class="n">correction</span> <span class="n">applied</span>
+<span class="n">Not</span> <span class="n">setting</span> <span class="n">metadata</span>
 <span class="n">Created</span> <span class="n">an</span> <span class="n">SSP</span> <span class="n">operator</span> <span class="p">(</span><span class="n">subspace</span> <span class="n">dimension</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="mi">4</span> <span class="n">projection</span> <span class="n">items</span> <span class="n">activated</span>
 <span class="n">Loading</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">145</span> <span class="n">events</span> <span class="ow">and</span> <span class="mi">106</span> <span class="n">original</span> <span class="n">time</span> <span class="n">points</span> <span class="o">...</span>
@@ -243,11 +244,11 @@ mean of the data:</p>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Accuracy</span> <span class="n">score</span> <span class="o">=</span> <span class="mf">0.966</span>
+<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Accuracy</span> <span class="n">score</span> <span class="o">=</span> <span class="mf">1.000</span>
 </pre></div>
 </div>
-<p><strong>Total running time of the script:</strong> ( 0 minutes  1.377 seconds)</p>
-<div class="sphx-glr-footer docutils container">
+<p><strong>Total running time of the script:</strong> ( 0 minutes  1.257 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-user-defined-function-py">
 <div class="sphx-glr-download docutils container">
 <a class="reference download internal" href="../_downloads/plot_user_defined_function.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_user_defined_function.py</span></code></a></div>
 <div class="sphx-glr-download docutils container">
@@ -273,7 +274,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2018, MNE-Features developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.<br/>
     </p>
   </div>
 </footer>

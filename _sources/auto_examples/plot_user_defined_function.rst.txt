@@ -1,4 +1,8 @@
+.. note::
+    :class: sphx-glr-download-link-note
 
+    Click :ref:`here <sphx_glr_download_auto_examples_plot_user_defined_function.py>` to download the full example code
+.. rst-class:: sphx-glr-example-title
 
 .. _sphx_glr_auto_examples_plot_user_defined_function.py:
 
@@ -89,7 +93,6 @@ Let us import the data using MNE-Python and epoch it:
 
  Out::
 
-    Successfully extracted to: [u'/data/jbschiratti/mne_data/MNE-sample-data']
     Opening raw data file /home/users/jbschiratti/mne_data/MNE-sample-data/MEG/sample/sample_audvis_filt-0-40_raw.fif...
         Read a total of 4 projection items:
             PCA-v1 (1 x 102)  idle
@@ -104,6 +107,8 @@ Let us import the data using MNE-Python and epoch it:
     l_trans_bandwidth chosen to be 0.5 Hz
     Filter length of 991 samples (6.600 sec) selected
     145 matching events found
+    No baseline correction applied
+    Not setting metadata
     Created an SSP operator (subspace dimension = 1)
     4 projection items activated
     Loading data for 145 events and 106 original time points ...
@@ -185,16 +190,20 @@ Print the accuracy score on a test dataset.
 
  Out::
 
-    Accuracy score = 0.966
+    Accuracy score = 1.000
 
 
-**Total running time of the script:** ( 0 minutes  1.377 seconds)
+**Total running time of the script:** ( 0 minutes  1.257 seconds)
 
+
+.. _sphx_glr_download_auto_examples_plot_user_defined_function.py:
 
 
 .. only :: html
 
  .. container:: sphx-glr-footer
+    :class: sphx-glr-footer-example
+
 
 
   .. container:: sphx-glr-download

@@ -1,17 +1,13 @@
 
 <!DOCTYPE html>
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>mne_features.univariate.compute_hjorth_mobility_spect &#8212; mne_features 0.1.dev0 documentation</title>
-    
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -25,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -41,7 +37,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body role="document">
+  <body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -127,7 +123,7 @@
 <dl class="function">
 <dt id="mne_features.univariate.compute_hjorth_mobility_spect">
 <code class="descclassname">mne_features.univariate.</code><code class="descname">compute_hjorth_mobility_spect</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_hjorth_mobility_spect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Hjorth mobility (per channel) (<a class="reference internal" href="#morm06" id="id1">[Morm06]</a>, <a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id2">[Teix11]</a>).</p>
+<dd><p>Hjorth mobility (per channel).</p>
 <p>Hjorth mobility parameter computed from the Power Spectrum of the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -140,7 +136,7 @@
 <p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
 <p><strong>normalize</strong> : bool (default: False)</p>
 <blockquote>
-<div><p>Normalize the result by the total power (see <a class="reference internal" href="mne_features.univariate.compute_decorr_time.html#teix11" id="id3">[Teix11]</a>).</p>
+<div><p>Normalize the result by the total power.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -150,13 +146,22 @@
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Alias of the feature function: <strong>hjorth_mobility_spect</strong></p>
+<p>Alias of the feature function: <strong>hjorth_mobility_spect</strong>. See <a class="reference internal" href="#r9394" id="id1">[R9394]</a> and 
+<a class="reference internal" href="#r9494" id="id2">[R9494]</a>.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="morm06" rules="none">
+<table class="docutils citation" frame="void" id="r9394" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[Morm06]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> Mormann, F. et al. (2006). Seizure prediction: the long and
+<tr><td class="label">[R9394]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Mormann, F. et al. (2006). Seizure prediction: the long and 
 winding road. Brain, 130(2), 314-333.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r9494" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R9494]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> Teixeira, C. A. et al. (2011). EPILAB: A software package for
+studies on the prediction of epileptic seizures. Journal of
+Neuroscience Methods, 200(2), 257-271.</td></tr>
 </tbody>
 </table>
 </dd></dl>
@@ -179,7 +184,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2018, MNE-Features developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.<br/>
     </p>
   </div>
 </footer>

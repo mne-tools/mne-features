@@ -1,4 +1,8 @@
+.. note::
+    :class: sphx-glr-download-link-note
 
+    Click :ref:`here <sphx_glr_download_auto_examples_plot_seizure_example.py>` to download the full example code
+.. rst-class:: sphx-glr-example-title
 
 .. _sphx_glr_auto_examples_plot_seizure_example.py:
 
@@ -25,17 +29,8 @@ Proc. IEEE ICASSP Conf. 2018
 
     This example is for illustration purposes, as other methods
     may lead to better performance on such a dataset (classification of
-    "seizure" vs. "non-seizure" iEEG segments).
-
-References
-----------
-
-.. [1] Andrzejak, R. G. et al. (2001). Indications of nonlinear deterministic
-       and finite-dimensional structures in time series of brain electrical
-       activity: Dependence on recording region and brain state. Physical
-       Review E, 64(6), 061907.
-
-.. [2] http://epileptologie-bonn.de/cms/front_content.php?idcat=193&lang=3
+    "seizure" vs. "non-seizure" iEEG segments). For further information, see 
+    (Andrzejak et al., 2001) and http://epileptologie-bonn.de.
 
 
 
@@ -162,16 +157,20 @@ Print the cross-validation accuracy score:
 
  Out::
 
-    Cross-validation accuracy score = 0.970 (+/- 0.00841)
+    Cross-validation accuracy score = 0.970 (+/- 0.00792)
 
 
-**Total running time of the script:** ( 0 minutes  2.080 seconds)
+**Total running time of the script:** ( 0 minutes  7.312 seconds)
 
+
+.. _sphx_glr_download_auto_examples_plot_seizure_example.py:
 
 
 .. only :: html
 
  .. container:: sphx-glr-footer
+    :class: sphx-glr-footer-example
+
 
 
   .. container:: sphx-glr-download

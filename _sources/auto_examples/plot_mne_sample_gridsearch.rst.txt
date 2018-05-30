@@ -1,4 +1,8 @@
+.. note::
+    :class: sphx-glr-download-link-note
 
+    Click :ref:`here <sphx_glr_download_auto_examples_plot_mne_sample_gridsearch.py>` to download the full example code
+.. rst-class:: sphx-glr-example-title
 
 .. _sphx_glr_auto_examples_plot_mne_sample_gridsearch.py:
 
@@ -93,7 +97,6 @@ Let us import the data using MNE-Python and epoch it:
 
  Out::
 
-    Successfully extracted to: [u'/data/jbschiratti/mne_data/MNE-sample-data']
     Opening raw data file /home/users/jbschiratti/mne_data/MNE-sample-data/MEG/sample/sample_audvis_filt-0-40_raw.fif...
         Read a total of 4 projection items:
             PCA-v1 (1 x 102)  idle
@@ -108,6 +111,8 @@ Let us import the data using MNE-Python and epoch it:
     l_trans_bandwidth chosen to be 0.5 Hz
     Filter length of 991 samples (6.600 sec) selected
     145 matching events found
+    No baseline correction applied
+    Not setting metadata
     4 projection items activated
     Loading data for 145 events and 106 original time points ...
     0 bad epochs dropped
@@ -122,8 +127,7 @@ Prepare for the classification task:
 
     pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                              selected_funcs=['app_entropy',
-                                                             'mean'],
-                                             memory='.')),
+                                                             'mean'])),
                      ('scaler', StandardScaler()),
                      ('clf', LogisticRegression(random_state=42))])
     skf = StratifiedKFold(n_splits=3, random_state=42)
@@ -171,7 +175,8 @@ GridSearchCV.
     params_grid = {'fe__app_entropy__emb': np.arange(2, 5)}
 
     gs = GridSearchCV(estimator=pipe, param_grid=params_grid,
-                      cv=StratifiedKFold(n_splits=2, random_state=42), n_jobs=1)
+                      cv=StratifiedKFold(n_splits=2, random_state=42), n_jobs=1,
+                      return_train_score=True)
     gs.fit(data, y)
 
     # Best parameters obtained with GridSearchCV:
@@ -234,13 +239,17 @@ Cross-validation accuracy score with optimized parameters:
     Cross-validation accuracy score (with optimized parameters) = 0.890 (+/- 0.01036)
 
 
-**Total running time of the script:** ( 0 minutes  2.701 seconds)
+**Total running time of the script:** ( 3 minutes  7.379 seconds)
 
+
+.. _sphx_glr_download_auto_examples_plot_mne_sample_gridsearch.py:
 
 
 .. only :: html
 
  .. container:: sphx-glr-footer
+    :class: sphx-glr-footer-example
+
 
 
   .. container:: sphx-glr-download

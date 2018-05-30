@@ -1,0 +1,10 @@
+:mod:`mne_features.univariate`.compute_teager_kaiser_energy
+==================================================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_teager_kaiser_energy
+
+.. raw:: html
+
+    <div class="clearer"></div>

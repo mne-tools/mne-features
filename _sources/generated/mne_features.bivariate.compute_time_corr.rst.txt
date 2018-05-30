@@ -1,5 +1,5 @@
-mne_features.bivariate.compute_time_corr
-========================================
+mne\_features\.bivariate\.compute\_time\_corr
+=============================================
 
 .. currentmodule:: mne_features.bivariate
 
