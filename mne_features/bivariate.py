@@ -101,7 +101,7 @@ def _max_cross_corr(sfreq, data, include_diag=False):
 
 
 def compute_max_cross_corr(sfreq, data, include_diag=False):
-    """Maximum linear cross-correlation ([Morm06]_, [Miro08]_).
+    """Maximum linear cross-correlation.
 
     Parameters
     ----------
@@ -126,20 +126,23 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
 
     Notes
     -----
-    Alias of the feature function: **max_cross_corr**
+    Alias of the feature function: **max_cross_corr**. See [1]_ and [2]_.
 
     References
     ----------
-    .. [Miro08] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
-                networks for epileptic seizure prediction from intracranial
-                EEG. Machine Learning for Signal Processing, 2008. IEEE
-                Workshop on (pp. 244-249). IEEE.
+    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and 
+           winding road. Brain, 130(2), 314-333.
+
+    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional 
+           networks for epileptic seizure prediction from intracranial EEG. 
+           Machine Learning for Signal Processing, 2008. IEEE Workshop on 
+           (pp. 244-249). IEEE.
     """
     return _max_cross_corr(sfreq, data, include_diag=include_diag)
 
 
 def compute_phase_lock_val(data, include_diag=False):
-    """Phase Locking Value (PLV) ([Plv]_).
+    """Phase Locking Value (PLV).
 
     Parameters
     ----------
@@ -159,11 +162,11 @@ def compute_phase_lock_val(data, include_diag=False):
 
     Notes
     -----
-    Alias of the feature function: **phase_lock_val**
+    Alias of the feature function: **phase_lock_val**. See [1]_.
 
     References
     ----------
-    .. [Plv] http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf
+    .. [1] http://www.gatsby.ucl.ac.uk/~vincenta/kaggle/report.pdf
     """
     n_channels, n_times = data.shape
     if include_diag:
@@ -184,7 +187,7 @@ def compute_phase_lock_val(data, include_diag=False):
 
 
 def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
-    """Measure of nonlinear interdependence ([Morm06]_, [Miro08]_).
+    """Measure of nonlinear interdependence.
 
     Parameters
     ----------
@@ -215,7 +218,17 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
 
     Notes
     -----
-    Alias of the feature function: **nonlin_interdep**
+    Alias of the feature function: **nonlin_interdep**. See [1]_ and [2]_.
+
+    References
+    ----------
+    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and 
+           winding road. Brain, 130(2), 314-333.
+
+    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional 
+           networks for epileptic seizure prediction from intracranial EEG. 
+           Machine Learning for Signal Processing, 2008. IEEE Workshop on 
+           (pp. 244-249). IEEE.
     """
     n_channels, n_times = data.shape
     if include_diag:
@@ -243,7 +256,7 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
 
 
 def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
-    """Correlation Coefficients (computed in the time domain) ([Tisp]_).
+    """Correlation Coefficients (computed in the time domain).
 
     Parameters
     ----------
@@ -270,12 +283,12 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
 
     Notes
     -----
-    Alias of the feature function: **time_corr**
+    Alias of the feature function: **time_corr**. See [1]_.
 
     References
     ----------
-    .. [Tisp] https://kaggle2.blob.core.windows.net/forum-message-attachments/
-              134445/4803/seizure-detection.pdf
+    .. [1] https://kaggle2.blob.core.windows.net/forum-message-attachments/
+           134445/4803/seizure-detection.pdf
     """
     n_channels = data.shape[0]
     _scaled = scale(data, axis=0)
@@ -292,7 +305,7 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
 
 def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
                        include_diag=False):
-    """Correlation Coefficients (computed from the power spectrum) ([Tisp]_).
+    """Correlation Coefficients (computed from the power spectrum).
 
     Parameters
     ----------
@@ -326,7 +339,12 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
 
     Notes
     -----
-    Alias of the feature function: **spect_corr**
+    Alias of the feature function: **spect_corr**. See [1]_.
+
+    References
+    ----------
+    .. [1] https://kaggle2.blob.core.windows.net/forum-message-attachments/
+           134445/4803/seizure-detection.pdf
     """
     n_channels = data.shape[0]
     ps, _ = power_spectrum(sfreq, data, return_db=db)

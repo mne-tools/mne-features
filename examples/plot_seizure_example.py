@@ -21,17 +21,8 @@ Proc. IEEE ICASSP Conf. 2018
 
     This example is for illustration purposes, as other methods
     may lead to better performance on such a dataset (classification of
-    "seizure" vs. "non-seizure" iEEG segments).
-
-References
-----------
-
-.. [1] Andrzejak, R. G. et al. (2001). Indications of nonlinear deterministic
-       and finite-dimensional structures in time series of brain electrical
-       activity: Dependence on recording region and brain state. Physical
-       Review E, 64(6), 061907.
-
-.. [2] http://epileptologie-bonn.de/cms/front_content.php?idcat=193&lang=3
+    "seizure" vs. "non-seizure" iEEG segments). For further information, see 
+    (Andrzejak et al., 2001) and http://epileptologie-bonn.de.
 """
 
 # Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
