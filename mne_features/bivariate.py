@@ -130,12 +130,12 @@ def compute_max_cross_corr(sfreq, data, include_diag=False):
 
     References
     ----------
-    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and 
+    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and
            winding road. Brain, 130(2), 314-333.
 
-    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional 
-           networks for epileptic seizure prediction from intracranial EEG. 
-           Machine Learning for Signal Processing, 2008. IEEE Workshop on 
+    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
+           networks for epileptic seizure prediction from intracranial EEG.
+           Machine Learning for Signal Processing, 2008. IEEE Workshop on
            (pp. 244-249). IEEE.
     """
     return _max_cross_corr(sfreq, data, include_diag=include_diag)
@@ -222,12 +222,12 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
 
     References
     ----------
-    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and 
+    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and
            winding road. Brain, 130(2), 314-333.
 
-    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional 
-           networks for epileptic seizure prediction from intracranial EEG. 
-           Machine Learning for Signal Processing, 2008. IEEE Workshop on 
+    .. [2] Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
+           networks for epileptic seizure prediction from intracranial EEG.
+           Machine Learning for Signal Processing, 2008. IEEE Workshop on
            (pp. 244-249). IEEE.
     """
     n_channels, n_times = data.shape

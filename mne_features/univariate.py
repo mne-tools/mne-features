@@ -336,12 +336,12 @@ def compute_hurst_exp(data):
 
     References
     ----------
-    .. [1] Rasheed, B. Q. K. et al. (2004). Hurst exponent and financial 
-           market predictability. In IASTED conference on Financial 
+    .. [1] Rasheed, B. Q. K. et al. (2004). Hurst exponent and financial
+           market predictability. In IASTED conference on Financial
            Engineering and Applications (FEA 2004) (pp. 203-209).
 
     .. [2] Devarajan, K. et al. (2014). EEG-Based Epilepsy Detection and
-           Prediction. International Journal of Engineering and Technology, 
+           Prediction. International Journal of Engineering and Technology,
            6(3), 212.
     """
     n_channels, n_times = data.shape
@@ -429,8 +429,8 @@ def compute_app_entropy(data, emb=2, metric='chebyshev'):
 
     References
     ----------
-    .. [1] Richman, J. S. et al. (2000). Physiological time-series analysis 
-           using approximate entropy and sample entropy. American Journal of 
+    .. [1] Richman, J. S. et al. (2000). Physiological time-series analysis
+           using approximate entropy and sample entropy. American Journal of
            Physiology-Heart and Circulatory Physiology, 278(6), H2039-H2049.
     """
     phi = _app_samp_entropy_helper(data, emb=emb, metric=metric,
@@ -462,8 +462,8 @@ def compute_samp_entropy(data, emb=2, metric='chebyshev'):
 
     References
     ----------
-    .. [1] Richman, J. S. et al. (2000). Physiological time-series analysis 
-           using approximate entropy and sample entropy. American Journal of 
+    .. [1] Richman, J. S. et al. (2000). Physiological time-series analysis
+           using approximate entropy and sample entropy. American Journal of
            Physiology-Heart and Circulatory Physiology, 278(6), H2039-H2049.
     """
     phi = _app_samp_entropy_helper(data, emb=emb, metric=metric,
@@ -494,8 +494,8 @@ def compute_decorr_time(sfreq, data):
 
     References
     ----------
-    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for 
-           studies on the prediction of epileptic seizures. Journal of 
+    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for
+           studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
     n_channels, n_times = data.shape
@@ -595,11 +595,11 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
 
     Notes
     -----
-    Alias of the feature function: **pow_freq_bands**. See [1]_. 
-    
+    Alias of the feature function: **pow_freq_bands**. See [1]_.
+
     References
     ----------
-    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for 
+    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
@@ -652,12 +652,12 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
 
     Notes
     -----
-    Alias of the feature function: **hjorth_mobility_spect**. See [1]_ and 
-    [2]_. 
+    Alias of the feature function: **hjorth_mobility_spect**. See [1]_ and
+    [2]_.
 
     References
     ----------
-    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and 
+    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and
            winding road. Brain, 130(2), 314-333.
 
     .. [2] Teixeira, C. A. et al. (2011). EPILAB: A software package for
@@ -693,7 +693,7 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False):
 
     Notes
     -----
-    Alias of the feature function: **hjorth_complexity_spect**. See [1]_ and 
+    Alias of the feature function: **hjorth_complexity_spect**. See [1]_ and
     [2]_.
 
     References
@@ -732,8 +732,8 @@ def compute_hjorth_mobility(data):
 
     References
     ----------
-    .. [1] Paivinen, N. et al. (2005). Epileptic seizure detection: A 
-           nonlinear viewpoint. Computer methods and programs in biomedicine, 
+    .. [1] Paivinen, N. et al. (2005). Epileptic seizure detection: A
+           nonlinear viewpoint. Computer methods and programs in biomedicine,
            79(2), 151-159.
     """
     x = np.insert(data, 0, 0, axis=-1)
@@ -763,8 +763,8 @@ def compute_hjorth_complexity(data):
 
     References
     ----------
-    .. [1] Paivinen, N. et al. (2005). Epileptic seizure detection: A 
-           nonlinear viewpoint. Computer methods and programs in biomedicine, 
+    .. [1] Paivinen, N. et al. (2005). Epileptic seizure detection: A
+           nonlinear viewpoint. Computer methods and programs in biomedicine,
            79(2), 151-159.
     """
     x = np.insert(data, 0, 0, axis=-1)
@@ -839,12 +839,12 @@ def compute_higuchi_fd(data, kmax=10):
 
     References
     ----------
-    .. [1] Esteller, R. et al. (2001). A comparison of waveform fractal 
-           dimension algorithms. IEEE Transactions on Circuits and Systems I: 
+    .. [1] Esteller, R. et al. (2001). A comparison of waveform fractal
+           dimension algorithms. IEEE Transactions on Circuits and Systems I:
            Fundamental Theory and Applications, 48(2), 177-183.
 
-    .. [2] Paivinen, N. et al. (2005). Epileptic seizure detection: A 
-           nonlinear viewpoint. Computer methods and programs in biomedicine, 
+    .. [2] Paivinen, N. et al. (2005). Epileptic seizure detection: A
+           nonlinear viewpoint. Computer methods and programs in biomedicine,
            79(2), 151-159.
     """
     return _higuchi_fd(data, kmax)
@@ -867,8 +867,8 @@ def compute_katz_fd(data):
 
     References
     ----------
-    .. [1] Esteller, R. et al. (2001). A comparison of waveform fractal 
-           dimension algorithms. IEEE Transactions on Circuits and Systems I: 
+    .. [1] Esteller, R. et al. (2001). A comparison of waveform fractal
+           dimension algorithms. IEEE Transactions on Circuits and Systems I:
            Fundamental Theory and Applications, 48(2), 177-183.
     """
     dists = np.abs(np.diff(data, axis=-1))
@@ -939,9 +939,9 @@ def compute_line_length(data):
 
     References
     ----------
-    .. [1] Esteller, R. et al. (2001). Line length: an efficient feature for 
-           seizure onset detection. In Engineering in Medicine and Biology 
-           Society, 2001. Proceedings of the 23rd Annual International 
+    .. [1] Esteller, R. et al. (2001). Line length: an efficient feature for
+           seizure onset detection. In Engineering in Medicine and Biology
+           Society, 2001. Proceedings of the 23rd Annual International
            Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
     """
     return np.mean(np.abs(np.diff(data, axis=-1)), axis=-1)
@@ -970,8 +970,8 @@ def compute_spect_entropy(sfreq, data):
 
     References
     ----------
-    .. [1] Inouye, T. et al. (1991). Quantification of EEG irregularity by 
-           use of the entropy of the power spectrum. Electroencephalography 
+    .. [1] Inouye, T. et al. (1991). Quantification of EEG irregularity by
+           use of the entropy of the power spectrum. Electroencephalography
            and clinical neurophysiology, 79(3), 204-210.
     """
     ps, _ = power_spectrum(sfreq, data, return_db=False)
@@ -1003,8 +1003,8 @@ def compute_svd_entropy(data, tau=2, emb=10):
 
     References
     ----------
-    .. [1] Roberts, S. J. et al. (1999). Temporal and spatial complexity 
-           measures for electroencephalogram based brain-computer interfacing. 
+    .. [1] Roberts, S. J. et al. (1999). Temporal and spatial complexity
+           measures for electroencephalogram based brain-computer interfacing.
            Medical & biological engineering & computing, 37(1), 93-98.
     """
     _, sv, _ = np.linalg.svd(_embed(data, d=emb, tau=tau))
@@ -1036,8 +1036,8 @@ def compute_svd_fisher_info(data, tau=2, emb=10):
 
     References
     ----------
-    .. [1] Roberts, S. J. et al. (1999). Temporal and spatial complexity 
-           measures for electroencephalogram based brain-computer interfacing. 
+    .. [1] Roberts, S. J. et al. (1999). Temporal and spatial complexity
+           measures for electroencephalogram based brain-computer interfacing.
            Medical & biological engineering & computing, 37(1), 93-98.
     """
     _, sv, _ = np.linalg.svd(_embed(data, d=emb, tau=tau))
@@ -1086,7 +1086,7 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
 
     References
     ----------
-    .. [1] Kharbouch, A. et al. (2011). An algorithm for seizure onset 
+    .. [1] Kharbouch, A. et al. (2011). An algorithm for seizure onset
            detection using intracranial EEG. Epilepsy & Behavior, 22, S29-S35.
     """
     n_channels = data.shape[0]
@@ -1135,7 +1135,7 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
 
     References
     ----------
-    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and winding 
+    .. [1] Mormann, F. et al. (2006). Seizure prediction: the long and winding
            road. Brain, 130(2), 314-333.
     """
     if ref_freq is None:
@@ -1188,8 +1188,8 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
 
     References
     ----------
-    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for 
-           studies on the prediction of epileptic seizures. Journal of 
+    .. [1] Teixeira, C. A. et al. (2011). EPILAB: A software package for
+           studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
     n_channels, n_times = data.shape
@@ -1247,8 +1247,8 @@ def compute_teager_kaiser_energy(data, wavelet_name='db4'):
 
     References
     ----------
-    .. [1] Badani, S. et al. (2017). Detection of epilepsy based on discrete 
-           wavelet transform and Teager-Kaiser energy operator. In Calcutta 
+    .. [1] Badani, S. et al. (2017). Detection of epilepsy based on discrete
+           wavelet transform and Teager-Kaiser energy operator. In Calcutta
            Conference (CALCON). 2017 IEEE (pp. 164-167).
     """
     n_channels, n_times = data.shape
