@@ -29,7 +29,7 @@ Proc. IEEE ICASSP Conf. 2018
 
     This example is for illustration purposes, as other methods
     may lead to better performance on such a dataset (classification of
-    "seizure" vs. "non-seizure" iEEG segments). For further information, see 
+    "seizure" vs. "non-seizure" iEEG segments). For further information, see
     (Andrzejak et al., 2001) and http://epileptologie-bonn.de.
 
 
@@ -157,10 +157,10 @@ Print the cross-validation accuracy score:
 
  Out::
 
-    Cross-validation accuracy score = 0.970 (+/- 0.00792)
+    Cross-validation accuracy score = 0.973 (+/- 0.00472)
 
 
-**Total running time of the script:** ( 0 minutes  7.312 seconds)
+**Total running time of the script:** ( 0 minutes  7.661 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_seizure_example.py:

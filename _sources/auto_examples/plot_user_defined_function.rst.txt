@@ -190,10 +190,10 @@ Print the accuracy score on a test dataset.
 
  Out::
 
-    Accuracy score = 1.000
+    Accuracy score = 0.931
 
 
-**Total running time of the script:** ( 0 minutes  1.257 seconds)
+**Total running time of the script:** ( 0 minutes  1.382 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_user_defined_function.py:

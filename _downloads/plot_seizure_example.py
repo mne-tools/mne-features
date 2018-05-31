@@ -21,7 +21,7 @@ Proc. IEEE ICASSP Conf. 2018
 
     This example is for illustration purposes, as other methods
     may lead to better performance on such a dataset (classification of
-    "seizure" vs. "non-seizure" iEEG segments). For further information, see 
+    "seizure" vs. "non-seizure" iEEG segments). For further information, see
     (Andrzejak et al., 2001) and http://epileptologie-bonn.de.
 """
 
