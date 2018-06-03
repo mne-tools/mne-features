@@ -29,7 +29,8 @@ from mne_features.univariate import (_slope_lstsq, _accumulate_std,
                                      compute_energy_freq_bands,
                                      compute_spect_edge_freq,
                                      compute_wavelet_coef_energy,
-                                     compute_teager_kaiser_energy)
+                                     compute_teager_kaiser_energy,
+                                     compute_powercurve_deviation)
 
 rng = np.random.RandomState(42)
 sfreq = 512.
@@ -253,6 +254,10 @@ def test_energy_freq_bands():
     tot_energy = np.sum(data_sin ** 2, axis=-1)
     assert_equal(band_energy > 0.98 * tot_energy, True)
 
+
+def test_powercurve_deviation():
+    compute_powercurve_deviation(data=data1, sfreq=sfreq)
+    # not sure how to test here
 
 def test_spect_entropy():
     expected = -(0.005 / 0.00625) * log(0.005 / 0.00625, 2.) - \

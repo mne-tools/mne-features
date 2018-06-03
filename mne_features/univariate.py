@@ -10,6 +10,9 @@ import numpy as np
 from scipy import stats
 from scipy.ndimage import convolve1d
 from sklearn.neighbors import KDTree
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, explained_variance_score
+
 
 from .mock_numba import nb
 from .utils import (power_spectrum, _embed, _filt, _get_feature_funcs,
@@ -973,6 +976,51 @@ def compute_svd_entropy(data, tau=2, emb=10):
     m = np.sum(sv, axis=-1)
     sv_norm = np.divide(sv, m[:, None])
     return -np.sum(np.multiply(sv_norm, np.log2(sv_norm)), axis=-1)
+
+
+
+def compute_powercurve_deviation(data, sfreq, freq_range=[0.1, 50.]):
+    """ Linear fit to the log-log frequency-curve with fit error (per channel).
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    freq_range: list, length 2
+        Gives floats fmin, fmax that define frequency range of the linear fit.
+
+    sfreq: float
+        The sampling frequency.
+    Returns
+    -------
+    output : ndarray, shape (n_channels, 4)
+        The 4 columns are slope, intercept, mse, and R2 per channel.
+    """
+    ps, freqs = power_spectrum(sfreq, data, return_db=False)
+
+    # mask limiting to input freq_range
+    mask = np.logical_and(freqs >= freq_range[0], freqs <= freq_range[1])
+
+    # freqs and ps selected over input freq_range and expressed in log scale
+    freqs, ps = 10 * np.log10(freqs[mask]), 10 * np.log10(ps[:, mask])
+
+    # linear fit
+    lm = LinearRegression()
+    fit_info = []
+
+
+    for power in ps:
+
+        lm.fit(freqs.reshape(-1, 1), power)
+        coef = float(lm.coef_)
+        intercept = float(lm.intercept_)
+        power_estimate = lm.predict(freqs.reshape(-1, 1))
+        mse = float(mean_squared_error(power, power_estimate))
+        R2 = float(explained_variance_score(power, power_estimate))
+        fit_info.append([coef, intercept, mse, R2])
+
+    fit_info = np.array(fit_info)
+
+    return(fit_info)
 
 
 def compute_svd_fisher_info(data, tau=2, emb=10):
