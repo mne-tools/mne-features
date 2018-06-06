@@ -72,8 +72,7 @@ data = epochs.get_data()
 
 pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                          selected_funcs=['app_entropy',
-                                                         'mean'],
-                                         memory='.')),
+                                                         'mean'])),
                  ('scaler', StandardScaler()),
                  ('clf', LogisticRegression(random_state=42))])
 skf = StratifiedKFold(n_splits=3, random_state=42)
@@ -96,7 +95,8 @@ print('Cross-validation accuracy score (with default parameters) = %1.3f '
 params_grid = {'fe__app_entropy__emb': np.arange(2, 5)}
 
 gs = GridSearchCV(estimator=pipe, param_grid=params_grid,
-                  cv=StratifiedKFold(n_splits=2, random_state=42), n_jobs=1)
+                  cv=StratifiedKFold(n_splits=2, random_state=42), n_jobs=1,
+                  return_train_score=True)
 gs.fit(data, y)
 
 # Best parameters obtained with GridSearchCV:
