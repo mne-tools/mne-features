@@ -1016,24 +1016,38 @@ def compute_svd_entropy(data, tau=2, emb=10):
     return -np.sum(np.multiply(sv_norm, np.log2(sv_norm)), axis=-1)
 
 
-def compute_powercurve_deviation(sfreq, data, fmin=0.1, fmax=50, 
+def compute_powercurve_deviation(sfreq, data, fmin=0.1, fmax=50,
                                  with_intercept=True):
-    """ Linear fit to the log-log frequency-curve with fit error (per channel).
+    """Linear regression of the the log-log frequency-curve (per channel).
+
+    Using a linear regression, the function estimates the slope and the
+    intercept (if ``with_intercept`` is True) of the Power Spectral Density
+    (PSD) in the log-log scale. In addition to this, the Mean Square Error
+    (MSE) and R2 coefficient (goodness-of-fit) are returned. By default, the
+    [0.1Hz, 50Hz] frequency range is used for the regression.
 
     Parameters
     ----------
+    sfreq : float
+        Sampling rate of the data.
+
     data : ndarray, shape (n_channels, n_times)
 
-    freq_range: list, length 2
-        Gives floats fmin, fmax that define frequency range of the linear fit.
+    fmin : float (default: 0.1)
+        Lower bound of the frequency range considered in the linear regression.
 
-    sfreq: float
-        The sampling frequency.
+    fmax : float (default: 50)
+        Upper bound of the frequency range considered in the linear regression.
+
+    with_intercept : bool (default: True)
+        If True, the intercept of the linear regression is included among the
+        features returned by the function. If False, only the slope, the MSE
+        and the R2 coefficient are returned.
 
     Returns
     -------
     output : ndarray, shape (n_channels * 4,)
-        The 4 characteristics are intercept, slope, MSE, and R2 per channel.
+        The four characteristics: intercept, slope, MSE, and R2 per channel.
 
     Notes
     -----
@@ -1042,18 +1056,13 @@ def compute_powercurve_deviation(sfreq, data, fmin=0.1, fmax=50,
 
     References
     ----------
-    .. [1] Demanuele C, James CJ, Sonuga-Barke EJ.
-           Distinguishing low frequency oscillations
-           within the 1/f spectral behaviour of electromagnetic
-           brain signals.
-           Behavioral and brain functions : BBF.
-           2007;3:62. doi:10.1186/1744-9081-3-62.
+    .. [1] Demanuelle C. et al. (2007). Distinguishing low frequency
+           oscillations within the 1/f spectral behaviour of electromagnetic
+           brain signals. Behavioral and Brain Functions (BBF).
 
-    .. [2] Winkler I, Haufe S, Tangermann M. Automatic Classification
-           of Artifactual ICA-Components for Artifact Removal in EEG Signals.
-           Behavioral and Brain Functions : BBF.
-           011;7:30. doi:10.1186/1744-9081-7-30.
-
+    .. [2] Winkler I. et al. (2011). Automatic Classification of Artifactual
+           ICA-Components for Artifact Removal in EEG Signals. Behavioral and
+           Brain Functions (BBF).
     """
 
     n_channels = data.shape[0]
