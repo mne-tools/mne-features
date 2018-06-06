@@ -264,9 +264,6 @@ def test_powercurve_deviation():
     are correct.
     """
 
-    np.random.seed(42)
-    sfreq = 2034.51
-
     # Support of the spectrum
     freqs = np.fft.fftfreq(n=int(sfreq), d=1. / sfreq)
 
@@ -278,7 +275,7 @@ def test_powercurve_deviation():
     # such that power(f) = k1/f**a with noise
     mag = np.zeros((freqs.shape[0],))
     mag[0] = 0
-    noise = np.random.uniform(low=-0.01, high=0.01, size=127)
+    noise = rng.uniform(low=-0.01, high=0.01, size=127)
     pos_freqs = np.arange(1,128)
     mag[pos_freqs] = (np.sqrt(k1) + noise) / (pos_freqs ** (theta / 2))
     mag[-pos_freqs] = mag[1:128]
@@ -286,7 +283,7 @@ def test_powercurve_deviation():
     # From the magnitude, we get the spectrum, choosing a random phase per bin.
     spect = np.zeros((freqs.shape[0],), dtype=np.complex64)
     spect[0] = 0
-    phase = np.random.uniform(low=-np.pi, high=np.pi, size=127)
+    phase = rng.uniform(low=-np.pi, high=np.pi, size=127)
     spect[pos_freqs] = mag[pos_freqs] * np.exp(phase * 1j)
     spect[-pos_freqs] = np.conj(spect[pos_freqs])
 
@@ -298,9 +295,9 @@ def test_powercurve_deviation():
     n_times = sig.shape[0]
 
     # We test our estimates
-    data = sig.reshape(1, -1)
     intercept, slope, mse, r2 = \
-    compute_powercurve_deviation(sfreq=sfreq, data=data, with_intercept=True)
+    compute_powercurve_deviation(sfreq=sfreq, data=sig.reshape(1, -1),
+                                 with_intercept=True)
 
     # obtained by the expression ps[f] = 2 * [ (spect[f]^2) / (n_times^2) ]
     # and plug-in: power(f) = k1/f**theta with noise

@@ -609,15 +609,15 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
     n_channels = data.shape[0]
     fb = _freq_bands_helper(sfreq, freq_bands)
     n_freq_bands = fb.shape[0]
-    ps, freqs = power_spectrum(sfreq, data, return_db=False)
+    psd, freqs = power_spectrum(sfreq, data, return_db=False)
     pow_freq_bands = np.empty((n_channels, n_freq_bands))
     for j in range(n_freq_bands):
         mask = np.logical_and(freqs >= fb[j, 0], freqs <= fb[j, 1])
-        ps_band = ps[:, mask]
-        pow_freq_bands[:, j] = np.sum(ps_band, axis=-1)
+        psd_band = psd[:, mask]
+        pow_freq_bands[:, j] = np.sum(psd_band, axis=-1)
     if normalize:
         pow_freq_bands = np.divide(pow_freq_bands,
-                                   np.sum(ps, axis=-1)[:, None])
+                                   np.sum(psd, axis=-1)[:, None])
     if ratios is None:
         return pow_freq_bands.ravel()
     elif ratios not in ['all', 'only']:
@@ -667,11 +667,11 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    ps, freqs = power_spectrum(sfreq, data)
+    psd, freqs = power_spectrum(sfreq, data)
     w_freqs = np.power(freqs, 2)
-    mobility = np.sum(np.multiply(ps, w_freqs), axis=-1)
+    mobility = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
-        mobility = np.divide(mobility, np.sum(ps, axis=-1))
+        mobility = np.divide(mobility, np.sum(psd, axis=-1))
     return mobility
 
 
@@ -708,11 +708,11 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False):
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    ps, freqs = power_spectrum(sfreq, data)
+    psd, freqs = power_spectrum(sfreq, data)
     w_freqs = np.power(freqs, 4)
-    complexity = np.sum(np.multiply(ps, w_freqs), axis=-1)
+    complexity = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
-        complexity = np.divide(complexity, np.sum(ps, axis=-1))
+        complexity = np.divide(complexity, np.sum(psd, axis=-1))
     return complexity
 
 
@@ -977,10 +977,10 @@ def compute_spect_entropy(sfreq, data):
            use of the entropy of the power spectrum. Electroencephalography
            and clinical neurophysiology, 79(3), 204-210.
     """
-    ps, _ = power_spectrum(sfreq, data, return_db=False)
-    m = np.sum(ps, axis=-1)
-    ps_norm = np.divide(ps[:, 1:], m[:, None])
-    return -np.sum(np.multiply(ps_norm, np.log2(ps_norm)), axis=-1)
+    psd, _ = power_spectrum(sfreq, data, return_db=False)
+    m = np.sum(psd, axis=-1)
+    psd_norm = np.divide(psd[:, 1:], m[:, None])
+    return -np.sum(np.multiply(psd_norm, np.log2(psd_norm)), axis=-1)
 
 
 def compute_svd_entropy(data, tau=2, emb=10):
@@ -1231,11 +1231,11 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
     n_edge = len(_edge)
     n_channels, n_times = data.shape
     spect_edge_freq = np.empty((n_channels, n_edge))
-    ps, freqs = power_spectrum(sfreq, data, return_db=False)
-    out = np.cumsum(ps, 1)
+    psd, freqs = power_spectrum(sfreq, data, return_db=False)
+    out = np.cumsum(psd, 1)
     for i, p in enumerate(_edge):
         idx_ref = np.where(freqs >= _ref_freq)[0][0]
-        ref_pow = np.sum(ps[:, :(idx_ref + 1)], axis=-1)
+        ref_pow = np.sum(psd[:, :(idx_ref + 1)], axis=-1)
         for j in range(n_channels):
             idx = np.where(out[j, :] >= p * ref_pow[j])[0]
             if idx.size > 0:
