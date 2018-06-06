@@ -256,8 +256,59 @@ def test_energy_freq_bands():
 
 
 def test_powercurve_deviation():
-    compute_powercurve_deviation(data=data1, sfreq=sfreq)
-    # not sure how to test here
+    """Test for :func:`compute_powercurve_deviation`.
+
+    We impose the power to be written as power(f) = k1/f**theta with noise
+    and derive a signal candidate, to which we apply the function
+    compute_powercurve_deviation and check whether the k1 and theta estimates
+    are correct.
+    """
+    sfreq = 2034.51
+
+    # Support of the spectrum
+    freqs = np.fft.fftfreq(n=int(sfreq), d=1. / sfreq)
+
+    # parameters
+    k1 = 5.
+    theta = 3.
+
+    # Define the magnitude of the spectrum
+    # such that power(f) = k1/f**a with noise
+    mag = np.zeros((freqs.shape[0],))
+    mag[0] = 0
+    for f in range(1, 128):
+        m = np.random.uniform(low=-0.01, high=0.01)
+        mag[f] = (np.sqrt(k1) + m) / (f ** (theta / 2))
+        mag[-f] = mag[f]
+
+    # From the magnitude, we get the spectrum, choosing a random phase per bin.
+    spect = np.zeros((freqs.shape[0],), dtype=np.complex64)
+    spect[0] = 0
+    for f in range(1, 128):
+        phase = np.random.uniform(low=-np.pi, high=np.pi)
+        spect[f] = mag[f] * np.exp(phase * 1j)
+        spect[-f] = np.conj(spect[f])
+
+    # Take the inverse FFT to go back to the time domain.
+    # The imaginary part of _sig is numerically close to 0 (hermitian symmetry).
+    # So we obtain a real signal
+    _sig = np.fft.ifft(spect)
+    sig = _sig.real
+    n_times = sig.shape[0]
+
+    # We test our estimates
+    data = sig.reshape(1, -1)
+    intercept, slope, mse, r2 = compute_powercurve_deviation(sfreq=sfreq, data=data, with_intercept=True)
+
+    # obtained by the expression ps[f] = 2 * [ (spect[f]^2) / (n_times^2) ]
+    # and plug-in: power(f) = k1/f**theta with noise
+    k1_estimate = 10**(intercept - np.log10(2) + 2 * np.log10(n_times))
+    theta_estimate = - slope
+
+    np.testing.assert_almost_equal(k1, k1_estimate, decimal=2)
+
+    np.testing.assert_almost_equal(theta, theta_estimate, decimal=2)
+
 
 def test_spect_entropy():
     expected = -(0.005 / 0.00625) * log(0.005 / 0.00625, 2.) - \

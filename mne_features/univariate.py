@@ -1016,9 +1016,10 @@ def compute_svd_entropy(data, tau=2, emb=10):
     return -np.sum(np.multiply(sv_norm, np.log2(sv_norm)), axis=-1)
 
 
-
-def compute_powercurve_deviation(data, sfreq, freq_range=[0.1, 50.]):
+def compute_powercurve_deviation(sfreq, data, fmin=0.1, fmax=50, 
+                                 with_intercept=True):
     """ Linear fit to the log-log frequency-curve with fit error (per channel).
+
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
@@ -1028,37 +1029,61 @@ def compute_powercurve_deviation(data, sfreq, freq_range=[0.1, 50.]):
 
     sfreq: float
         The sampling frequency.
+
     Returns
     -------
-    output : ndarray, shape (n_channels, 4)
-        The 4 columns are slope, intercept, mse, and R2 per channel.
+    output : ndarray, shape (n_channels * 4,)
+        The 4 characteristics are intercept, slope, MSE, and R2 per channel.
+
+    Notes
+    -----
+    Alias of the feature function: **powercurve_deviation**. See [1]_
+    and [2]_.
+
+    References
+    ----------
+    .. [1] Demanuele C, James CJ, Sonuga-Barke EJ.
+           Distinguishing low frequency oscillations
+           within the 1/f spectral behaviour of electromagnetic
+           brain signals.
+           Behavioral and brain functions : BBF.
+           2007;3:62. doi:10.1186/1744-9081-3-62.
+
+    .. [2] Winkler I, Haufe S, Tangermann M. Automatic Classification
+           of Artifactual ICA-Components for Artifact Removal in EEG Signals.
+           Behavioral and Brain Functions : BBF.
+           011;7:30. doi:10.1186/1744-9081-7-30.
+
     """
-    ps, freqs = power_spectrum(sfreq, data, return_db=False)
+
+    n_channels = data.shape[0]
+    psd, freqs = power_spectrum(sfreq, data, return_db=False)
 
     # mask limiting to input freq_range
-    mask = np.logical_and(freqs >= freq_range[0], freqs <= freq_range[1])
+    mask = np.logical_and(freqs >= fmin, freqs <= fmax)
 
-    # freqs and ps selected over input freq_range and expressed in log scale
-    freqs, ps = 10 * np.log10(freqs[mask]), 10 * np.log10(ps[:, mask])
+    # freqs and psd selected over input freq_range and expressed in log scale
+    freqs, psd = np.log10(freqs[mask]), np.log10(psd[:, mask])
 
     # linear fit
     lm = LinearRegression()
-    fit_info = []
+    fit_info = np.empty((n_channels, 4))
 
-
-    for power in ps:
+    for idx, power in enumerate(psd):
 
         lm.fit(freqs.reshape(-1, 1), power)
         coef = float(lm.coef_)
         intercept = float(lm.intercept_)
         power_estimate = lm.predict(freqs.reshape(-1, 1))
         mse = float(mean_squared_error(power, power_estimate))
-        R2 = float(explained_variance_score(power, power_estimate))
-        fit_info.append([coef, intercept, mse, R2])
+        r2 = float(explained_variance_score(power, power_estimate))
+        fit_info[idx, :] = np.array([intercept, coef, mse, r2])
 
-    fit_info = np.array(fit_info)
+    if not with_intercept:
 
-    return(fit_info)
+        fit_info = fit_info[:, 1:]
+
+    return(fit_info.ravel())
 
 
 def compute_svd_fisher_info(data, tau=2, emb=10):
