@@ -1064,7 +1064,6 @@ def compute_powercurve_deviation(sfreq, data, fmin=0.1, fmax=50,
            ICA-Components for Artifact Removal in EEG Signals. Behavioral and
            Brain Functions (BBF).
     """
-
     n_channels = data.shape[0]
     psd, freqs = power_spectrum(sfreq, data, return_db=False)
 

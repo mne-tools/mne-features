@@ -263,7 +263,6 @@ def test_powercurve_deviation():
     compute_powercurve_deviation and check whether the k1 and theta estimates
     are correct.
     """
-
     # Support of the spectrum
     freqs = np.fft.fftfreq(n=int(sfreq), d=1. / sfreq)
 
@@ -276,7 +275,7 @@ def test_powercurve_deviation():
     mag = np.zeros((freqs.shape[0],))
     mag[0] = 0
     noise = rng.uniform(low=-0.01, high=0.01, size=127)
-    pos_freqs = np.arange(1,128)
+    pos_freqs = np.arange(1, 128)
     mag[pos_freqs] = (np.sqrt(k1) + noise) / (pos_freqs ** (theta / 2))
     mag[-pos_freqs] = mag[1:128]
 
@@ -296,8 +295,8 @@ def test_powercurve_deviation():
 
     # We test our estimates
     intercept, slope, mse, r2 = \
-    compute_powercurve_deviation(sfreq=sfreq, data=sig.reshape(1, -1),
-                                 with_intercept=True)
+        compute_powercurve_deviation(sfreq=sfreq, data=sig.reshape(1, -1),
+                                     with_intercept=True)
 
     # obtained by the expression ps[f] = 2 * [ (spect[f]^2) / (n_times^2) ]
     # and plug-in: power(f) = k1/f**theta with noise
