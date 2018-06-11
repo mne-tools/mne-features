@@ -53,7 +53,7 @@ Functions
    compute_katz_fd
    compute_zero_crossings
    compute_line_length
-   compute_powercurve_deviation
+   compute_spect_slope
    compute_spect_entropy
    compute_svd_entropy
    compute_svd_fisher_info

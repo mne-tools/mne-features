@@ -30,7 +30,7 @@ from mne_features.univariate import (_slope_lstsq, _accumulate_std,
                                      compute_spect_edge_freq,
                                      compute_wavelet_coef_energy,
                                      compute_teager_kaiser_energy,
-                                     compute_powercurve_deviation)
+                                     compute_spect_slope)
 
 rng = np.random.RandomState(42)
 sfreq = 512.
@@ -255,7 +255,7 @@ def test_energy_freq_bands():
     assert_equal(band_energy > 0.98 * tot_energy, True)
 
 
-def test_powercurve_deviation():
+def test_spect_slope():
     """Test for :func:`compute_powercurve_deviation`.
 
     We impose the power to be written as power(f) = k1/f**theta with noise
@@ -295,8 +295,8 @@ def test_powercurve_deviation():
 
     # We test our estimates
     intercept, slope, mse, r2 = \
-        compute_powercurve_deviation(sfreq=sfreq, data=sig.reshape(1, -1),
-                                     with_intercept=True)
+        compute_spect_slope(sfreq=sfreq, data=sig.reshape(1, -1),
+                            with_intercept=True)
 
     # obtained by the expression ps[f] = 2 * [ (spect[f]^2) / (n_times^2) ]
     # and plug-in: power(f) = k1/f**theta with noise
@@ -304,11 +304,8 @@ def test_powercurve_deviation():
     theta_estimate = - slope
 
     np.testing.assert_almost_equal(k1, k1_estimate, decimal=1)
-
     np.testing.assert_almost_equal(theta, theta_estimate, decimal=1)
-
     assert r2 > 0.95, "Explained variance is not high enough."
-
     assert mse < 0.5, "Residual has too large standard deviation."
 
 
@@ -378,6 +375,7 @@ if __name__ == '__main__':
     test_higuchi_fd()
     test_katz_fd()
     test_energy_freq_bands()
+    test_spect_slope()
     test_spect_entropy()
     test_spect_edge_freq()
     test_svd_entropy()

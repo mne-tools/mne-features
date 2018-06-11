@@ -1016,8 +1016,8 @@ def compute_svd_entropy(data, tau=2, emb=10):
     return -np.sum(np.multiply(sv_norm, np.log2(sv_norm)), axis=-1)
 
 
-def compute_powercurve_deviation(sfreq, data, fmin=0.1, fmax=50,
-                                 with_intercept=True):
+def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
+                        with_intercept=True):
     """Linear regression of the the log-log frequency-curve (per channel).
 
     Using a linear regression, the function estimates the slope and the
@@ -1051,7 +1051,7 @@ def compute_powercurve_deviation(sfreq, data, fmin=0.1, fmax=50,
 
     Notes
     -----
-    Alias of the feature function: **powercurve_deviation**. See [1]_
+    Alias of the feature function: **spect_slope**. See [1]_
     and [2]_.
 
     References
@@ -1076,22 +1076,16 @@ def compute_powercurve_deviation(sfreq, data, fmin=0.1, fmax=50,
     # linear fit
     lm = LinearRegression()
     fit_info = np.empty((n_channels, 4))
-
     for idx, power in enumerate(psd):
-
         lm.fit(freqs.reshape(-1, 1), power)
-        coef = float(lm.coef_)
-        intercept = float(lm.intercept_)
+        fit_info[idx, 0] = lm.coef_
+        fit_info[idx, 1] = lm.intercept_
         power_estimate = lm.predict(freqs.reshape(-1, 1))
-        mse = float(mean_squared_error(power, power_estimate))
-        r2 = float(explained_variance_score(power, power_estimate))
-        fit_info[idx, :] = np.array([intercept, coef, mse, r2])
-
+        fit_info[idx, 2] = mean_squared_error(power, power_estimate)
+        fit_info[idx, 3] = explained_variance_score(power, power_estimate)
     if not with_intercept:
-
         fit_info = fit_info[:, 1:]
-
-    return(fit_info.ravel())
+    return fit_info.ravel()
 
 
 def compute_svd_fisher_info(data, tau=2, emb=10):
