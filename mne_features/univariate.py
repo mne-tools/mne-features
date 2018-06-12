@@ -1078,8 +1078,8 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
     fit_info = np.empty((n_channels, 4))
     for idx, power in enumerate(psd):
         lm.fit(freqs.reshape(-1, 1), power)
-        fit_info[idx, 0] = lm.coef_
-        fit_info[idx, 1] = lm.intercept_
+        fit_info[idx, 0] = lm.intercept_
+        fit_info[idx, 1] = lm.coef_
         power_estimate = lm.predict(freqs.reshape(-1, 1))
         fit_info[idx, 2] = mean_squared_error(power, power_estimate)
         fit_info[idx, 3] = explained_variance_score(power, power_estimate)
