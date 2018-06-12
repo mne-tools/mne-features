@@ -29,7 +29,8 @@ from mne_features.univariate import (_slope_lstsq, _accumulate_std,
                                      compute_energy_freq_bands,
                                      compute_spect_edge_freq,
                                      compute_wavelet_coef_energy,
-                                     compute_teager_kaiser_energy)
+                                     compute_teager_kaiser_energy,
+                                     compute_spect_slope)
 
 rng = np.random.RandomState(42)
 sfreq = 512.
@@ -254,6 +255,60 @@ def test_energy_freq_bands():
     assert_equal(band_energy > 0.98 * tot_energy, True)
 
 
+def test_spect_slope():
+    """Test for :func:`compute_powercurve_deviation`.
+
+    We impose the power to be written as power(f) = k1/f**theta with noise
+    and derive a signal candidate, to which we apply the function
+    compute_powercurve_deviation and check whether the k1 and theta estimates
+    are correct.
+    """
+    # Support of the spectrum
+    freqs = np.fft.fftfreq(n=int(sfreq), d=1. / sfreq)
+
+    # parameters
+    k1 = 5.
+    theta = 3.
+
+    # Define the magnitude of the spectrum
+    # such that power(f) = k1/f**a with noise
+    mag = np.zeros((freqs.shape[0],))
+    mag[0] = 0
+    noise = rng.uniform(low=-0.01, high=0.01, size=127)
+    pos_freqs = np.arange(1, 128)
+    mag[pos_freqs] = (np.sqrt(k1) + noise) / (pos_freqs ** (theta / 2))
+    mag[-pos_freqs] = mag[1:128]
+
+    # From the magnitude, we get the spectrum, choosing a random phase per bin.
+    spect = np.zeros((freqs.shape[0],), dtype=np.complex64)
+    spect[0] = 0
+    phase = rng.uniform(low=-np.pi, high=np.pi, size=127)
+    spect[pos_freqs] = mag[pos_freqs] * np.exp(phase * 1j)
+    spect[-pos_freqs] = np.conj(spect[pos_freqs])
+
+    # Take the inverse FFT to go back to the time domain.
+    # The imaginary part of _sig is numerically close to 0
+    # by hermitian symmetry. So we obtain a real signal.
+    _sig = np.fft.ifft(spect)
+    sig = _sig.real
+    n_times = sig.shape[0]
+
+    # We test our estimates
+    intercept, slope, mse, r2 = \
+        compute_spect_slope(sfreq=sfreq, data=sig.reshape(1, -1),
+                            with_intercept=True)
+
+    # obtained by the expression ps[f] = 2 * [ (spect[f]^2) / (n_times^2) ]
+    # and plug-in: power(f) = k1/f**theta with noise
+    k1_estimate = 10**(intercept - np.log10(2) + 2 * np.log10(n_times))
+    theta_estimate = - slope
+
+    np.testing.assert_almost_equal(k1, k1_estimate, decimal=1)
+    np.testing.assert_almost_equal(theta, theta_estimate, decimal=1)
+    assert r2 > 0.95, "Explained variance is not high enough."
+    assert mse < 0.5, "Residual has too large standard deviation."
+
+
 def test_spect_entropy():
     expected = -(0.005 / 0.00625) * log(0.005 / 0.00625, 2.) - \
         (0.00125 / 0.00625) * log(0.00125 / 0.00625, 2.)
@@ -320,6 +375,7 @@ if __name__ == '__main__':
     test_higuchi_fd()
     test_katz_fd()
     test_energy_freq_bands()
+    test_spect_slope()
     test_spect_entropy()
     test_spect_edge_freq()
     test_svd_entropy()
