@@ -82,8 +82,8 @@ psd, freqs = _psd[0, mask], _freqs[mask]
 # by ``compute_spect_slope`` because, in the feature function, the linear
 # regression fit is done in the log10-log10 scale.
 res = compute_spect_slope(sfreq, data, fmin=0.1, fmax=40)
-slope = -res[0]
-intercept = 10 ** res[1]
+slope = -res[1]
+intercept = 10 ** res[0]
 print('The estimated slope (respectively intercept) is: %1.2f (resp. %1.3e)' %
       (slope, intercept))
 
