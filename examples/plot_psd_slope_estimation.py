@@ -50,29 +50,23 @@ event_id = dict(aud_l=1, vis_l=3)
 # Setup for reading the raw data
 raw = mne.io.read_raw_fif(raw_fname, preload=True)
 raw.filter(.5, None, fir_design='firwin')
-events = mne.read_events(event_fname)
-picks = mne.pick_types(raw.info, meg=False, eeg=True)
-
-# Read epochs
-epochs = mne.Epochs(raw, events, event_id, tmin, tmax, picks=picks, proj=True,
-                    baseline=None, preload=True)
 
 ###############################################################################
-# Estimate the slope (and the intercept) of the PSD. For the sake of the
-# example, a single epoch and channel are used to estimate the slope and the
+# Estimate the slope (and the intercept) of the PSD. We use here a single
+# MEG channel during the full recording to estimate the slope and the
 # intercept.
 
-data = epochs.get_data()[0, 1, :].reshape((1, -1))
-sfreq = epochs.info['sfreq']
+data, _ = raw[0, :2048]
+# data = epochs.get_data()[0, 1, :].reshape((1, -1))
+sfreq = raw.info['sfreq']
 
 # Compute the (one-sided) PSD using FFT. The ``mask`` variable allows to
 # select only the part of the PSD which corresponds to frequencies between
 # 0.1Hz and 40Hz (the data used in this example is already low-pass filtered
 # at 40Hz).
-_psd, _freqs = power_spectrum(sfreq, data)
-mask = np.logical_and(0.1 <= _freqs, _freqs <= 40)
-
-psd, freqs = _psd[0, mask], _freqs[mask]
+psd, freqs = power_spectrum(sfreq, data)
+mask = np.logical_and(0.1 <= freqs, freqs <= 40)
+psd, freqs = psd[0, mask], freqs[mask]
 
 # Estimate the slope (and the intercept) of the PSD. The function
 # :func:`compute_spect_slope` assumes that the PSD of the signal is of the
@@ -81,23 +75,18 @@ psd, freqs = _psd[0, mask], _freqs[mask]
 # the variables ``slope`` and ``intercept`` differ from the values returned
 # by ``compute_spect_slope`` because, in the feature function, the linear
 # regression fit is done in the log10-log10 scale.
-res = compute_spect_slope(sfreq, data, fmin=0.1, fmax=40)
-slope = -res[1]
-intercept = 10 ** res[0]
+intercept, slope, _, _ = compute_spect_slope(sfreq, data, fmin=1., fmax=40.)
 print('The estimated slope (respectively intercept) is: %1.2f (resp. %1.3e)' %
       (slope, intercept))
 
 # Plot the PSD together with the ``b / (f ** a)`` curve (estimated decay of
-# the PSD with frequency) and the ``b / f`` curve (classical decay of the PSD
-# with frequency).
+# the PSD with frequency).
 plt.figure()
-plt.plot(freqs, psd, '-b', lw=2, label='PSD')
-plt.plot(freqs, intercept / (freqs ** slope), '-r', lw=2,
-         label='b / (f ** a)')
-plt.plot(freqs, intercept / (freqs ** 1.), '-m', lw=1, label='b / f')
-plt.xlabel('f (frequency, in Hz)')
-plt.ylabel('PSD (in Volts ** 2 / Hz)')
-plt.ylim([np.min(psd), np.max(psd)])
+plt.semilogx(freqs, np.log10(psd), '-b', lw=2, label='PSD')
+plt.semilogx(freqs, intercept + slope * np.log10(freqs),
+             '-r', lw=2, label='b / (f ** a)')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('PSD (dB)')
 plt.xlim([1, 40])
-plt.legend(loc='upper right')
+plt.legend(loc='lower left')
 plt.show()
