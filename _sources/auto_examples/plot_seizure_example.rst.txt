@@ -157,10 +157,10 @@ Print the cross-validation accuracy score:
 
  Out::
 
-    Cross-validation accuracy score = 0.973 (+/- 0.00472)
+    Cross-validation accuracy score = 0.970 (+/- 0.00808)
 
 
-**Total running time of the script:** ( 0 minutes  7.661 seconds)
+**Total running time of the script:** ( 0 minutes  7.966 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_seizure_example.py:

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Extract features from MEG time series for classification &#8212; mne_features 0.1.dev0 documentation</title>
+    <title>Estimation of the slope and intercept of the Power Spectral Density &#8212; mne_features 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
@@ -82,7 +82,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Extract features from MEG time series for classification</a></li>
+<li><a class="reference internal" href="#">Estimation of the slope and intercept of the Power Spectral Density</a></li>
 </ul>
 </ul>
 </li>
@@ -94,7 +94,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../_sources/auto_examples/plot_mne_sample_features.rst.txt"
+  <a href="../_sources/auto_examples/plot_psd_slope_estimation.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -118,10 +118,14 @@
   
   <div class="sphx-glr-download-link-note admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-mne-sample-features-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-psd-slope-estimation-py"><span class="std std-ref">here</span></a> to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="extract-features-from-meg-time-series-for-classification">
-<span id="sphx-glr-auto-examples-plot-mne-sample-features-py"></span><h1>Extract features from MEG time series for classification<a class="headerlink" href="#extract-features-from-meg-time-series-for-classification" title="Permalink to this headline">¶</a></h1>
+<div class="sphx-glr-example-title section" id="estimation-of-the-slope-and-intercept-of-the-power-spectral-density">
+<span id="sphx-glr-auto-examples-plot-psd-slope-estimation-py"></span><h1>Estimation of the slope and intercept of the Power Spectral Density<a class="headerlink" href="#estimation-of-the-slope-and-intercept-of-the-power-spectral-density" title="Permalink to this headline">¶</a></h1>
+<p>This example aims at showing how the utility function <cite>power_spectrum</cite> and
+the feature function <a class="reference internal" href="../generated/mne_features.univariate.compute_spect_slope.html#mne_features.univariate.compute_spect_slope" title="mne_features.univariate.compute_spect_slope"><code class="xref py py-func docutils literal"><span class="pre">mne_features.univariate.compute_spect_slope()</span></code></a> can
+be used to estimate the slope and the intercept of the Power Spectral
+Density (PSD, computed using the FFT of the signal).</p>
 <p>The code for this example is based on the method proposed in:</p>
 <p>Jean-Baptiste SCHIRATTI, Jean-Eudes LE DOUGET, Michel LE VAN QUYEN,
 Slim ESSID, Alexandre GRAMFORT,
@@ -131,22 +135,20 @@ Proc. IEEE ICASSP Conf. 2018</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This example is for illustration purposes, as other methods
-may lead to better performance on such a dataset (classification
-of auditory vs. visual stimuli).</p>
+may lead to more robust/reliable estimation of the slope and intercept
+of the PSD.</p>
 </div>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Author: Jean-Baptiste Schiratti &lt;jean.baptiste.schiratti@gmail.com&gt;</span>
 <span class="c1">#         Alexandre Gramfort &lt;alexandre.gramfort@inria.fr&gt;</span>
 <span class="c1"># License: BSD 3 clause</span>
 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">mne</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">mne.datasets</span> <span class="kn">import</span> <span class="n">sample</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" title="View documentation for sklearn.linear_model.LogisticRegression"><span class="n">LogisticRegression</span></a>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html#sklearn.model_selection.cross_val_score" title="View documentation for sklearn.model_selection.cross_val_score"><span class="n">cross_val_score</span></a><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html#sklearn.model_selection.KFold" title="View documentation for sklearn.model_selection.KFold"><span class="n">KFold</span></a>
-<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="View documentation for sklearn.pipeline.Pipeline"><span class="n">Pipeline</span></a>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="View documentation for sklearn.preprocessing.StandardScaler"><span class="n">StandardScaler</span></a>
 
-<span class="kn">from</span> <span class="nn">mne_features.feature_extraction</span> <span class="kn">import</span> <a href="../generated/mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="View documentation for mne_features.feature_extraction.extract_features"><span class="n">extract_features</span></a>
+<span class="kn">from</span> <span class="nn">mne_features.univariate</span> <span class="kn">import</span> <a href="../generated/mne_features.univariate.compute_spect_slope.html#mne_features.univariate.compute_spect_slope" title="View documentation for mne_features.univariate.compute_spect_slope"><span class="n">compute_spect_slope</span></a>
+<span class="kn">from</span> <span class="nn">mne_features.utils</span> <span class="kn">import</span> <span class="n">power_spectrum</span>
 
 <span class="k">print</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">)</span>
 </pre></div>
@@ -161,16 +163,6 @@ of auditory vs. visual stimuli).</p>
 <span class="c1"># Setup for reading the raw data</span>
 <span class="n">raw</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_raw_fif</span><span class="p">(</span><span class="n">raw_fname</span><span class="p">,</span> <span class="n">preload</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">raw</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">fir_design</span><span class="o">=</span><span class="s1">&#39;firwin&#39;</span><span class="p">)</span>
-<span class="n">events</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">read_events</span><span class="p">(</span><span class="n">event_fname</span><span class="p">)</span>
-<span class="n">picks</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">pick_types</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">meg</span><span class="o">=</span><span class="s1">&#39;grad&#39;</span><span class="p">,</span> <span class="n">eeg</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-
-<span class="c1"># Read epochs</span>
-<span class="n">epochs</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">Epochs</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                    <span class="n">baseline</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">preload</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">labels</span> <span class="o">=</span> <span class="n">epochs</span><span class="o">.</span><span class="n">events</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-<span class="c1"># get MEG and EEG data</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">epochs</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
@@ -187,44 +179,58 @@ of auditory vs. visual stimuli).</p>
 <span class="n">Setting</span> <span class="n">up</span> <span class="n">high</span><span class="o">-</span><span class="k">pass</span> <span class="nb">filter</span> <span class="n">at</span> <span class="mf">0.5</span> <span class="n">Hz</span>
 <span class="n">l_trans_bandwidth</span> <span class="n">chosen</span> <span class="n">to</span> <span class="n">be</span> <span class="mf">0.5</span> <span class="n">Hz</span>
 <span class="n">Filter</span> <span class="n">length</span> <span class="n">of</span> <span class="mi">991</span> <span class="n">samples</span> <span class="p">(</span><span class="mf">6.600</span> <span class="n">sec</span><span class="p">)</span> <span class="n">selected</span>
-<span class="mi">145</span> <span class="n">matching</span> <span class="n">events</span> <span class="n">found</span>
-<span class="n">No</span> <span class="n">baseline</span> <span class="n">correction</span> <span class="n">applied</span>
-<span class="n">Not</span> <span class="n">setting</span> <span class="n">metadata</span>
-<span class="mi">4</span> <span class="n">projection</span> <span class="n">items</span> <span class="n">activated</span>
-<span class="n">Loading</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">145</span> <span class="n">events</span> <span class="ow">and</span> <span class="mi">106</span> <span class="n">original</span> <span class="n">time</span> <span class="n">points</span> <span class="o">...</span>
-<span class="mi">0</span> <span class="n">bad</span> <span class="n">epochs</span> <span class="n">dropped</span>
 </pre></div>
 </div>
-<p>Prepare for the classification task:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pipe</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="View documentation for sklearn.pipeline.Pipeline"><span class="n">Pipeline</span></a><span class="p">([(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html#sklearn.preprocessing.StandardScaler" title="View documentation for sklearn.preprocessing.StandardScaler"><span class="n">StandardScaler</span></a><span class="p">()),</span>
-                 <span class="p">(</span><span class="s1">&#39;lr&#39;</span><span class="p">,</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html#sklearn.linear_model.LogisticRegression" title="View documentation for sklearn.linear_model.LogisticRegression"><span class="n">LogisticRegression</span></a><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">))])</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">labels</span>
+<p>Estimate the slope (and the intercept) of the PSD. We use here a single
+MEG channel during the full recording to estimate the slope and the
+intercept.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="mi">2048</span><span class="p">]</span>
+<span class="c1"># data = epochs.get_data()[0, 1, :].reshape((1, -1))</span>
+<span class="n">sfreq</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">]</span>
+
+<span class="c1"># Compute the (one-sided) PSD using FFT. The ``mask`` variable allows to</span>
+<span class="c1"># select only the part of the PSD which corresponds to frequencies between</span>
+<span class="c1"># 0.1Hz and 40Hz (the data used in this example is already low-pass filtered</span>
+<span class="c1"># at 40Hz).</span>
+<span class="n">psd</span><span class="p">,</span> <span class="n">freqs</span> <span class="o">=</span> <span class="n">power_spectrum</span><span class="p">(</span><span class="n">sfreq</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">mask</span> <span class="o">=</span> <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.logical_and.html#numpy.logical_and" title="View documentation for numpy.logical_and"><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span></a><span class="p">(</span><span class="mf">0.1</span> <span class="o">&lt;=</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">freqs</span> <span class="o">&lt;=</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">psd</span><span class="p">,</span> <span class="n">freqs</span> <span class="o">=</span> <span class="n">psd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask</span><span class="p">],</span> <span class="n">freqs</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+<span class="c1"># Estimate the slope (and the intercept) of the PSD. The function</span>
+<span class="c1"># :func:`compute_spect_slope` assumes that the PSD of the signal is of the</span>
+<span class="c1"># form: ``psd[f] = b / (f ** a)``. The coefficients a and b are respectively</span>
+<span class="c1"># called *slope* and *intercept* of the Power Spectral Density. The values of</span>
+<span class="c1"># the variables ``slope`` and ``intercept`` differ from the values returned</span>
+<span class="c1"># by ``compute_spect_slope`` because, in the feature function, the linear</span>
+<span class="c1"># regression fit is done in the log10-log10 scale.</span>
+<span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <a href="../generated/mne_features.univariate.compute_spect_slope.html#mne_features.univariate.compute_spect_slope" title="View documentation for mne_features.univariate.compute_spect_slope"><span class="n">compute_spect_slope</span></a><span class="p">(</span><span class="n">sfreq</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">40.</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;The estimated slope (respectively intercept) is: </span><span class="si">%1.2f</span><span class="s1"> (resp. </span><span class="si">%1.3e</span><span class="s1">)&#39;</span> <span class="o">%</span>
+      <span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">))</span>
+
+<span class="c1"># Plot the PSD together with the ``b / (f ** a)`` curve (estimated decay of</span>
+<span class="c1"># the PSD with frequency).</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="View documentation for matplotlib.pyplot.figure"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span></a><span class="p">()</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.semilogx.html#matplotlib.pyplot.semilogx" title="View documentation for matplotlib.pyplot.semilogx"><span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span></a><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.log10.html#numpy.log10" title="View documentation for numpy.log10"><span class="n">np</span><span class="o">.</span><span class="n">log10</span></a><span class="p">(</span><span class="n">psd</span><span class="p">),</span> <span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;PSD&#39;</span><span class="p">)</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.semilogx.html#matplotlib.pyplot.semilogx" title="View documentation for matplotlib.pyplot.semilogx"><span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span></a><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">intercept</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.log10.html#numpy.log10" title="View documentation for numpy.log10"><span class="n">np</span><span class="o">.</span><span class="n">log10</span></a><span class="p">(</span><span class="n">freqs</span><span class="p">),</span>
+             <span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;b / (f ** a)&#39;</span><span class="p">)</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="View documentation for matplotlib.pyplot.xlabel"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span></a><span class="p">(</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">)</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="View documentation for matplotlib.pyplot.ylabel"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span></a><span class="p">(</span><span class="s1">&#39;PSD (dB)&#39;</span><span class="p">)</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xlim.html#matplotlib.pyplot.xlim" title="View documentation for matplotlib.pyplot.xlim"><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span></a><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.legend.html#matplotlib.pyplot.legend" title="View documentation for matplotlib.pyplot.legend"><span class="n">plt</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">)</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="View documentation for matplotlib.pyplot.show"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<p>Classification using features (mean, peak-to-peak amplitude,
-standard deviation). See <a class="reference internal" href="../api.html#api-documentation"><span class="std std-ref">API Documentation</span></a> for full list of supported
-features.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">selected_funcs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;ptp_amp&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">}</span>
-<span class="n">X_new</span> <span class="o">=</span> <a href="../generated/mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="View documentation for mne_features.feature_extraction.extract_features"><span class="n">extract_features</span></a><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">],</span> <span class="n">selected_funcs</span><span class="p">)</span>
-<span class="n">kf</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html#sklearn.model_selection.KFold" title="View documentation for sklearn.model_selection.KFold"><span class="n">KFold</span></a><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">scores</span> <span class="o">=</span> <a href="http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html#sklearn.model_selection.cross_val_score" title="View documentation for sklearn.model_selection.cross_val_score"><span class="n">cross_val_score</span></a><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">X_new</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kf</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Print the cross-validation score:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s1">&#39;Cross-validation accuracy score = </span><span class="si">%1.3f</span><span class="s1"> (+/- </span><span class="si">%1.5f</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.mean.html#numpy.mean" title="View documentation for numpy.mean"><span class="n">np</span><span class="o">.</span><span class="n">mean</span></a><span class="p">(</span><span class="n">scores</span><span class="p">),</span>
-                                                               <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.std.html#numpy.std" title="View documentation for numpy.std"><span class="n">np</span><span class="o">.</span><span class="n">std</span></a><span class="p">(</span><span class="n">scores</span><span class="p">)))</span>
-</pre></div>
-</div>
+<img alt="../_images/sphx_glr_plot_psd_slope_estimation_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_plot_psd_slope_estimation_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">Cross</span><span class="o">-</span><span class="n">validation</span> <span class="n">accuracy</span> <span class="n">score</span> <span class="o">=</span> <span class="mf">0.938</span> <span class="p">(</span><span class="o">+/-</span> <span class="mf">0.00060</span><span class="p">)</span>
+<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">estimated</span> <span class="n">slope</span> <span class="p">(</span><span class="n">respectively</span> <span class="n">intercept</span><span class="p">)</span> <span class="ow">is</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.98</span> <span class="p">(</span><span class="n">resp</span><span class="o">.</span> <span class="o">-</span><span class="mf">2.460e+01</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>Total running time of the script:</strong> ( 0 minutes  1.218 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-mne-sample-features-py">
+<p><strong>Total running time of the script:</strong> ( 0 minutes  0.831 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-psd-slope-estimation-py">
 <div class="sphx-glr-download docutils container">
-<a class="reference download internal" href="../_downloads/plot_mne_sample_features.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_mne_sample_features.py</span></code></a></div>
+<a class="reference download internal" href="../_downloads/plot_psd_slope_estimation.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_psd_slope_estimation.py</span></code></a></div>
 <div class="sphx-glr-download docutils container">
-<a class="reference download internal" href="../_downloads/plot_mne_sample_features.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_mne_sample_features.ipynb</span></code></a></div>
+<a class="reference download internal" href="../_downloads/plot_psd_slope_estimation.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_psd_slope_estimation.ipynb</span></code></a></div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.readthedocs.io">Gallery generated by Sphinx-Gallery</a></p>
 </div>
