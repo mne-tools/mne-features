@@ -556,7 +556,7 @@ def _freq_bands_helper(sfreq, freq_bands):
 
 def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
                                                              30., 100.]),
-                           normalize=True, ratios=None):
+                           normalize=True, ratios=None, psd_method='welch'):
     """Power Spectrum (computed by frequency bands).
 
     Parameters
@@ -592,6 +592,10 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
         function returns only the ratios of power in bands. If None, no
         ratio is computed.
 
+    psd_method : str (default: 'welch')
+        Method used for the estimation of the Power Spectral Density (PSD).
+        Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
+
     Returns
     -------
     output : ndarray, shape (n_channels * (n_freqs - 1),)
@@ -609,7 +613,7 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
     n_channels = data.shape[0]
     fb = _freq_bands_helper(sfreq, freq_bands)
     n_freq_bands = fb.shape[0]
-    psd, freqs = power_spectrum(sfreq, data, return_db=False)
+    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
     pow_freq_bands = np.empty((n_channels, n_freq_bands))
     for j in range(n_freq_bands):
         mask = np.logical_and(freqs >= fb[j, 0], freqs <= fb[j, 1])
@@ -634,7 +638,8 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
             return band_ratios.ravel()
 
 
-def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
+def compute_hjorth_mobility_spect(sfreq, data, normalize=False,
+                                  psd_method='welch'):
     """Hjorth mobility (per channel).
 
     Hjorth mobility parameter computed from the Power Spectrum of the data.
@@ -648,6 +653,10 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
 
     normalize : bool (default: False)
         Normalize the result by the total power.
+
+    psd_method : str (default: 'welch')
+        Method used for the estimation of the Power Spectral Density (PSD).
+        Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
 
     Returns
     -------
@@ -667,7 +676,7 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    psd, freqs = power_spectrum(sfreq, data)
+    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
     w_freqs = np.power(freqs, 2)
     mobility = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
@@ -675,7 +684,8 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
     return mobility
 
 
-def compute_hjorth_complexity_spect(sfreq, data, normalize=False):
+def compute_hjorth_complexity_spect(sfreq, data, normalize=False,
+                                    psd_method='welch'):
     """Hjorth complexity (per channel).
 
     Hjorth complexity parameter computed from the Power Spectrum of the data.
@@ -689,6 +699,10 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False):
 
     normalize : bool (default: False)
         Normalize the result by the total power.
+
+    psd_method : str (default: 'welch')
+        Method used for the estimation of the Power Spectral Density (PSD).
+        Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
 
     Returns
     -------
@@ -708,7 +722,7 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False):
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    psd, freqs = power_spectrum(sfreq, data)
+    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
     w_freqs = np.power(freqs, 4)
     complexity = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
@@ -950,7 +964,7 @@ def compute_line_length(data):
     return np.mean(np.abs(np.diff(data, axis=-1)), axis=-1)
 
 
-def compute_spect_entropy(sfreq, data):
+def compute_spect_entropy(sfreq, data, psd_method='welch'):
     """Spectral Entropy (per channel).
 
     Spectral Entropy is defined to be the Shannon Entropy of the Power
@@ -962,6 +976,10 @@ def compute_spect_entropy(sfreq, data):
         Sampling rate of the data
 
     data : ndarray, shape (n_channels, n_times)
+
+    psd_method : str (default: 'welch')
+        Method used for the estimation of the Power Spectral Density (PSD).
+        Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
 
     Returns
     -------
@@ -977,7 +995,7 @@ def compute_spect_entropy(sfreq, data):
            use of the entropy of the power spectrum. Electroencephalography
            and clinical neurophysiology, 79(3), 204-210.
     """
-    psd, _ = power_spectrum(sfreq, data, return_db=False)
+    psd, _ = power_spectrum(sfreq, data, method=psd_method)
     m = np.sum(psd, axis=-1)
     psd_norm = np.divide(psd[:, 1:], m[:, None])
     return -np.sum(np.multiply(psd_norm, np.log2(psd_norm)), axis=-1)
@@ -1017,7 +1035,7 @@ def compute_svd_entropy(data, tau=2, emb=10):
 
 
 def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
-                        with_intercept=True):
+                        with_intercept=True, psd_method='welch'):
     """Linear regression of the the log-log frequency-curve (per channel).
 
     Using a linear regression, the function estimates the slope and the
@@ -1044,6 +1062,10 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
         features returned by the function. If False, only the slope, the MSE
         and the R2 coefficient are returned.
 
+    psd_method : str (default: 'welch')
+        Method used for the estimation of the Power Spectral Density (PSD).
+        Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
+
     Returns
     -------
     output : ndarray, shape (n_channels * 4,)
@@ -1065,7 +1087,7 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
            Brain Functions (BBF).
     """
     n_channels = data.shape[0]
-    psd, freqs = power_spectrum(sfreq, data, return_db=False)
+    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
 
     # mask limiting to input freq_range
     mask = np.logical_and(freqs >= fmin, freqs <= fmax)
@@ -1178,7 +1200,8 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
     return band_energy.ravel()
 
 
-def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
+def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
+                            psd_method='welch'):
     """Spectal Edge Frequency (per channel).
 
     Parameters
@@ -1198,6 +1221,10 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
         corresponds to a percentage. The spectral edge frequency will be
         computed for each different value in `edge`. If None, `edge = [0.5]`
         is used.
+
+    psd_method : str (default: 'welch')
+        Method used for the estimation of the Power Spectral Density (PSD).
+        Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
 
     Returns
     -------
@@ -1224,7 +1251,7 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
     n_edge = len(_edge)
     n_channels, n_times = data.shape
     spect_edge_freq = np.empty((n_channels, n_edge))
-    psd, freqs = power_spectrum(sfreq, data, return_db=False)
+    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
     out = np.cumsum(psd, 1)
     for i, p in enumerate(_edge):
         idx_ref = np.where(freqs >= _ref_freq)[0][0]

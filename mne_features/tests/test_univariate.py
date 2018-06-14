@@ -164,7 +164,8 @@ def test_decorr_time():
 
 def test_pow_freq_bands():
     expected = np.array([0, 0.005, 0, 0, 0.00125]) / 0.00625
-    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin), expected)
+    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin,
+                                               psd_method='fft'), expected)
     # Ratios of power in bands:
     # For data_sin, only the usual theta (4Hz - 8Hz) and low gamma
     # (30Hz - 70Hz) bands contain non-zero power.
@@ -172,21 +173,25 @@ def test_pow_freq_bands():
     expected_pow = np.array([0.005, 0.00125]) / 0.00625
     expected_ratios = np.array([4., 0.25])
     assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb,
-                                               ratios='all'),
+                                               ratios='all', psd_method='fft'),
                         np.r_[expected_pow, expected_ratios])
     assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb,
-                                               ratios='only'), expected_ratios)
+                                               ratios='only',
+                                               psd_method='fft'),
+                        expected_ratios)
 
 
 def test_hjorth_mobility_spect():
     expected = 0.005 * (5 ** 2) + 0.00125 * (33 ** 2)
-    assert_almost_equal(compute_hjorth_mobility_spect(sfreq, data_sin),
+    assert_almost_equal(compute_hjorth_mobility_spect(sfreq, data_sin,
+                                                      psd_method='fft'),
                         expected)
 
 
 def test_hjorth_complexity_spect():
     expected = 0.005 * (5 ** 4) + 0.00125 * (33 ** 4)
-    assert_almost_equal(compute_hjorth_complexity_spect(sfreq, data_sin),
+    assert_almost_equal(compute_hjorth_complexity_spect(sfreq, data_sin,
+                                                        psd_method='fft'),
                         expected)
 
 
@@ -296,7 +301,7 @@ def test_spect_slope():
     # We test our estimates
     intercept, slope, mse, r2 = \
         compute_spect_slope(sfreq=sfreq, data=sig.reshape(1, -1),
-                            with_intercept=True)
+                            with_intercept=True, psd_method='fft')
 
     # obtained by the expression ps[f] = 2 * [ (spect[f]^2) / (n_times^2) ]
     # and plug-in: power(f) = k1/f**theta with noise
@@ -312,7 +317,8 @@ def test_spect_slope():
 def test_spect_entropy():
     expected = -(0.005 / 0.00625) * log(0.005 / 0.00625, 2.) - \
         (0.00125 / 0.00625) * log(0.00125 / 0.00625, 2.)
-    assert_almost_equal(compute_spect_entropy(sfreq, data_sin), expected)
+    assert_almost_equal(compute_spect_entropy(sfreq, data_sin,
+                                              psd_method='fft'), expected)
 
 
 def test_spect_edge_freq():
@@ -325,10 +331,12 @@ def test_spect_edge_freq():
     """
     expected = 5.
     assert_almost_equal(compute_spect_edge_freq(sfreq, data_sin, ref_freq=15,
-                                                edge=[50]), expected)
+                                                edge=[50], psd_method='fft'),
+                        expected)
     expected = 33.
     assert_almost_equal(compute_spect_edge_freq(sfreq, data_sin, ref_freq=50,
-                                                edge=[80]), expected)
+                                                edge=[80], psd_method='fft'),
+                        expected)
 
 
 def test_svd_entropy():

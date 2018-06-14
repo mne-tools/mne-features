@@ -303,7 +303,7 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
         return coefs
 
 
-def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
+def compute_spect_corr(sfreq, data, with_eigenvalues=True,
                        include_diag=False):
     """Correlation Coefficients (computed from the power spectrum).
 
@@ -314,10 +314,6 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
 
     data : ndarray, shape (n_channels, n_times)
         The signals.
-
-    db : bool (default: True)
-        If True, the power spectrum returned by the function
-        :func:`compute_power_spectrum` is returned in dB/Hz.
 
     with_eigenvalues : bool (default: True)
         If True, the function also returns the eigenvalues of the correlation
@@ -347,7 +343,7 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
            134445/4803/seizure-detection.pdf
     """
     n_channels = data.shape[0]
-    ps, _ = power_spectrum(sfreq, data, return_db=db)
+    ps, _ = power_spectrum(sfreq, data)
     _scaled = scale(ps, axis=0)
     corr = np.corrcoef(_scaled)
     coefs = corr[np.triu_indices(n_channels, 1 - int(include_diag))]

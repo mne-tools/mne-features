@@ -13,6 +13,7 @@ from warnings import warn
 import numpy as np
 import pywt
 from mne.filter import filter_data
+from mne.time_frequency import psd_array_welch, psd_array_multitaper
 
 from .mock_numba import nb
 
@@ -87,51 +88,76 @@ def _embed(x, d, tau):
     return X
 
 
-def power_spectrum(sfreq, data, return_db=False):
-    """One-sided Power Spectrum ([Hein02]_, [Math]_).
+def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
+                   verbose=False):
+    """Power Spectral Density (PSD).
+
+    Utility function to compute the (one-sided) Power Spectral Density which
+    acts as a wrapper for :func:`mne.time_frequency.psd_array_welch` (if
+    ``method='welch'``) or :func:`mne.time_frequency.psd_array_multitaper`
+    (if ``method='multitaper'``). The multitaper method, although more
+    computationally intensive than Welch's method or FFT, should be prefered
+    for 'short' windows. Welch's method is more suitable for 'long' windows.
 
     Parameters
     ----------
     sfreq : float
         Sampling rate of the data.
 
-    data : ndarray, shape (n_channels, n_times)
+    data : ndarray, shape (..., n_times).
 
-    return_db : bool (default: False)
-        If True, the result is returned in dB/Hz.
+    fmin : float (default: 0.)
+        Lower bound of the frequency range to consider.
+
+    fmax : float (default: 256.)
+        Upper bound of the frequency range to consider.
+
+    method : str (default: 'welch')
+        Method used to estimate the PSD from the data. The valid values for
+        the parameter ``method`` are: ``'welch'``, ``'fft'`` or
+        ``'multitaper'``.
+
+    verbose : bool (default: False)
+        Verbosity parameter. If True, info and warnings related to
+        :func:`mne.time_frequency.psd_array_welch` or
+        :func:`mne.time_frequency.psd_array_multitaper` are printed.
 
     Returns
     -------
-    ps : ndarray, shape (n_channels, n_times // 2 + 1)
+    psd : ndarray, shape (..., n_freqs)
+        Estimated PSD.
 
-    freqs : ndarray, shape (n_channels, n_times // 2 + 1)
+    freqs : ndarray, shape (n_freqs,)
         Array of frequency bins.
-
-    References
-    ----------
-    .. [Hein02] Heinzel, G. et al. (2002). Spectrum and spectral density
-                estimation by the Discrete Fourier transform (DFT), including
-                a comprehensive list of window functions and some new at-top
-                windows.
-
-    .. [Math] http://fr.mathworks.com/help/signal/ug/power-spectral-density-
-              estimates-using-fft.html
     """
-    n_times = data.shape[1]
-    m = np.mean(data, axis=-1)
-    _data = data - m[:, None]
-    spect = np.fft.rfft(_data, n_times)
-    mag = np.abs(spect)
-    freqs = np.fft.rfftfreq(n_times, 1. / sfreq)
-    ps = np.power(mag, 2) / (n_times ** 2)
-    ps *= 2.
-    ps[:, 0] /= 2.
-    if n_times % 2 == 0:
-        ps[:, -1] /= 2.
-    if return_db:
-        return 10. * np.log10(ps), freqs
+    _verbose = 40 * (1 - int(verbose))
+    _fmin, _fmax = max(0, fmin), min(fmax, sfreq / 2)
+    if method == 'welch':
+        n_fft = min(data.shape[-1], 2048)
+        return psd_array_welch(data, sfreq, fmin=_fmin, fmax=_fmax,
+                               n_fft=n_fft, verbose=_verbose,
+                               n_per_seg=n_fft // 2, n_overlap=n_fft // 4)
+    elif method == 'multitaper':
+        return psd_array_multitaper(data, sfreq, fmin=_fmin, fmax=_fmax,
+                                    verbose=_verbose)
+    elif method == 'fft':
+        n_times = data.shape[-1]
+        m = np.mean(data, axis=-1)
+        _data = data - m[..., None]
+        spect = np.fft.rfft(_data, n_times)
+        mag = np.abs(spect)
+        freqs = np.fft.rfftfreq(n_times, 1. / sfreq)
+        psd = np.power(mag, 2) / (n_times ** 2)
+        psd *= 2.
+        psd[..., 0] /= 2.
+        if n_times % 2 == 0:
+            psd[..., -1] /= 2.
+        mask = np.logical_and(freqs >= _fmin, freqs <= _fmax)
+        return psd[..., mask], freqs[mask]
     else:
-        return ps, freqs
+        raise ValueError('The given method (%s) is not implemented. Valid '
+                         'methods for the computation of the PSD are: '
+                         '`welch`, `fft` or `multitaper`.' % str(method))
 
 
 def _filt(sfreq, data, filter_freqs, verbose=False):

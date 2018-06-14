@@ -56,16 +56,16 @@ raw.filter(.5, None, fir_design='firwin')
 # MEG channel during the full recording to estimate the slope and the
 # intercept.
 
-data, _ = raw[0, :2048]
-# data = epochs.get_data()[0, 1, :].reshape((1, -1))
+data, _ = raw[1, :2048]
 sfreq = raw.info['sfreq']
+psd_method = 'multitaper'
 
 # Compute the (one-sided) PSD using FFT. The ``mask`` variable allows to
 # select only the part of the PSD which corresponds to frequencies between
 # 0.1Hz and 40Hz (the data used in this example is already low-pass filtered
 # at 40Hz).
-psd, freqs = power_spectrum(sfreq, data)
-mask = np.logical_and(0.1 <= freqs, freqs <= 40)
+psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+mask = np.logical_and(1 <= freqs, freqs <= 40)
 psd, freqs = psd[0, mask], freqs[mask]
 
 # Estimate the slope (and the intercept) of the PSD. The function
@@ -75,16 +75,17 @@ psd, freqs = psd[0, mask], freqs[mask]
 # the variables ``slope`` and ``intercept`` differ from the values returned
 # by ``compute_spect_slope`` because, in the feature function, the linear
 # regression fit is done in the log10-log10 scale.
-intercept, slope, _, _ = compute_spect_slope(sfreq, data, fmin=1., fmax=40.)
-print('The estimated slope (respectively intercept) is: %1.2f (resp. %1.3e)' %
-      (slope, intercept))
+intercept, slope, _, _ = compute_spect_slope(sfreq, data, fmin=1., fmax=40.,
+                                             psd_method=psd_method)
+print('The estimated slope is a = %1.2f and the estimated intercept is '
+      'b = %1.3e' % (slope, intercept))
 
-# Plot the PSD together with the ``b / (f ** a)`` curve (estimated decay of
-# the PSD with frequency).
+# Plot the PSD together with the ``b + a * f`` straight line (estimated decay
+# of the PSD with frequency in the log10-log10 scale).
 plt.figure()
 plt.semilogx(freqs, np.log10(psd), '-b', lw=2, label='PSD')
 plt.semilogx(freqs, intercept + slope * np.log10(freqs),
-             '-r', lw=2, label='b / (f ** a)')
+             '-r', lw=2, label='b + a * f')
 plt.xlabel('Frequency (Hz)')
 plt.ylabel('PSD (dB)')
 plt.xlim([1, 40])

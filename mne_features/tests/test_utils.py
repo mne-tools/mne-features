@@ -11,24 +11,31 @@ from mne_features.utils import _idxiter, power_spectrum, _embed, _filt
 
 
 rng = np.random.RandomState(42)
-sfreq = 256.
+sfreq = 172.
 data = rng.standard_normal((20, int(sfreq)))
 
 
-def test_power_spectrum():
-    ps, freqs = power_spectrum(sfreq, data, return_db=False)
-    _data = data - np.mean(data, axis=-1)[:, None]
-    assert_almost_equal(np.mean(_data ** 2, axis=-1), np.sum(ps, axis=-1))
-
-
 def test_psd():
-    n_times = data.shape[-1]
-    freqs, pxx = signal.welch(data, sfreq,
-                              window=signal.get_window('boxcar', n_times),
-                              return_onesided=True, scaling='spectrum')
-    ps, freqs2 = power_spectrum(sfreq, data, return_db=False)
-    assert_almost_equal(freqs, freqs2)
-    assert_almost_equal(pxx, ps)
+    n_channels, n_times = data.shape
+    _data = data[None, ...]
+    # Only test output shape when `method='welch'` or `method='multitaper'`
+    # since it is actually just a wrapper for MNE functions:
+    psd_welch, _ = power_spectrum(sfreq, _data, method='welch')
+    psd_multitaper, _ = power_spectrum(sfreq, _data, method='multitaper')
+    psd_fft, freqs_fft = power_spectrum(sfreq, _data, method='fft')
+    assert_equal(psd_welch.shape, (1, n_channels, n_times // 2 + 1))
+    assert_equal(psd_multitaper.shape, (1, n_channels, n_times // 2 + 1))
+    assert_equal(psd_fft.shape, (1, n_channels, n_times // 2 + 1))
+
+    # Compare result obtained with `method='fft'` to the Scipy's result
+    # (implementation of Welch's method with rectangular window):
+    expected_freqs, expected_psd = signal.welch(data, sfreq,
+                                                window=signal.get_window(
+                                                    'boxcar', data.shape[-1]),
+                                                return_onesided=True,
+                                                scaling='density')
+    assert_almost_equal(expected_freqs, freqs_fft)
+    assert_almost_equal(expected_psd, psd_fft[0, ...])
 
 
 def test_idxiter():
@@ -70,7 +77,6 @@ def test_filt():
 
 if __name__ == '__main__':
 
-    test_power_spectrum()
     test_psd()
     test_idxiter()
     test_embed()
