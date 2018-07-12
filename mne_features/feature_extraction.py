@@ -15,6 +15,7 @@ from sklearn.preprocessing import FunctionTransformer
 
 from .bivariate import get_bivariate_funcs
 from .univariate import get_univariate_funcs
+from .utils import _idxiter
 
 
 class FeatureFunctionTransformer(FunctionTransformer):
@@ -67,12 +68,40 @@ class FeatureFunctionTransformer(FunctionTransformer):
         """
         X_out = super(FeatureFunctionTransformer, self).transform(X, y)
         self.output_shape_ = X_out.shape[0]
+        self.n_channels = X.shape[0]
         return X_out
 
     def get_feature_names(self):
         """Mapping of the feature indices to feature names."""
+        if hasattr(self.func, 'func'):
+            # If `_params['func'] is of type `functools.partial`
+            feature_func = self.func.func
+        elif hasattr(self.func, 'py_func'):
+            # If `_params['func'] is a jitted Python function
+            feature_func = self.func.py_func
+        else:
+            # If `_params['func'] is an actual Python function
+            feature_func = self.func
+        func_name = feature_func.__name__.split('compute_')[-1]
+        _params = super(FeatureFunctionTransformer,
+                        self).get_params(True)['params']
         if not hasattr(self, 'output_shape_'):
             raise ValueError('Call `transform` or `fit_transform` first.')
+        elif func_name == 'pow_freq_bands':
+            freq_bands = _params['freq_bands']
+            n_freq_bands = (freq_bands.shape[0] - 1 if
+                            freq_bands.ndim == 1 else freq_bands.shape[0])
+            ratios_names = ['ch%s_%s_%s' % (ch_num, i, j) for ch_num in
+                            range(self.n_channels) for _, i, j in
+                            _idxiter(n_freq_bands, triu=False)]
+            pow_names = ['ch%s_%s' % (ch_num, i) for ch_num in
+                         range(self.n_channels) for i in range(n_freq_bands)]
+            if _params['ratios'] is None:
+                return pow_names
+            elif _params['ratios'] == 'only':
+                return ratios_names
+            else:
+                return pow_names + ratios_names
         else:
             return np.arange(self.output_shape_).astype(str)
 
