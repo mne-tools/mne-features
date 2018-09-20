@@ -68,7 +68,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
         """
         X_out = super(FeatureFunctionTransformer, self).transform(X, y)
         _feature_func = _get_python_func(self.func)
-        _params = super(FeatureFunctionTransformer, self).get_params(deep=True)
+        _params = self.get_params()
         if hasattr(_feature_func, 'get_feature_names'):
             self.feature_names = _feature_func.get_feature_names(X, **_params)
         self.output_shape_ = X_out.shape[0]
@@ -340,7 +340,7 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         Xnew : ndarray, shape (n_epochs, n_features)
             Extracted features.
         """
-        mem = joblib.Memory(location=self.memory)
+        mem = joblib.Memory(cachedir=self.memory)
         _extractor = mem.cache(extract_features)
         return _extractor(X, self.sfreq, self.selected_funcs,
                           funcs_params=self.params, n_jobs=self.n_jobs)
