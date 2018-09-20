@@ -136,7 +136,7 @@ def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
         n_fft = min(data.shape[-1], 2048)
         return psd_array_welch(data, sfreq, fmin=_fmin, fmax=_fmax,
                                n_fft=n_fft, verbose=_verbose,
-                               n_per_seg=n_fft // 2, n_overlap=n_fft // 4)
+                               n_per_seg=n_fft, n_overlap=n_fft // 2)
     elif method == 'multitaper':
         return psd_array_multitaper(data, sfreq, fmin=_fmin, fmax=_fmax,
                                     verbose=_verbose)
