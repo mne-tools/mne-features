@@ -74,7 +74,7 @@ pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                          selected_funcs=['app_entropy',
                                                          'mean'])),
                  ('scaler', StandardScaler()),
-                 ('clf', LogisticRegression(random_state=42))])
+                 ('clf', LogisticRegression(random_state=42, solver='lbfgs'))])
 skf = StratifiedKFold(n_splits=3, random_state=42)
 y = labels
 

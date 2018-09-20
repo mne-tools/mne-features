@@ -634,6 +634,28 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
             return band_ratios.ravel()
 
 
+def _compute_pow_freq_bands_feat_names(data, freq_bands, normalize, ratios):
+    """Utility function to create feature names compatible with the output
+    of :func:`compute_pow_freq_bands`."""
+    n_channels = data.shape[0]
+    n_freq_bands = (freq_bands.shape[0] - 1 if freq_bands.ndim == 1 else
+                    freq_bands.shape[0])
+    ratios_names = ['ch%s_%s_%s' % (ch_num, i, j) for ch_num in
+                    range(n_channels) for _, i, j in
+                    _idxiter(n_freq_bands, triu=False)]
+    pow_names = ['ch%s_%s' % (ch_num, i) for ch_num in
+                 range(n_channels) for i in range(n_freq_bands)]
+    if ratios is None:
+        return pow_names
+    elif ratios == 'only':
+        return ratios_names
+    else:
+        return pow_names + ratios_names
+
+
+compute_pow_freq_bands.get_feature_names = _compute_pow_freq_bands_feat_names
+
+
 def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
     """Hjorth mobility (per channel).
 

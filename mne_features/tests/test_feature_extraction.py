@@ -111,7 +111,7 @@ def test_gridsearch_feature_extractor():
                      ('clf', CheckingClassifier(
                          check_X=lambda arr: arr.shape[1:] == (X.shape[1],)))])
     params_grid = {'FE__higuchi_fd__kmax': [5, 10]}
-    gs = GridSearchCV(estimator=pipe, param_grid=params_grid)
+    gs = GridSearchCV(estimator=pipe, param_grid=params_grid, cv=3)
     gs.fit(X, y)
     assert_equal(hasattr(gs, 'cv_results_'), True)
 
