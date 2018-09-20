@@ -6,7 +6,7 @@ Estimation of the slope and intercept of the Power Spectral Density
 This example aims at showing how the utility function `power_spectrum` and 
 the feature function :func:`mne_features.univariate.compute_spect_slope` can 
 be used to estimate the slope and the intercept of the Power Spectral 
-Density (PSD, computed using the FFT of the signal).
+Density (PSD, computed - by default - using Welch method).
 
 The code for this example is based on the method proposed in:
 
@@ -58,13 +58,12 @@ raw.filter(.5, None, fir_design='firwin')
 
 data, _ = raw[1, :2048]
 sfreq = raw.info['sfreq']
-psd_method = 'multitaper'
 
-# Compute the (one-sided) PSD using FFT. The ``mask`` variable allows to
-# select only the part of the PSD which corresponds to frequencies between
+# Compute the (one-sided) PSD using Welch method. The ``mask`` variable allows
+# to select only the part of the PSD which corresponds to frequencies between
 # 0.1Hz and 40Hz (the data used in this example is already low-pass filtered
 # at 40Hz).
-psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+psd, freqs = power_spectrum(sfreq, data)
 mask = np.logical_and(1 <= freqs, freqs <= 40)
 psd, freqs = psd[0, mask], freqs[mask]
 
@@ -75,8 +74,7 @@ psd, freqs = psd[0, mask], freqs[mask]
 # the variables ``slope`` and ``intercept`` differ from the values returned
 # by ``compute_spect_slope`` because, in the feature function, the linear
 # regression fit is done in the log10-log10 scale.
-intercept, slope, _, _ = compute_spect_slope(sfreq, data, fmin=1., fmax=40.,
-                                             psd_method=psd_method)
+intercept, slope, _, _ = compute_spect_slope(sfreq, data, fmin=1., fmax=40.)
 print('The estimated slope is a = %1.2f and the estimated intercept is '
       'b = %1.3e' % (slope, intercept))
 
