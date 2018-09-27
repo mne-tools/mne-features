@@ -355,10 +355,10 @@ def compute_spect_corr(sfreq, data, with_eigenvalues=True,
     """
     n_channels = data.shape[0]
     if psd_params is not None:
-        psd_params.update({'method': psd_method})
+        psd_params.update({'psd_method': psd_method})
         ps, _ = power_spectrum(sfreq, data, **psd_params)
     else:
-        ps, _ = power_spectrum(sfreq, data, method=psd_method)
+        ps, _ = power_spectrum(sfreq, data, psd_method=psd_method)
     _scaled = scale(ps, axis=0)
     corr = np.corrcoef(_scaled)
     coefs = corr[np.triu_indices(n_channels, 1 - int(include_diag))]

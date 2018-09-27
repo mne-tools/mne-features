@@ -621,10 +621,10 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
     fb = _freq_bands_helper(sfreq, freq_bands)
     n_freq_bands = fb.shape[0]
     if psd_params is not None:
-        psd_params.update({'method': psd_method})
+        psd_params.update({'psd_method': psd_method})
         psd, freqs = power_spectrum(sfreq, data, **psd_params)
     else:
-        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
     pow_freq_bands = np.empty((n_channels, n_freq_bands))
     for j in range(n_freq_bands):
         mask = np.logical_and(freqs >= fb[j, 0], freqs <= fb[j, 1])
@@ -694,10 +694,10 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False,
            Neuroscience Methods, 200(2), 257-271.
     """
     if psd_params is not None:
-        psd_params.update({'method': psd_method})
+        psd_params.update({'psd_method': psd_method})
         psd, freqs = power_spectrum(sfreq, data, **psd_params)
     else:
-        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
     w_freqs = np.power(freqs, 2)
     mobility = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
@@ -750,10 +750,10 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False,
            Neuroscience Methods, 200(2), 257-271.
     """
     if psd_params is not None:
-        psd_params.update({'method': psd_method})
+        psd_params.update({'psd_method': psd_method})
         psd, freqs = power_spectrum(sfreq, data, **psd_params)
     else:
-        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
     w_freqs = np.power(freqs, 4)
     complexity = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
@@ -1033,10 +1033,10 @@ def compute_spect_entropy(sfreq, data, psd_method='welch', psd_params=None):
            and clinical neurophysiology, 79(3), 204-210.
     """
     if psd_params is not None:
-        psd_params.update({'method': psd_method})
-        psd, _ = power_spectrum(sfreq, data, method=psd_method)
+        psd_params.update({'psd_method': psd_method})
+        psd, _ = power_spectrum(sfreq, data, psd_method=psd_method)
     else:
-        psd, _ = power_spectrum(sfreq, data, method=psd_method)
+        psd, _ = power_spectrum(sfreq, data, psd_method=psd_method)
     m = np.sum(psd, axis=-1)
     psd_norm = np.divide(psd[:, 1:], m[:, None])
     return -np.sum(np.multiply(psd_norm, np.log2(psd_norm)), axis=-1)
@@ -1136,10 +1136,10 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
     """
     n_channels = data.shape[0]
     if psd_params is not None:
-        psd_params.update({'method': psd_method})
+        psd_params.update({'psd_method': psd_method})
         psd, freqs = power_spectrum(sfreq, data, **psd_params)
     else:
-        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
 
     # mask limiting to input freq_range
     mask = np.logical_and(freqs >= fmin, freqs <= fmax)
@@ -1310,10 +1310,10 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
     n_channels, n_times = data.shape
     spect_edge_freq = np.empty((n_channels, n_edge))
     if psd_params is not None:
-        psd_params.update({'method': psd_method})
+        psd_params.update({'psd_method': psd_method})
         psd, freqs = power_spectrum(sfreq, data, **psd_params)
     else:
-        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
     out = np.cumsum(psd, 1)
     for i, p in enumerate(_edge):
         idx_ref = np.where(freqs >= _ref_freq)[0][0]

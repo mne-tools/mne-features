@@ -326,7 +326,7 @@ def test_spect_edge_freq():
 
     For `data_sin` (signal x(t) = 0.1 * sin(5t) + 0.05 * sin(33t), on
     [0, 2 * pi], at sfreq = 512Hz), the minimum frequency at which more than
-    50% (resp. 80%) of the spectral power up to ref_freq = 15Hz
+    50% (resp. 90%) of the spectral power up to ref_freq = 15Hz
     (resp. ref_freq = 50Hz) is contained in the signal is 5Hz (resp. 33HZ).
     """
     expected = 5.
@@ -335,7 +335,7 @@ def test_spect_edge_freq():
                         expected)
     expected = 33.
     assert_almost_equal(compute_spect_edge_freq(sfreq, data_sin, ref_freq=50,
-                                                edge=[80], psd_method='fft'),
+                                                edge=[90], psd_method='fft'),
                         expected)
 
 

@@ -88,7 +88,7 @@ def _embed(x, d, tau):
     return X
 
 
-def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
+def power_spectrum(sfreq, data, fmin=0., fmax=256., psd_method='welch',
                    welch_n_fft=256, welch_n_per_seg=None, welch_n_overlap=0,
                    verbose=False):
     """Power Spectral Density (PSD).
@@ -113,7 +113,7 @@ def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
     fmax : float (default: 256.)
         Upper bound of the frequency range to consider.
 
-    method : str (default: 'welch')
+    psd_method : str (default: 'welch')
         Method used to estimate the PSD from the data. The valid values for
         the parameter ``method`` are: ``'welch'``, ``'fft'`` or
         ``'multitaper'``.
@@ -148,16 +148,16 @@ def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
     """
     _verbose = 40 * (1 - int(verbose))
     _fmin, _fmax = max(0, fmin), min(fmax, sfreq / 2)
-    if method == 'welch':
+    if psd_method == 'welch':
         _n_fft = min(data.shape[-1], welch_n_fft)
         return psd_array_welch(data, sfreq, fmin=_fmin, fmax=_fmax,
                                n_fft=_n_fft, verbose=_verbose,
                                n_per_seg=welch_n_per_seg,
                                n_overlap=welch_n_overlap)
-    elif method == 'multitaper':
+    elif psd_method == 'multitaper':
         return psd_array_multitaper(data, sfreq, fmin=_fmin, fmax=_fmax,
                                     verbose=_verbose)
-    elif method == 'fft':
+    elif psd_method == 'fft':
         n_times = data.shape[-1]
         m = np.mean(data, axis=-1)
         _data = data - m[..., None]
@@ -174,7 +174,7 @@ def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
     else:
         raise ValueError('The given method (%s) is not implemented. Valid '
                          'methods for the computation of the PSD are: '
-                         '`welch`, `fft` or `multitaper`.' % str(method))
+                         '`welch`, `fft` or `multitaper`.' % str(psd_method))
 
 
 def _filt(sfreq, data, filter_freqs, verbose=False):
