@@ -67,19 +67,35 @@ class FeatureFunctionTransformer(FunctionTransformer):
             details.
         """
         X_out = super(FeatureFunctionTransformer, self).transform(X, y)
-        _feature_func = _get_python_func(self.func)
-        _params = self.get_params()
-        if hasattr(_feature_func, 'get_feature_names'):
-            self.feature_names = _feature_func.get_feature_names(X, **_params)
         self.output_shape_ = X_out.shape[0]
         return X_out
+
+    def fit(self, X, y=None):
+        """Fit the FeatureFunctionTransformer (does not extract features).
+
+        Parameters
+        ----------
+        X : ndarray, shape (n_channels, n_times)
+
+        y : ignored
+
+        Returns
+        -------
+        self
+        """
+        self._check_input(X)
+        _feature_func = _get_python_func(self.func)
+        if hasattr(_feature_func, 'get_feature_names'):
+            _params = self.get_params()
+            self.feature_names_ = _feature_func.get_feature_names(X, **_params)
+        return self
 
     def get_feature_names(self):
         """Mapping of the feature indices to feature names."""
         if not hasattr(self, 'output_shape_'):
-            raise ValueError('Call `transform` or `fit_transform` first.')
-        elif hasattr(self, 'feature_names'):
-            return self.feature_names
+            raise ValueError('Call `fit_transform` first.')
+        elif hasattr(self, 'feature_names_'):
+            return self.feature_names_
         else:
             return np.arange(self.output_shape_).astype(str)
 
