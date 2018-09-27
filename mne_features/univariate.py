@@ -556,7 +556,8 @@ def _freq_bands_helper(sfreq, freq_bands):
 
 def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
                                                              30., 100.]),
-                           normalize=True, ratios=None, psd_method='welch'):
+                           normalize=True, ratios=None, psd_method='welch',
+                           psd_params=None):
     """Power Spectrum (computed by frequency bands).
 
     Parameters
@@ -596,6 +597,12 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
         Method used for the estimation of the Power Spectral Density (PSD).
         Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
 
+    psd_params : dict or None (default: None)
+        If not None, dict with optional parameters (`welch_n_fft`,
+        `welch_n_per_seg`, `welch_n_overlap`) to be passed to
+        :func:`mne_features.utils.power_spectrum`. If None, default parameters
+        are used (see doc for :func:`mne_features.utils.power_spectrum`).
+
     Returns
     -------
     output : ndarray, shape (n_channels * (n_freqs - 1),)
@@ -613,7 +620,11 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
     n_channels = data.shape[0]
     fb = _freq_bands_helper(sfreq, freq_bands)
     n_freq_bands = fb.shape[0]
-    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+    if psd_params is not None:
+        psd_params.update({'method': psd_method})
+        psd, freqs = power_spectrum(sfreq, data, **psd_params)
+    else:
+        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
     pow_freq_bands = np.empty((n_channels, n_freq_bands))
     for j in range(n_freq_bands):
         mask = np.logical_and(freqs >= fb[j, 0], freqs <= fb[j, 1])
@@ -639,7 +650,7 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
 
 
 def compute_hjorth_mobility_spect(sfreq, data, normalize=False,
-                                  psd_method='welch'):
+                                  psd_method='welch', psd_params=None):
     """Hjorth mobility (per channel).
 
     Hjorth mobility parameter computed from the Power Spectrum of the data.
@@ -657,6 +668,12 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False,
     psd_method : str (default: 'welch')
         Method used for the estimation of the Power Spectral Density (PSD).
         Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
+
+    psd_params : dict or None (default: None)
+        If not None, dict with optional parameters (`welch_n_fft`,
+        `welch_n_per_seg`, `welch_n_overlap`) to be passed to
+        :func:`mne_features.utils.power_spectrum`. If None, default parameters
+        are used (see doc for :func:`mne_features.utils.power_spectrum`).
 
     Returns
     -------
@@ -676,7 +693,11 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False,
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+    if psd_params is not None:
+        psd_params.update({'method': psd_method})
+        psd, freqs = power_spectrum(sfreq, data, **psd_params)
+    else:
+        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
     w_freqs = np.power(freqs, 2)
     mobility = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
@@ -685,7 +706,7 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False,
 
 
 def compute_hjorth_complexity_spect(sfreq, data, normalize=False,
-                                    psd_method='welch'):
+                                    psd_method='welch', psd_params=None):
     """Hjorth complexity (per channel).
 
     Hjorth complexity parameter computed from the Power Spectrum of the data.
@@ -703,6 +724,12 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False,
     psd_method : str (default: 'welch')
         Method used for the estimation of the Power Spectral Density (PSD).
         Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
+
+    psd_params : dict or None (default: None)
+        If not None, dict with optional parameters (`welch_n_fft`,
+        `welch_n_per_seg`, `welch_n_overlap`) to be passed to
+        :func:`mne_features.utils.power_spectrum`. If None, default parameters
+        are used (see doc for :func:`mne_features.utils.power_spectrum`).
 
     Returns
     -------
@@ -722,7 +749,11 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False,
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+    if psd_params is not None:
+        psd_params.update({'method': psd_method})
+        psd, freqs = power_spectrum(sfreq, data, **psd_params)
+    else:
+        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
     w_freqs = np.power(freqs, 4)
     complexity = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
@@ -964,7 +995,7 @@ def compute_line_length(data):
     return np.mean(np.abs(np.diff(data, axis=-1)), axis=-1)
 
 
-def compute_spect_entropy(sfreq, data, psd_method='welch'):
+def compute_spect_entropy(sfreq, data, psd_method='welch', psd_params=None):
     """Spectral Entropy (per channel).
 
     Spectral Entropy is defined to be the Shannon Entropy of the Power
@@ -981,6 +1012,12 @@ def compute_spect_entropy(sfreq, data, psd_method='welch'):
         Method used for the estimation of the Power Spectral Density (PSD).
         Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
 
+    psd_params : dict or None (default: None)
+        If not None, dict with optional parameters (`welch_n_fft`,
+        `welch_n_per_seg`, `welch_n_overlap`) to be passed to
+        :func:`mne_features.utils.power_spectrum`. If None, default parameters
+        are used (see doc for :func:`mne_features.utils.power_spectrum`).
+
     Returns
     -------
     output : ndarray, shape (n_channels,)
@@ -995,7 +1032,11 @@ def compute_spect_entropy(sfreq, data, psd_method='welch'):
            use of the entropy of the power spectrum. Electroencephalography
            and clinical neurophysiology, 79(3), 204-210.
     """
-    psd, _ = power_spectrum(sfreq, data, method=psd_method)
+    if psd_params is not None:
+        psd_params.update({'method': psd_method})
+        psd, _ = power_spectrum(sfreq, data, method=psd_method)
+    else:
+        psd, _ = power_spectrum(sfreq, data, method=psd_method)
     m = np.sum(psd, axis=-1)
     psd_norm = np.divide(psd[:, 1:], m[:, None])
     return -np.sum(np.multiply(psd_norm, np.log2(psd_norm)), axis=-1)
@@ -1035,7 +1076,8 @@ def compute_svd_entropy(data, tau=2, emb=10):
 
 
 def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
-                        with_intercept=True, psd_method='welch'):
+                        with_intercept=True, psd_method='welch',
+                        psd_params=None):
     """Linear regression of the the log-log frequency-curve (per channel).
 
     Using a linear regression, the function estimates the slope and the
@@ -1066,6 +1108,12 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
         Method used for the estimation of the Power Spectral Density (PSD).
         Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
 
+    psd_params : dict or None (default: None)
+        If not None, dict with optional parameters (`welch_n_fft`,
+        `welch_n_per_seg`, `welch_n_overlap`) to be passed to
+        :func:`mne_features.utils.power_spectrum`. If None, default parameters
+        are used (see doc for :func:`mne_features.utils.power_spectrum`).
+
     Returns
     -------
     output : ndarray, shape (n_channels * 4,)
@@ -1087,7 +1135,11 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
            Brain Functions (BBF).
     """
     n_channels = data.shape[0]
-    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+    if psd_params is not None:
+        psd_params.update({'method': psd_method})
+        psd, freqs = power_spectrum(sfreq, data, **psd_params)
+    else:
+        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
 
     # mask limiting to input freq_range
     mask = np.logical_and(freqs >= fmin, freqs <= fmax)
@@ -1201,7 +1253,7 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
 
 
 def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
-                            psd_method='welch'):
+                            psd_method='welch', psd_params=None):
     """Spectal Edge Frequency (per channel).
 
     Parameters
@@ -1225,6 +1277,12 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
     psd_method : str (default: 'welch')
         Method used for the estimation of the Power Spectral Density (PSD).
         Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
+
+    psd_params : dict or None (default: None)
+        If not None, dict with optional parameters (`welch_n_fft`,
+        `welch_n_per_seg`, `welch_n_overlap`) to be passed to
+        :func:`mne_features.utils.power_spectrum`. If None, default parameters
+        are used (see doc for :func:`mne_features.utils.power_spectrum`).
 
     Returns
     -------
@@ -1251,7 +1309,11 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
     n_edge = len(_edge)
     n_channels, n_times = data.shape
     spect_edge_freq = np.empty((n_channels, n_edge))
-    psd, freqs = power_spectrum(sfreq, data, method=psd_method)
+    if psd_params is not None:
+        psd_params.update({'method': psd_method})
+        psd, freqs = power_spectrum(sfreq, data, **psd_params)
+    else:
+        psd, freqs = power_spectrum(sfreq, data, method=psd_method)
     out = np.cumsum(psd, 1)
     for i, p in enumerate(_edge):
         idx_ref = np.where(freqs >= _ref_freq)[0][0]

@@ -89,6 +89,7 @@ def _embed(x, d, tau):
 
 
 def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
+                   welch_n_fft=256, welch_n_per_seg=None, welch_n_overlap=0,
                    verbose=False):
     """Power Spectral Density (PSD).
 
@@ -117,6 +118,21 @@ def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
         the parameter ``method`` are: ``'welch'``, ``'fft'`` or
         ``'multitaper'``.
 
+    welch_n_fft : int (default: 256)
+        The length of the FFT used. The segments will be zero-padded if
+        `welch_n_fft > welch_n_per_seg`. This parameter will be ignored if
+        `method = 'fft'` or `method = 'multitaper'`.
+
+    welch_n_per_seg : int or None (default: None)
+        Length of each Welch segment (windowed with a Hamming window). If
+        None, `welch_n_per_seg` is equal to `welch_n_fft`. This parameter
+        will be ignored if `method = 'fft'` or `method = 'multitaper'`.
+
+    welch_n_overlap : int (default: 0)
+        The number of points of overlap between segments. Should be
+        `<= welch_n_per_seg`. This parameter will be ignored if
+        `method = 'fft'` or `method = 'multitaper'`.
+
     verbose : bool (default: False)
         Verbosity parameter. If True, info and warnings related to
         :func:`mne.time_frequency.psd_array_welch` or
@@ -133,10 +149,11 @@ def power_spectrum(sfreq, data, fmin=0., fmax=256., method='welch',
     _verbose = 40 * (1 - int(verbose))
     _fmin, _fmax = max(0, fmin), min(fmax, sfreq / 2)
     if method == 'welch':
-        n_fft = min(data.shape[-1], 2048)
+        _n_fft = min(data.shape[-1], welch_n_fft)
         return psd_array_welch(data, sfreq, fmin=_fmin, fmax=_fmax,
-                               n_fft=n_fft, verbose=_verbose,
-                               n_per_seg=n_fft, n_overlap=n_fft // 2)
+                               n_fft=_n_fft, verbose=_verbose,
+                               n_per_seg=welch_n_per_seg,
+                               n_overlap=welch_n_overlap)
     elif method == 'multitaper':
         return psd_array_multitaper(data, sfreq, fmin=_fmin, fmax=_fmax,
                                     verbose=_verbose)
