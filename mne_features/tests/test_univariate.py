@@ -8,6 +8,7 @@ from math import sqrt, log, cos
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal, assert_raises
 
+from mne_features.feature_extraction import extract_features
 from mne_features.univariate import (_slope_lstsq, _accumulate_std,
                                      _accumulate_min, _accumulate_max,
                                      compute_mean, compute_variance,
@@ -176,6 +177,40 @@ def test_pow_freq_bands():
                         np.r_[expected_pow, expected_ratios])
     assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb,
                                                ratios='only'), expected_ratios)
+
+
+def test_feature_names_pow_freq_bands():
+    _data = data[:, :3, :]  # keep only 3 channels for the sake of simplicity
+    selected_funcs = ['pow_freq_bands']
+    fb = np.array([[4., 8.], [30., 70.]])
+    ratios_col_names = ['ch0_0_1', 'ch0_1_0', 'ch1_0_1', 'ch1_1_0',
+                        'ch2_0_1', 'ch2_1_0']
+    pow_col_names = ['ch0_0', 'ch0_1', 'ch1_0', 'ch1_1', 'ch2_0', 'ch2_1']
+
+    # With `ratios = 'only'`:
+    df_only = extract_features(
+        _data, sfreq, selected_funcs,
+        funcs_params={'pow_freq_bands__ratios': 'only',
+                      'pow_freq_bands__freq_bands': fb},
+        return_as_df=True)
+    assert_equal(df_only.columns.get_level_values(1).values, ratios_col_names)
+
+    # With `ratios = 'all'`:
+    df_all = extract_features(
+        _data, sfreq, selected_funcs,
+        funcs_params={'pow_freq_bands__ratios': 'all',
+                      'pow_freq_bands__freq_bands': fb},
+        return_as_df=True)
+    assert_equal(df_all.columns.get_level_values(1).values,
+                 pow_col_names + ratios_col_names)
+
+    # With `ratios = None`:
+    df = extract_features(
+        _data, sfreq, selected_funcs,
+        funcs_params={'pow_freq_bands__ratios': None,
+                      'pow_freq_bands__freq_bands': fb},
+        return_as_df=True)
+    assert_equal(df.columns.get_level_values(1).values, pow_col_names)
 
 
 def test_hjorth_mobility_spect():
@@ -368,6 +403,7 @@ if __name__ == '__main__':
     test_samp_entropy()
     test_decorr_time()
     test_pow_freq_bands()
+    test_feature_names_pow_freq_bands()
     test_hjorth_mobility_spect()
     test_hjorth_complexity_spect()
     test_hjorth_mobility()
