@@ -304,7 +304,8 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
 
 
 def compute_spect_corr(sfreq, data, with_eigenvalues=True,
-                       include_diag=False):
+                       include_diag=False, psd_method='welch',
+                       psd_params=None):
     """Correlation Coefficients (computed from the power spectrum).
 
     Parameters
@@ -323,6 +324,16 @@ def compute_spect_corr(sfreq, data, with_eigenvalues=True,
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
+
+    psd_method : str (default: 'welch')
+        Method used for the estimation of the Power Spectral Density (PSD).
+        Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
+
+    psd_params : dict or None (default: None)
+        If not None, dict with optional parameters (`welch_n_fft`,
+        `welch_n_per_seg`, `welch_n_overlap`) to be passed to
+        :func:`mne_features.utils.power_spectrum`. If None, default parameters
+        are used (see doc for :func:`mne_features.utils.power_spectrum`).
 
     Returns
     -------
@@ -343,7 +354,11 @@ def compute_spect_corr(sfreq, data, with_eigenvalues=True,
            134445/4803/seizure-detection.pdf
     """
     n_channels = data.shape[0]
-    ps, _ = power_spectrum(sfreq, data)
+    if psd_params is not None:
+        psd_params.update({'method': psd_method})
+        ps, _ = power_spectrum(sfreq, data, **psd_params)
+    else:
+        ps, _ = power_spectrum(sfreq, data, method=psd_method)
     _scaled = scale(ps, axis=0)
     corr = np.corrcoef(_scaled)
     coefs = corr[np.triu_indices(n_channels, 1 - int(include_diag))]
