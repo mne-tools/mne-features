@@ -20,9 +20,9 @@ def test_psd():
     _data = data[None, ...]
     # Only test output shape when `method='welch'` or `method='multitaper'`
     # since it is actually just a wrapper for MNE functions:
-    psd_welch, _ = power_spectrum(sfreq, _data, method='welch')
-    psd_multitaper, _ = power_spectrum(sfreq, _data, method='multitaper')
-    psd_fft, freqs_fft = power_spectrum(sfreq, _data, method='fft')
+    psd_welch, _ = power_spectrum(sfreq, _data, psd_method='welch')
+    psd_multitaper, _ = power_spectrum(sfreq, _data, psd_method='multitaper')
+    psd_fft, freqs_fft = power_spectrum(sfreq, _data, psd_method='fft')
     assert_equal(psd_welch.shape, (1, n_channels, n_times // 2 + 1))
     assert_equal(psd_multitaper.shape, (1, n_channels, n_times // 2 + 1))
     assert_equal(psd_fft.shape, (1, n_channels, n_times // 2 + 1))
