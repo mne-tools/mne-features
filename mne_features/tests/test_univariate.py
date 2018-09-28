@@ -180,37 +180,46 @@ def test_pow_freq_bands():
 
 
 def test_feature_names_pow_freq_bands():
-    _data = data[:, :3, :]  # keep only 3 channels for the sake of simplicity
+    _data = data[:, :2, :]  # keep only 2 channels for the sake of simplicity
     selected_funcs = ['pow_freq_bands']
-    fb = np.array([[4., 8.], [30., 70.]])
-    ratios_col_names = ['ch0_0_1', 'ch0_1_0', 'ch1_0_1', 'ch1_1_0',
-                        'ch2_0_1', 'ch2_1_0']
-    pow_col_names = ['ch0_0', 'ch0_1', 'ch1_0', 'ch1_1', 'ch2_0', 'ch2_1']
+    fb1 = np.array([[4., 8.], [30., 70.]])
+    fb2 = {'theta': [4, 8], 'low-gamma': np.array([30, 70])}
+    _fb = [fb1, fb2]
+    ratios_col_names1 = ['ch0_band0/band1', 'ch0_band1/band0',
+                         'ch1_band0/band1', 'ch1_band1/band0']
+    ratios_col_names2 = ['ch0_theta/low-gamma', 'ch0_low-gamma/theta',
+                         'ch1_theta/low-gamma', 'ch1_low-gamma/theta']
+    _ratios_names = [ratios_col_names1, ratios_col_names2]
+    pow_col_names1 = ['ch0_band0', 'ch0_band1', 'ch1_band0', 'ch1_band1']
+    pow_col_names2 = ['ch0_theta', 'ch0_low-gamma',
+                      'ch1_theta', 'ch1_low-gamma']
+    _pow_names = [pow_col_names1, pow_col_names2]
 
-    # With `ratios = 'only'`:
-    df_only = extract_features(
-        _data, sfreq, selected_funcs,
-        funcs_params={'pow_freq_bands__ratios': 'only',
-                      'pow_freq_bands__freq_bands': fb},
-        return_as_df=True)
-    assert_equal(df_only.columns.get_level_values(1).values, ratios_col_names)
+    for fb, ratios_names, pow_names in zip(_fb, _ratios_names, _pow_names):
+        # With `ratios = 'only'`:
+        df_only = extract_features(
+            _data, sfreq, selected_funcs,
+            funcs_params={'pow_freq_bands__ratios': 'only',
+                          'pow_freq_bands__freq_bands': fb},
+            return_as_df=True)
+        assert_equal(df_only.columns.get_level_values(1).values, ratios_names)
 
-    # With `ratios = 'all'`:
-    df_all = extract_features(
-        _data, sfreq, selected_funcs,
-        funcs_params={'pow_freq_bands__ratios': 'all',
-                      'pow_freq_bands__freq_bands': fb},
-        return_as_df=True)
-    assert_equal(df_all.columns.get_level_values(1).values,
-                 pow_col_names + ratios_col_names)
+        # With `ratios = 'all'`:
+        df_all = extract_features(
+            _data, sfreq, selected_funcs,
+            funcs_params={'pow_freq_bands__ratios': 'all',
+                          'pow_freq_bands__freq_bands': fb},
+            return_as_df=True)
+        assert_equal(df_all.columns.get_level_values(1).values,
+                     pow_names + ratios_names)
 
-    # With `ratios = None`:
-    df = extract_features(
-        _data, sfreq, selected_funcs,
-        funcs_params={'pow_freq_bands__ratios': None,
-                      'pow_freq_bands__freq_bands': fb},
-        return_as_df=True)
-    assert_equal(df.columns.get_level_values(1).values, pow_col_names)
+        # With `ratios = None`:
+        df = extract_features(
+            _data, sfreq, selected_funcs,
+            funcs_params={'pow_freq_bands__ratios': None,
+                          'pow_freq_bands__freq_bands': fb},
+            return_as_df=True)
+        assert_equal(df.columns.get_level_values(1).values, pow_names)
 
 
 def test_hjorth_mobility_spect():
@@ -288,6 +297,26 @@ def test_energy_freq_bands():
                                             deriv_filt=False)
     tot_energy = np.sum(data_sin ** 2, axis=-1)
     assert_equal(band_energy > 0.98 * tot_energy, True)
+
+
+def test_feature_names_energy_freq_bands():
+    _data = data[:, :2, :]  # keep only 2 channels for the sake of simplicity
+    selected_funcs = ['energy_freq_bands']
+    fb1 = np.array([[4., 8.], [30., 70.]])
+    fb2 = {'theta': [4, 8], 'low-gamma': np.array([30, 70])}
+    _fb = [fb1, fb2]
+    expected_names1 = ['ch0_band0', 'ch0_band1', 'ch1_band0', 'ch1_band1']
+    expected_names2 = ['ch0_theta', 'ch0_low-gamma',
+                       'ch1_theta', 'ch1_low-gamma']
+    _expected_names = [expected_names1, expected_names2]
+
+    for fb, feat_names in zip(_fb, _expected_names):
+
+        df = extract_features(
+            _data, sfreq, selected_funcs,
+            funcs_params={'energy_freq_bands__freq_bands': fb},
+            return_as_df=True)
+        assert_equal(df.columns.get_level_values(1).values, feat_names)
 
 
 def test_spect_slope():
@@ -411,6 +440,7 @@ if __name__ == '__main__':
     test_higuchi_fd()
     test_katz_fd()
     test_energy_freq_bands()
+    test_feature_names_energy_freq_bands()
     test_spect_slope()
     test_spect_entropy()
     test_spect_edge_freq()
