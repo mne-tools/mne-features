@@ -213,6 +213,29 @@ def _get_feature_funcs(sfreq, module_name):
     return feature_funcs
 
 
+def _get_python_func(func):
+    """Get the Python function underlying partial or jitted functions.
+
+    Parameters
+    ----------
+    func : function or instance of `functools.partial` or jitted function.
+        Transfomed feature function.
+
+    Returns
+    -------
+    function
+    """
+    if hasattr(func, 'func'):
+        # If `func` is of type `functools.partial`
+        return func.func
+    elif hasattr(func, 'py_func'):
+        # If `func` is a jitted Python function
+        return func.py_func
+    else:
+        # If `func` is an actual Python function
+        return func
+
+
 def _wavelet_coefs(data, wavelet_name='db4'):
     """Compute Discrete Wavelet Transform coefficients.
 

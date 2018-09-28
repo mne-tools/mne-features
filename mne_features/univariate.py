@@ -566,17 +566,21 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
 
     data : ndarray, shape (n_channels, n_times)
 
-    freq_bands : ndarray, shape (n_freq_bands + 1,) or (n_freq_bands, 2)
-        Array defining the frequency bands. If ``freq_bands`` has shape
-        ``(n_freq_bands + 1,)`` the entries of ``freq_bands`` define
-        ``n_freq_bands`` **contiguous** frequency bands as follows: the i-th
-        frequency bands is defined as [freq_bands[i], freq_bands[i + 1]]
-        (0 <= i <= n_freq_bands - 1). If ``freq_bands`` has shape
-        ``(n_freq_bands, 2)``, the rows of ``freq_bands`` define
-        ``n_freq_bands`` **non-contiguous** frequency bands. By default,
-        ``freq_bands`` is: ``np.array([0.5, 4., 8., 13., 30., 100.])``.
-        The entries of ``freq_bands`` should be between 0 and sfreq / 2 (the
-        Nyquist frequency) as the function uses the one-sided PSD.
+    freq_bands : ndarray or dict (default: np.array([.5, 4, 8, 13, 30, 100]))
+        The parameter ``freq_bands`` should be either a ndarray with shape
+        ``(n_freq_bands + 1,)`` or ``(n_freq_bands, 2)`` or a dict. If ndarray
+        with shape ``(n_freq_bands + 1,)``, the entries define **contiguous**
+        frequency bands as follows: the i-th frequency band is defined as:
+        [freq_bands[i], freq_bands[i + 1]] (0 <= i <= n_freq_bands - 1). If
+        ndarray with shape ``(n_freq_bands, 2)``, the rows of ``freq_bands``
+        define **non-contiguous** frequency bands. If dict, the keys should be
+        strings (names of the frequency bands) and the values, the
+        corresponding bands (as ndarray with shape (2,) or list of length 2).
+        When ``freq_bands`` is of type dict, the keys are used to generate the
+        feature names (only used when features are extracted with
+        ``return_as_df=True``). The values of ``freq_bands`` should be between
+        0 and sfreq / 2 (the Nyquist frequency) as the function uses the
+        one-sided PSD.
 
     normalize : bool (default: True)
         If True, the average power in each frequency band is normalized by
@@ -607,7 +611,11 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
            Neuroscience Methods, 200(2), 257-271.
     """
     n_channels = data.shape[0]
-    fb = _freq_bands_helper(sfreq, freq_bands)
+    if isinstance(freq_bands, dict):
+        _freq_bands = np.asarray([freq_bands[n] for n in freq_bands])
+    else:
+        _freq_bands = np.asarray(freq_bands)
+    fb = _freq_bands_helper(sfreq, _freq_bands)
     n_freq_bands = fb.shape[0]
     psd, freqs = power_spectrum(sfreq, data, return_db=False)
     pow_freq_bands = np.empty((n_channels, n_freq_bands))
@@ -632,6 +640,33 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
             return np.r_[pow_freq_bands.ravel(), band_ratios.ravel()]
         else:
             return band_ratios.ravel()
+
+
+def _compute_pow_freq_bands_feat_names(data, freq_bands, normalize, ratios):
+    """Utility function to create feature names compatible with the output
+    of :func:`compute_pow_freq_bands`."""
+    n_channels = data.shape[0]
+    if isinstance(freq_bands, dict):
+        n_freq_bands = len(freq_bands)
+        _band_names = [str(n) for n in freq_bands]
+    else:
+        n_freq_bands = (freq_bands.shape[0] - 1 if freq_bands.ndim == 1
+                        else freq_bands.shape[0])
+        _band_names = ['band' + str(j) for j in range(n_freq_bands)]
+    ratios_names = ['ch%s_%s/%s' % (ch, _band_names[i], _band_names[j])
+                    for ch in range(n_channels) for _, i, j in
+                    _idxiter(n_freq_bands, triu=False)]
+    pow_names = ['ch%s_%s' % (ch, _band_names[i]) for ch in
+                 range(n_channels) for i in range(n_freq_bands)]
+    if ratios is None:
+        return pow_names
+    elif ratios == 'only':
+        return ratios_names
+    else:
+        return pow_names + ratios_names
+
+
+compute_pow_freq_bands.get_feature_names = _compute_pow_freq_bands_feat_names
 
 
 def compute_hjorth_mobility_spect(sfreq, data, normalize=False):
@@ -1135,17 +1170,21 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
 
     data : ndarray, shape (n_channels, n_times)
 
-    freq_bands : ndarray, shape (n_freq_bands + 1,) or (n_freq_bands, 2)
-        Array defining the frequency bands. If ``freq_bands`` has shape
-        ``(n_freq_bands + 1,)`` the entries of ``freq_bands`` define
-        ``n_freq_bands`` **contiguous** frequency bands as follows: the i-th
-        frequency bands is defined as [freq_bands[i], freq_bands[i + 1]]
-        (0 <= i <= n_freq_bands - 1). If ``freq_bands`` has shape
-        ``(n_freq_bands, 2)``, the rows of ``freq_bands`` define
-        ``n_freq_bands`` **non-contiguous** frequency bands. By default,
-        ``freq_bands`` is: ``np.array([0.5, 4., 8., 13., 30., 100.])``.
-        The entries of ``freq_bands`` should be between 0 and sfreq / 2 (the
-        Nyquist frequency) as the function uses the one-sided PSD.
+    freq_bands : ndarray or dict (default: np.array([.5, 4, 8, 13, 30, 100]))
+        The parameter ``freq_bands`` should be either a ndarray with shape
+        ``(n_freq_bands + 1,)`` or ``(n_freq_bands, 2)`` or a dict. If ndarray
+        with shape ``(n_freq_bands + 1,)``, the entries define **contiguous**
+        frequency bands as follows: the i-th frequency band is defined as:
+        [freq_bands[i], freq_bands[i + 1]] (0 <= i <= n_freq_bands - 1). If
+        ndarray with shape ``(n_freq_bands, 2)``, the rows of ``freq_bands``
+        define **non-contiguous** frequency bands. If dict, the keys should be
+        strings (names of the frequency bands) and the values, the
+        corresponding bands (as ndarray with shape (2,) or list of length 2).
+        When ``freq_bands`` is of type dict, the keys are used to generate the
+        feature names (only used when features are extracted with
+        ``return_as_df=True``). The values of ``freq_bands`` should be between
+        0 and sfreq / 2 (the Nyquist frequency) as the function uses the
+        one-sided PSD.
 
     deriv_filt : bool (default: False)
         If True, a derivative filter is applied to the input data before
@@ -1165,7 +1204,11 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
            detection using intracranial EEG. Epilepsy & Behavior, 22, S29-S35.
     """
     n_channels = data.shape[0]
-    fb = _freq_bands_helper(sfreq, freq_bands)
+    if isinstance(freq_bands, dict):
+        _freq_bands = np.asarray([freq_bands[n] for n in freq_bands])
+    else:
+        _freq_bands = np.asarray(freq_bands)
+    fb = _freq_bands_helper(sfreq, _freq_bands)
     n_freq_bands = fb.shape[0]
     band_energy = np.empty((n_channels, n_freq_bands))
     if deriv_filt:
@@ -1176,6 +1219,24 @@ def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
         filtered_data = _filt(sfreq, _data, fb[j, :])
         band_energy[:, j] = np.sum(filtered_data ** 2, axis=-1)
     return band_energy.ravel()
+
+
+def _compute_energy_fb_feat_names(data, freq_bands, deriv_filt):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_energy_freq_bands`."""
+    n_channels = data.shape[0]
+    if isinstance(freq_bands, dict):
+        n_freq_bands = len(freq_bands)
+        _band_names = [str(n) for n in freq_bands]
+    else:
+        n_freq_bands = (freq_bands.shape[0] - 1 if freq_bands.ndim == 1
+                        else freq_bands.shape[0])
+        _band_names = ['band' + str(j) for j in range(n_freq_bands)]
+    return ['ch%s_%s' % (ch, _band_names[i]) for ch in range(n_channels) for
+            i in range(n_freq_bands)]
+
+
+compute_energy_freq_bands.get_feature_names = _compute_energy_fb_feat_names
 
 
 def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None):
