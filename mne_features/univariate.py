@@ -657,7 +657,8 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
             return band_ratios.ravel()
 
 
-def _compute_pow_freq_bands_feat_names(data, freq_bands, normalize, ratios):
+def _compute_pow_freq_bands_feat_names(data, freq_bands, normalize, ratios,
+                                       psd_method, psd_params):
     """Utility function to create feature names compatible with the output
     of :func:`compute_pow_freq_bands`."""
     n_channels = data.shape[0]
