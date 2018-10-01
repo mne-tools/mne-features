@@ -14,7 +14,8 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import scale
 
 from .mock_numba import nb
-from .utils import _idxiter, power_spectrum, _embed, _get_feature_funcs
+from .utils import (_idxiter, power_spectrum, _embed, _get_feature_funcs,
+                    _psd_params_checker)
 
 
 def get_bivariate_funcs(sfreq):
@@ -303,8 +304,9 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
         return coefs
 
 
-def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
-                       include_diag=False):
+def compute_spect_corr(sfreq, data, with_eigenvalues=True,
+                       include_diag=False, psd_method='welch',
+                       psd_params=None):
     """Correlation Coefficients (computed from the power spectrum).
 
     Parameters
@@ -315,10 +317,6 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
     data : ndarray, shape (n_channels, n_times)
         The signals.
 
-    db : bool (default: True)
-        If True, the power spectrum returned by the function
-        :func:`compute_power_spectrum` is returned in dB/Hz.
-
     with_eigenvalues : bool (default: True)
         If True, the function also returns the eigenvalues of the correlation
         matrix.
@@ -327,6 +325,16 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
+
+    psd_method : str (default: 'welch')
+        Method used for the estimation of the Power Spectral Density (PSD).
+        Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
+
+    psd_params : dict or None (default: None)
+        If not None, dict with optional parameters (`welch_n_fft`,
+        `welch_n_per_seg`, `welch_n_overlap`) to be passed to
+        :func:`mne_features.utils.power_spectrum`. If None, default parameters
+        are used (see doc for :func:`mne_features.utils.power_spectrum`).
 
     Returns
     -------
@@ -347,7 +355,8 @@ def compute_spect_corr(sfreq, data, db=False, with_eigenvalues=True,
            134445/4803/seizure-detection.pdf
     """
     n_channels = data.shape[0]
-    ps, _ = power_spectrum(sfreq, data, return_db=db)
+    _psd_params = _psd_params_checker(psd_params)
+    ps, _ = power_spectrum(sfreq, data, psd_method=psd_method, **_psd_params)
     _scaled = scale(ps, axis=0)
     corr = np.corrcoef(_scaled)
     coefs = corr[np.triu_indices(n_channels, 1 - int(include_diag))]
