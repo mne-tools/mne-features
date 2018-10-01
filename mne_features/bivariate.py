@@ -14,7 +14,8 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import scale
 
 from .mock_numba import nb
-from .utils import _idxiter, power_spectrum, _embed, _get_feature_funcs
+from .utils import (_idxiter, power_spectrum, _embed, _get_feature_funcs,
+                    _psd_params_checker)
 
 
 def get_bivariate_funcs(sfreq):
@@ -354,11 +355,8 @@ def compute_spect_corr(sfreq, data, with_eigenvalues=True,
            134445/4803/seizure-detection.pdf
     """
     n_channels = data.shape[0]
-    if psd_params is not None:
-        psd_params.update({'psd_method': psd_method})
-        ps, _ = power_spectrum(sfreq, data, **psd_params)
-    else:
-        ps, _ = power_spectrum(sfreq, data, psd_method=psd_method)
+    _psd_params = _psd_params_checker(psd_params)
+    ps, _ = power_spectrum(sfreq, data, psd_method=psd_method, **_psd_params)
     _scaled = scale(ps, axis=0)
     corr = np.corrcoef(_scaled)
     coefs = corr[np.triu_indices(n_channels, 1 - int(include_diag))]
