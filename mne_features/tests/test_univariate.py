@@ -11,6 +11,7 @@ from numpy.testing import assert_equal, assert_almost_equal, assert_raises
 from mne_features.feature_extraction import extract_features
 from mne_features.univariate import (_slope_lstsq, _accumulate_std,
                                      _accumulate_min, _accumulate_max,
+                                     _freq_bands_helper,
                                      compute_mean, compute_variance,
                                      compute_std, compute_ptp_amp,
                                      compute_skewness, compute_kurtosis,
@@ -163,6 +164,17 @@ def test_decorr_time():
     assert_equal(np.all(compute_decorr_time(sfreq, data2) > 0), True)
 
 
+def test_freq_bands_helper():
+    fb1 = np.array([.5, 4, 8, 13, 30, 100])
+    fb2 = np.array([[.5, 4], [4, 8], [8, 13], [13, 30], [30, 100]])
+    assert_equal(fb2, _freq_bands_helper(256., fb1))
+    assert_equal(fb2, _freq_bands_helper(256., fb2))
+    with assert_raises(ValueError):
+        _freq_bands_helper(128., fb1)
+    with assert_raises(ValueError):
+        _freq_bands_helper(256., fb2.T)
+
+
 def test_pow_freq_bands():
     expected = np.array([0, 0.005, 0, 0, 0.00125]) / 0.00625
     assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin,
@@ -180,6 +192,9 @@ def test_pow_freq_bands():
                                                ratios='only',
                                                psd_method='fft'),
                         expected_ratios)
+    with assert_raises(ValueError):
+        # Invalid `ratios` parameter
+        compute_pow_freq_bands(sfreq, data_sin, ratios=['alpha', 'beta'])
 
 
 def test_feature_names_pow_freq_bands():
@@ -237,6 +252,10 @@ def test_hjorth_complexity_spect():
     assert_almost_equal(compute_hjorth_complexity_spect(sfreq, data_sin,
                                                         psd_method='fft'),
                         expected)
+    assert_almost_equal(compute_hjorth_complexity_spect(sfreq, data_sin,
+                                                        normalize=True,
+                                                        psd_method='fft'),
+                        expected / 0.00625)
 
 
 def test_hjorth_mobility():
@@ -439,6 +458,7 @@ if __name__ == '__main__':
     test_app_entropy()
     test_samp_entropy()
     test_decorr_time()
+    test_freq_bands_helper()
     test_pow_freq_bands()
     test_feature_names_pow_freq_bands()
     test_hjorth_mobility_spect()

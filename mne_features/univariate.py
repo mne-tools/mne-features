@@ -16,7 +16,7 @@ from sklearn.metrics import mean_squared_error, explained_variance_score
 
 from .mock_numba import nb
 from .utils import (power_spectrum, _embed, _filt, _get_feature_funcs,
-                    _wavelet_coefs, _idxiter)
+                    _wavelet_coefs, _idxiter, _psd_params_checker)
 
 
 def get_univariate_funcs(sfreq):
@@ -628,11 +628,9 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
         _freq_bands = np.asarray(freq_bands)
     fb = _freq_bands_helper(sfreq, _freq_bands)
     n_freq_bands = fb.shape[0]
-    if psd_params is not None:
-        psd_params.update({'psd_method': psd_method})
-        psd, freqs = power_spectrum(sfreq, data, **psd_params)
-    else:
-        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
+    _psd_params = _psd_params_checker(psd_params)
+    psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method,
+                                **_psd_params)
     pow_freq_bands = np.empty((n_channels, n_freq_bands))
     for j in range(n_freq_bands):
         mask = np.logical_and(freqs >= fb[j, 0], freqs <= fb[j, 1])
@@ -729,11 +727,9 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False,
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    if psd_params is not None:
-        psd_params.update({'psd_method': psd_method})
-        psd, freqs = power_spectrum(sfreq, data, **psd_params)
-    else:
-        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
+    _psd_params = _psd_params_checker(psd_params)
+    psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method,
+                                **_psd_params)
     w_freqs = np.power(freqs, 2)
     mobility = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
@@ -785,11 +781,9 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False,
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    if psd_params is not None:
-        psd_params.update({'psd_method': psd_method})
-        psd, freqs = power_spectrum(sfreq, data, **psd_params)
-    else:
-        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
+    _psd_params = _psd_params_checker(psd_params)
+    psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method,
+                                **_psd_params)
     w_freqs = np.power(freqs, 4)
     complexity = np.sum(np.multiply(psd, w_freqs), axis=-1)
     if normalize:
@@ -1068,11 +1062,8 @@ def compute_spect_entropy(sfreq, data, psd_method='welch', psd_params=None):
            use of the entropy of the power spectrum. Electroencephalography
            and clinical neurophysiology, 79(3), 204-210.
     """
-    if psd_params is not None:
-        psd_params.update({'psd_method': psd_method})
-        psd, _ = power_spectrum(sfreq, data, psd_method=psd_method)
-    else:
-        psd, _ = power_spectrum(sfreq, data, psd_method=psd_method)
+    _psd_params = _psd_params_checker(psd_params)
+    psd, _ = power_spectrum(sfreq, data, psd_method=psd_method, **_psd_params)
     m = np.sum(psd, axis=-1)
     psd_norm = np.divide(psd[:, 1:], m[:, None])
     return -np.sum(np.multiply(psd_norm, np.log2(psd_norm)), axis=-1)
@@ -1171,11 +1162,9 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
            Brain Functions (BBF).
     """
     n_channels = data.shape[0]
-    if psd_params is not None:
-        psd_params.update({'psd_method': psd_method})
-        psd, freqs = power_spectrum(sfreq, data, **psd_params)
-    else:
-        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
+    _psd_params = _psd_params_checker(psd_params)
+    psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method,
+                                **_psd_params)
 
     # mask limiting to input freq_range
     mask = np.logical_and(freqs >= fmin, freqs <= fmax)
@@ -1371,11 +1360,9 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
     n_edge = len(_edge)
     n_channels, n_times = data.shape
     spect_edge_freq = np.empty((n_channels, n_edge))
-    if psd_params is not None:
-        psd_params.update({'psd_method': psd_method})
-        psd, freqs = power_spectrum(sfreq, data, **psd_params)
-    else:
-        psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method)
+    _psd_params = _psd_params_checker(psd_params)
+    psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method,
+                                **_psd_params)
     out = np.cumsum(psd, 1)
     for i, p in enumerate(_edge):
         idx_ref = np.where(freqs >= _ref_freq)[0][0]

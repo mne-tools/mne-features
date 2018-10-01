@@ -177,6 +177,40 @@ def power_spectrum(sfreq, data, fmin=0., fmax=256., psd_method='welch',
                          '`welch`, `fft` or `multitaper`.' % str(psd_method))
 
 
+def _psd_params_checker(params):
+    """Utility function to check parameters to be passed to `power_spectrum`.
+
+    Parameters
+    ----------
+    params : dict or None
+        Optional parameters to be passed to
+        :func:`mne_features.utils.power_spectrum`. If `params` contains a key
+        which is not an optional parameter of
+        :func:`mne_features.utils.power_spectrum`, an error is raised.
+
+    Returns
+    -------
+    valid_params : dict
+    """
+    if params is None:
+        return dict()
+    elif not isinstance(params, dict):
+        raise ValueError('The parameter `psd_params` has type %s. Expected '
+                         'dict instead.' % type(params))
+    else:
+        expected_keys = ['welch_n_fft', 'welch_n_per_seg', 'welch_n_overlap']
+        valid_keys = list()
+        for n in params:
+            if n not in expected_keys:
+                raise ValueError('The key %s in `psd_params` is not valid and '
+                                 'will be ignored. Valid keys are: %s' %
+                                 (n, str(expected_keys)))
+            else:
+                valid_keys.append(n)
+        valid_params = {n: params[n] for n in valid_keys}
+        return valid_params
+
+
 def _filt(sfreq, data, filter_freqs, verbose=False):
     """Filter data.
 

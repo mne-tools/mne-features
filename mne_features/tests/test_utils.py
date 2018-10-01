@@ -4,11 +4,11 @@
 
 
 import numpy as np
-from numpy.testing import assert_almost_equal, assert_equal
+from numpy.testing import assert_almost_equal, assert_equal, assert_raises
 from scipy import signal
 
-from mne_features.utils import _idxiter, power_spectrum, _embed, _filt
-
+from mne_features.utils import (_idxiter, power_spectrum, _embed, _filt,
+                                _psd_params_checker)
 
 rng = np.random.RandomState(42)
 sfreq = 172.
@@ -75,9 +75,22 @@ def test_filt():
     assert_equal(filt_bandpass.shape, data.shape)
 
 
+def test_psd_params_checker():
+    valid_params = {'welch_n_fft': 2048, 'welch_n_per_seg': 1024}
+    assert_equal(valid_params, _psd_params_checker(valid_params))
+    assert_equal(dict(), _psd_params_checker(None))
+    with assert_raises(ValueError):
+        invalid_params1 = {'n_fft': 1024, 'psd_method': 'fft'}
+        _psd_params_checker(invalid_params1)
+    with assert_raises(ValueError):
+        invalid_params2 = [1024, 1024]
+        _psd_params_checker(invalid_params2)
+
+
 if __name__ == '__main__':
 
     test_psd()
     test_idxiter()
     test_embed()
     test_filt()
+    test_psd_params_checker()
