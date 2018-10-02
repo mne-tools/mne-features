@@ -110,6 +110,8 @@ def test_line_length():
 def test_zero_crossings():
     expected = np.array([5, 3])
     assert_almost_equal(compute_zero_crossings(data1), expected)
+    _data = np.sin(np.linspace(0, 4 * 2 * np.pi, 20))
+    assert_equal(compute_zero_crossings(_data[None, :]), np.array([9]))
 
 
 def test_hurst_exp():

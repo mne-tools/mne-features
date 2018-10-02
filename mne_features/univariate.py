@@ -959,14 +959,16 @@ def compute_katz_fd(data):
     return katz
 
 
-@nb.jit([nb.float64[:](nb.float64[:, :]), nb.float32[:](nb.float32[:, :])],
-        nopython=True)
-def _zero_crossings(data):
+@nb.jit([nb.float64[:](nb.float64[:, :], nb.float64),
+         nb.float32[:](nb.float32[:, :], nb.float32)], nopython=True)
+def _zero_crossings(data, threshold):
     """Utility function for :func:`compute_zero_crossings`.
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
+
+    threshold : float
 
     Returns
     -------
@@ -976,18 +978,21 @@ def _zero_crossings(data):
     zc = np.zeros((n_channels,), dtype=data.dtype)
     for j in range(n_channels):
         for i in range(n_times - 1):
-            if data[j, i] == 0 or data[j, i] * data[j, i + 1] < 0:
+            if abs(data[j, i]) < threshold or data[j, i] * data[j, i + 1] < 0:
                 zc[j] += 1
-        zc[j] += int(data[j, n_times - 1] == 0)
+        zc[j] += int(abs(data[j, n_times - 1]) < threshold)
     return zc
 
 
-def compute_zero_crossings(data):
+def compute_zero_crossings(data, threshold=1e-12):
     """Number of zero crossings (per channel).
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
+
+    threshold : float (default: 1e-12)
+        Threshold used to determine when a float should de treated as zero.
 
     Returns
     -------
@@ -997,7 +1002,7 @@ def compute_zero_crossings(data):
     -----
     Alias of the feature function: **zero_crossings**
     """
-    return _zero_crossings(data)
+    return _zero_crossings(data, threshold=threshold)
 
 
 def compute_line_length(data):
