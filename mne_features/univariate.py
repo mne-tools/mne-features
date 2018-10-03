@@ -960,7 +960,7 @@ def compute_katz_fd(data):
 
 
 @nb.jit([nb.float64[:](nb.float64[:, :], nb.float64),
-         nb.float32[:](nb.float32[:, :], nb.float32)], nopython=True)
+         nb.float32[:](nb.float32[:, :], nb.float64)], nopython=True)
 def _zero_crossings(data, threshold):
     """Utility function for :func:`compute_zero_crossings`.
 
@@ -984,14 +984,14 @@ def _zero_crossings(data, threshold):
     return zc
 
 
-def compute_zero_crossings(data, threshold=1e-12):
+def compute_zero_crossings(data, threshold=np.finfo(np.float64).eps):
     """Number of zero crossings (per channel).
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
 
-    threshold : float (default: 1e-12)
+    threshold : float (default: np.finfo(np.float64).eps)
         Threshold used to determine when a float should de treated as zero.
 
     Returns
