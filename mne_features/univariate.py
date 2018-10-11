@@ -959,35 +959,19 @@ def compute_katz_fd(data):
     return katz
 
 
-@nb.jit([nb.float64[:](nb.float64[:, :]), nb.float32[:](nb.float32[:, :])],
-        nopython=True)
-def _zero_crossings(data):
-    """Utility function for :func:`compute_zero_crossings`.
+def compute_zero_crossings(data, threshold=np.finfo(np.float64).eps):
+    """Number of zero-crossings (per channel).
+
+    The ``threshold`` parameter is used to clip 'small' values to zero.
+    Changing its default value is likely to affect the number of
+    zero-crossings returned by the function.
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
 
-    Returns
-    -------
-    output : ndarray, shape (n_channels,)
-    """
-    n_channels, n_times = data.shape
-    zc = np.zeros((n_channels,), dtype=data.dtype)
-    for j in range(n_channels):
-        for i in range(n_times - 1):
-            if data[j, i] == 0 or data[j, i] * data[j, i + 1] < 0:
-                zc[j] += 1
-        zc[j] += int(data[j, n_times - 1] == 0)
-    return zc
-
-
-def compute_zero_crossings(data):
-    """Number of zero crossings (per channel).
-
-    Parameters
-    ----------
-    data : ndarray, shape (n_channels, n_times)
+    threshold : float (default: np.finfo(np.float64).eps)
+        Threshold used to determine when a float should de treated as zero.
 
     Returns
     -------
@@ -997,7 +981,17 @@ def compute_zero_crossings(data):
     -----
     Alias of the feature function: **zero_crossings**
     """
-    return _zero_crossings(data)
+    _data = data.copy()
+    # clip 'small' values to 0
+    _data[np.abs(_data) < threshold] = 0
+    sgn = np.sign(_data)
+    # sgn may already contain 0 values (either 'true' zeros or clipped values)
+    aux = np.diff((sgn == 0).astype(np.int64), axis=-1)
+    count = np.sum(aux == 1, axis=-1) + (_data[:, 0] == 0)
+    # zero between two consecutive time points (data[i] * data[i + 1] < 0)
+    mask_implicit_zeros = sgn[:, 1:] * sgn[:, :-1] < 0
+    count += np.sum(mask_implicit_zeros, axis=-1)
+    return count
 
 
 def compute_line_length(data):
