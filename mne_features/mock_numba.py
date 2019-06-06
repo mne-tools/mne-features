@@ -8,8 +8,8 @@ from warnings import warn
 
 try:
     import numba as nb
-except ImportError as _:
-    warn('Numba not found. Your code will be slower.')
+except ImportError as e:
+    warn('{}. Your code will be slower.'.format(e))
 
     class Bunch(dict):
         """Dictionnary-like object that exposes its keys as attributes."""
