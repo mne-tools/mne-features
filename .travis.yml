@@ -25,7 +25,7 @@ install:
     - python setup.py develop --no-deps
 script:
     - make
-    - flake8 --count mne_features
+    - flake8 --count mne_features --ignore=E121,E123,E126,E226,E24,E704,W503,W504
 after_success:
   - |
     if [[ "${USE_NUMBA}" == "OFF" ]]; then
