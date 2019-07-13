@@ -419,11 +419,11 @@ def test_spect_edge_freq():
     """
     expected = 5.
     assert_almost_equal(compute_spect_edge_freq(sfreq, data_sin, ref_freq=15,
-                                                edge=[50], psd_method='fft'),
+                                                edge=[.5], psd_method='fft'),
                         expected)
     expected = 33.
     assert_almost_equal(compute_spect_edge_freq(sfreq, data_sin, ref_freq=50,
-                                                edge=[90], psd_method='fft'),
+                                                edge=[.9], psd_method='fft'),
                         expected)
 
 

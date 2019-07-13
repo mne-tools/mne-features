@@ -1313,11 +1313,8 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
         edge frequency. If None, `ref_freq = sfreq / 2` is used.
 
     edge : list of float or None (default: None)
-        If not None, the values of `edge` are assumed to be positive and will
-        be normalized to values between 0 and 1. Each entry of `edge`
-        corresponds to a percentage. The spectral edge frequency will be
-        computed for each different value in `edge`. If None, `edge = [0.5]`
-        is used.
+        If not None, ``edge`` is expected to be a list of values between 0
+        and 1. If None, ``edge = [0.5]`` is used.
 
     psd_method : str (default: 'welch')
         Method used for the estimation of the Power Spectral Density (PSD).
@@ -1350,7 +1347,12 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
     if edge is None:
         _edge = [0.5]
     else:
-        _edge = [e / 100. for e in edge]
+        # Check the values in `edge`
+        if not all([0 <= p <= 1 for p in edge]):
+            raise ValueError('The values in ``edge``` must be floats between '
+                             '0 and 1. Got {} instead.'.format(edge))
+        else:
+            _edge = edge
     n_edge = len(_edge)
     n_channels, n_times = data.shape
     spect_edge_freq = np.empty((n_channels, n_edge))
