@@ -134,6 +134,7 @@ html_theme_options = {
     'navbar_links': [
         ("Examples", "auto_examples/index"),
         ("API", "api"),
+        ("What's new", "whats_new"),
         ("GitHub", "https://github.com/mne-tools/mne_features", True)
     ],
     'bootswatch_theme': "united"
@@ -193,7 +194,7 @@ html_favicon = 'logo/mne_features_logo.ico'
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #html_show_sphinx = True
