@@ -853,8 +853,8 @@ def compute_hjorth_complexity(data):
     return complexity
 
 
-@nb.jit([nb.float64[:](nb.float64[:, :], nb.optional(nb.int64)),
-         nb.float32[:](nb.float32[:, :], nb.optional(nb.int32))])
+@nb.jit([nb.float64[:](nb.float64[:, :], nb.int64),
+         nb.float32[:](nb.float32[:, :], nb.int32)], nopython=True)
 def _higuchi_fd(data, kmax):
     """Utility function for :func:`compute_higuchi_fd`.
 
@@ -871,6 +871,7 @@ def _higuchi_fd(data, kmax):
     n_channels, n_times = data.shape
     higuchi = np.empty((n_channels,), dtype=data.dtype)
     for s in range(n_channels):
+        kmax = np.int64(kmax)
         lk = np.empty((kmax,))
         x_reg = np.empty((kmax,))
         y_reg = np.empty((kmax,))
