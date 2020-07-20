@@ -18,8 +18,8 @@ install:
       if [[ "${PYTHON_VERSION}" == "3.6" ]]; then
         conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn pandas;
         pip install mne PyWavelets coverage coveralls tqdm download;
-      else;
-        pip install -r requirements.txt;
+      # else;
+      #   pip install -r requirements.txt;
       fi;
     - |
       if [[ "${USE_NUMBA}" == "ON" && "${PYTHON_VERSION}" == "3.6"]]; then
