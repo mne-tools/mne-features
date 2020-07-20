@@ -22,7 +22,7 @@ install:
       #   pip install -r requirements.txt;
       fi;
     - |
-      if [[ "${USE_NUMBA}" == "ON" && "${PYTHON_VERSION}" == "3.6"]]; then
+      if [[ "${USE_NUMBA}" == "ON" ] && [ "${PYTHON_VERSION}" == "3.6" ]]; then
         conda install --yes --quiet numba
       fi;
     - pip install pytest coverage flake8 check-manifest
