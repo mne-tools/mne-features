@@ -14,6 +14,8 @@ exclude .coveragerc
 exclude *.yml
 exclude dictionary.txt
 exclude .mailmap
+exclude requirements.txt
 recursive-exclude mne_features *.pyc
 
 recursive-exclude doc *
+recursive-exclude examples/bonn_data *

@@ -4,9 +4,7 @@
 
 PYTHON ?= python
 CYTHON ?= cython
-NOSETESTS ?= nosetests
-NOSETESTS_OPTIONS := $(shell pip list | grep nose-timer > /dev/null && \
-                       echo '--with-timer --timer-top-n 50')
+PYTESTS ?= pytest
 CTAGS ?= ctags
 
 all: clean test
@@ -29,21 +27,18 @@ clean: clean-build clean-pyc clean-so clean-ctags
 
 in: inplace # just a shortcut
 inplace:
-	$(PYTHON) setup.py build_ext -i
+	$(PYTHON) setup.py develop
 
-test-code:
-	$(NOSETESTS) -s mne_features $(NOSETESTS_OPTIONS)
+test: inplace test-manifest
+	rm -f .coverage
+	$(PYTESTS) mne_features
 
 test-doc:
-	$(NOSETESTS) -s --with-doctest --doctest-tests --doctest-extension=rst \
-	--doctest-extension=inc --doctest-fixtures=_fixture `find doc/ -name '*.rst'`
+	$(PYTESTS) --doctest-modules --doctest-ignore-import-errors mne_features
 
 test-coverage:
 	rm -rf coverage .coverage
-	$(NOSETESTS) -s --with-coverage --cover-html --cover-html-dir=coverage \
-	--cover-package=mne_features mne_features
-
-test: test-code test-doc test-manifest
+	$(PYTESTS) --cov=mne_features --cov-report html:coverage
 
 trailing-spaces:
 	find . -name "*.py" | xargs perl -pi -e 's/[ \t]*$$//'
