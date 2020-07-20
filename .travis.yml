@@ -2,6 +2,7 @@ language: python
 
 env:
   - USE_NUMBA=ON PYTHON_VERSION=3.6
+  - USE_NUMBA=ON PYTHON_VERSION=3.8
   - USE_NUMBA=OFF PYTHON_VERSION=3.6
 
 before_install:
@@ -13,15 +14,18 @@ before_install:
 install:
     - conda create -n testenv --yes pip python=${PYTHON_VERSION}
     - source activate testenv
-    - conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn pandas
     - |
-      if [[ "${USE_NUMBA}" == "ON" ]]; then
+      if [[ "${PYTHON_VERSION}" == "3.6" ]]; then
+        conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn pandas
+        pip install mne PyWavelets coverage coveralls tqdm download
+      else;
+        pip install -r requirements.txt
+      fi
+    - |
+      if [[ "${USE_NUMBA}" == "ON" && "${PYTHON_VERSION}" == "3.6"]]; then
         conda install --yes --quiet numba
       fi
-    - conda install --yes --quiet nose coverage
-    - pip install flake8 check-manifest
-    - pip install mne PyWavelets coverage coveralls tqdm
-    - pip install "git+https://github.com/choldgraf/download"
+    - pip install pytest coverage flake8 check-manifest
     - python setup.py develop --no-deps
 script:
     - make
