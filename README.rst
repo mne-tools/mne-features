@@ -29,14 +29,14 @@ Dependencies
 
 These are the dependencies to use MNE-Features:
 
-* numpy (>=1.8)
-* matplotlib (>=1.3)
-* scipy (>=0.19)
-* numba (>=0.37)
+* numpy (>=1.13.3)
+* matplotlib (>=1.5)
+* scipy (>=1.0)
+* numba (>=0.45.1)
 * scikit-learn (>=0.19)
-* mne (>=0.14)
+* mne (>=0.18.2)
 * PyWavelets (>=0.5.2)
-* pandas (>=0.20)
+* pandas (>=0.25.3)
 
 
 Cite
