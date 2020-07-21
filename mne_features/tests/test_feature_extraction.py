@@ -11,7 +11,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 try:
     from sklearn.utils._mocking import CheckingClassifier
-except:
+except (ImportError, ModuleNotFoundError):
     from sklearn.utils.mocking import CheckingClassifier
 from mne_features.feature_extraction import (extract_features,
                                              FeatureFunctionTransformer,
