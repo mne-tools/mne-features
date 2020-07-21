@@ -16,7 +16,7 @@ install:
     - source activate testenv
     - |
       if [[ "${PYTHON_VERSION}" == "3.6" ]]; then
-        conda install --yes --quiet numpy matplotlib scipy scikit-learn pandas;
+        conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=1.0 scikit-learn pandas;
         pip install mne PyWavelets coverage coveralls tqdm download;
       fi;
     - |

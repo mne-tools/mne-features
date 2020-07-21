@@ -11,7 +11,7 @@ import pandas as pd
 from sklearn.base import TransformerMixin, BaseEstimator
 try:
     from sklearn.externals import joblib
-except:
+except (ImportError, ModuleNotFoundError):
     import joblib
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer

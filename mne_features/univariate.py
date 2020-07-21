@@ -1407,8 +1407,8 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
     levdec = len(coefs) - 1
     wavelet_energy = np.zeros((n_channels, levdec))
     for j in range(n_channels):
-        for l in range(levdec):
-            wavelet_energy[j, l] = np.sum(coefs[levdec - l][j, :] ** 2)
+        for level in range(levdec):
+            wavelet_energy[j, level] = np.sum(coefs[levdec - level][j, :] ** 2)
     return wavelet_energy.ravel()
 
 
@@ -1465,8 +1465,8 @@ def compute_teager_kaiser_energy(data, wavelet_name='db4'):
     coefs = _wavelet_coefs(data, wavelet_name)
     levdec = len(coefs) - 1
     tke = np.empty((n_channels, levdec + 1, 2))
-    for l in range(levdec + 1):
-        tk_energy = _tk_energy(coefs[l])
-        tke[:, l, 0] = np.mean(tk_energy, axis=-1)
-        tke[:, l, 1] = np.std(tk_energy, ddof=1, axis=-1)
+    for level in range(levdec + 1):
+        tk_energy = _tk_energy(coefs[level])
+        tke[:, level, 0] = np.mean(tk_energy, axis=-1)
+        tke[:, level, 1] = np.std(tk_energy, ddof=1, axis=-1)
     return tke.ravel()
