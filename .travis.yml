@@ -18,18 +18,19 @@ install:
       if [[ "${PYTHON_VERSION}" == "3.6" ]]; then
         conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn pandas;
         pip install mne PyWavelets coverage coveralls tqdm download;
-      # else;
-      #   pip install -r requirements.txt;
+      fi;
+    - |
+      if [[ "${PYTHON_VERSION}" == "3.8" ]]; then
+        pip install -r requirements.txt;
       fi;
     - |
       if [[ ( "${USE_NUMBA}" == "ON" ) && ( "${PYTHON_VERSION}" == "3.6" ) ]]; then
         conda install --yes --quiet numba
       fi;
-    - pip install pytest coverage flake8 check-manifest
-    - python setup.py develop --no-deps
+    - pip install pytest coverage flake8 check-manifest pytest-sugar
 script:
     - make
-    - flake8 --count mne_features --ignore=E121,E123,E126,E226,E24,E704,W503,W504
+    - flake8 --count mne_features
 after_success:
   - |
     if [[ "${USE_NUMBA}" == "OFF" ]]; then
