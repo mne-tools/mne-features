@@ -27,7 +27,7 @@ clean: clean-build clean-pyc clean-so clean-ctags
 
 in: inplace # just a shortcut
 inplace:
-	$(PYTHON) setup.py develop
+	$(PYTHON) setup.py develop --no-deps
 
 test: inplace test-manifest
 	rm -f .coverage
