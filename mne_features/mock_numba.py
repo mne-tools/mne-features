@@ -8,7 +8,7 @@ from warnings import warn
 
 try:
     import numba as nb
-except ImportError as e:
+except (ImportError, ModuleNotFoundError) as e:
     warn('{}. Your code will be slower.'.format(e))
 
     class Bunch(dict):
