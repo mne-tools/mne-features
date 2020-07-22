@@ -16,7 +16,7 @@ install:
     - source activate testenv
     - |
       if [[ "${PYTHON_VERSION}" == "3.6" ]]; then
-        conda install --yes --quiet numpy=1.13.3 matplotlib scipy=1.0.1 scikit-learn=0.19.1 pandas=0.25.3;
+        conda install --yes --quiet numpy=1.15.4 matplotlib scipy=1.0 scikit-learn=0.19.1 pandas=0.25.3;
         pip install mne==0.18.2 PyWavelets tqdm download;
       fi;
     - |
@@ -25,7 +25,7 @@ install:
       fi;
     - |
       if [[ ( "${USE_NUMBA}" == "ON" ) && ( "${PYTHON_VERSION}" == "3.6" ) ]]; then
-        pip install numba==0.40.1
+        pip install numba==0.45.1
       fi;
     - pip install pytest coverage flake8 check-manifest pytest-sugar
 script:
