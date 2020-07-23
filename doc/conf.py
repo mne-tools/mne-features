@@ -12,6 +12,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+from datetime import date
 import sys
 # import os
 import sphinx_gallery  # noqa
@@ -60,7 +61,9 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'mne_features'
-copyright = u'2018, MNE-Features developers'
+td = date.today()
+copyright = u'2012-%s, MNE-Features Developers. Last updated on %s' % (td.year,
+                                                              td.isoformat())
 author = u'Jean-Baptiste SCHIRATTI'
 
 # The version info for the project you're documenting, acts as replacement for
