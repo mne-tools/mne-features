@@ -1,31 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mne_features.bivariate.compute_max_cross_corr &#8212; mne_features 0.1.dev0 documentation</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mne_features.bivariate.compute_max_cross_corr &#8212; mne_features 0.1 documentation</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.1.dev0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -35,9 +25,12 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
 
-  </head>
-  <body>
+  </head><body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -50,7 +43,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           mne_features</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -58,6 +51,7 @@
             
                 <li><a href="../auto_examples/index.html">Examples</a></li>
                 <li><a href="../api.html">API</a></li>
+                <li><a href="../whats_new.html">What's new</a></li>
                 <li><a href="https://github.com/mne-tools/mne_features">GitHub</a></li>
             
             
@@ -71,6 +65,7 @@
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">What’s new?</a></li>
 </ul>
 </ul>
 </li>
@@ -94,11 +89,7 @@
             
             
             
-              <li class="hidden-sm">
-<div id="sourcelink">
-  <a href="../_sources/generated/mne_features.bivariate.compute_max_cross_corr.rst.txt"
-     rel="nofollow">Source</a>
-</div></li>
+              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -120,60 +111,48 @@
   
   <div class="section" id="mne-features-bivariate-compute-max-cross-corr">
 <h1>mne_features.bivariate.compute_max_cross_corr<a class="headerlink" href="#mne-features-bivariate-compute-max-cross-corr" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="mne_features.bivariate.compute_max_cross_corr">
-<code class="descclassname">mne_features.bivariate.</code><code class="descname">compute_max_cross_corr</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>include_diag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_max_cross_corr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mne_features.bivariate.</code><code class="sig-name descname">compute_max_cross_corr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sfreq</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">include_diag</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.bivariate.compute_max_cross_corr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum linear cross-correlation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sfreq</strong> : float</p>
-<blockquote>
-<div><p>Sampling rate of the data.</p>
-</div></blockquote>
-<p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
-<blockquote>
-<div><p>The signals.</p>
-</div></blockquote>
-<p><strong>include_diag</strong> : bool (default: False)</p>
-<blockquote>
-<div><p>If False, features corresponding to pairs of identical electrodes
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sfreq</strong><span class="classifier">float</span></dt><dd><p>Sampling rate of the data.</p>
+</dd>
+<dt><strong>data</strong><span class="classifier">ndarray, shape (n_channels, n_times)</span></dt><dd><p>The signals.</p>
+</dd>
+<dt><strong>include_diag</strong><span class="classifier">bool (default: False)</span></dt><dd><p>If False, features corresponding to pairs of identical electrodes
 are not computed. In other words, features are not computed from pairs
-of electrodes of the form <code class="docutils literal"><span class="pre">(ch[i],</span> <span class="pre">ch[i])</span></code>.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_output,)</p>
-<blockquote class="last">
-<div><p>With <code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
-<code class="docutils literal"><span class="pre">include_diag</span></code> is True and
-<code class="docutils literal"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
-<code class="docutils literal"><span class="pre">include_diag</span></code> is False.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+of electrodes of the form <code class="docutils literal notranslate"><span class="pre">(ch[i],</span> <span class="pre">ch[i])</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>output</strong><span class="classifier">ndarray, shape (n_output,)</span></dt><dd><p>With <code class="docutils literal notranslate"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
+<code class="docutils literal notranslate"><span class="pre">include_diag</span></code> is True and
+<code class="docutils literal notranslate"><span class="pre">n_output</span> <span class="pre">=</span> <span class="pre">n_channels</span> <span class="pre">*</span> <span class="pre">(n_channels</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code> if
+<code class="docutils literal notranslate"><span class="pre">include_diag</span></code> is False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
-<p>Alias of the feature function: <strong>max_cross_corr</strong>. See <a class="reference internal" href="#r6566" id="id1">[R6566]</a> and <a class="reference internal" href="#r6666" id="id2">[R6666]</a>.</p>
+<p>Alias of the feature function: <strong>max_cross_corr</strong>. See <a class="reference internal" href="#ra6b5e8245bb3-1" id="id1">[1]</a> and <a class="reference internal" href="#ra6b5e8245bb3-2" id="id2">[2]</a>.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r6566" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[R6566]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Mormann, F. et al. (2006). Seizure prediction: the long and
-winding road. Brain, 130(2), 314-333.</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="r6666" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[R6666]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
+<dl class="citation">
+<dt class="label" id="ra6b5e8245bb3-1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Mormann, F. et al. (2006). Seizure prediction: the long and
+winding road. Brain, 130(2), 314-333.</p>
+</dd>
+<dt class="label" id="ra6b5e8245bb3-2"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Mirowski, P. W. et al. (2008). Comparing SVM and convolutional
 networks for epileptic seizure prediction from intracranial EEG.
 Machine Learning for Signal Processing, 2008. IEEE Workshop on
-(pp. 244-249). IEEE.</td></tr>
-</tbody>
-</table>
+(pp. 244-249). IEEE.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -193,8 +172,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2018, MNE-Features developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.<br/>
+        &copy; Copyright 2012-2020, MNE-Features Developers. Last updated on 2020-07-23.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.1.<br/>
     </p>
   </div>
 </footer>

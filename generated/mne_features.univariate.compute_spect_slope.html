@@ -1,31 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mne_features.univariate.compute_spect_slope &#8212; mne_features 0.1.dev0 documentation</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mne_features.univariate.compute_spect_slope &#8212; mne_features 0.1 documentation</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.1.dev0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -35,9 +25,12 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
 
-  </head>
-  <body>
+  </head><body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -50,7 +43,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           mne_features</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -58,6 +51,7 @@
             
                 <li><a href="../auto_examples/index.html">Examples</a></li>
                 <li><a href="../api.html">API</a></li>
+                <li><a href="../whats_new.html">What's new</a></li>
                 <li><a href="https://github.com/mne-tools/mne_features">GitHub</a></li>
             
             
@@ -71,6 +65,7 @@
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">What’s new?</a></li>
 </ul>
 </ul>
 </li>
@@ -84,7 +79,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_spect_slope</a></li>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_features.univariate</span></code>.compute_spect_slope</a></li>
 </ul>
 </ul>
 </li>
@@ -94,11 +89,7 @@
             
             
             
-              <li class="hidden-sm">
-<div id="sourcelink">
-  <a href="../_sources/generated/mne_features.univariate.compute_spect_slope.rst.txt"
-     rel="nofollow">Source</a>
-</div></li>
+              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -119,69 +110,63 @@
 <div class="container content-container">
   
   <div class="section" id="mne-features-univariate-compute-spect-slope">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.univariate</span></code>.compute_spect_slope<a class="headerlink" href="#mne-features-univariate-compute-spect-slope" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_features.univariate</span></code>.compute_spect_slope<a class="headerlink" href="#mne-features-univariate-compute-spect-slope" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
 <dt id="mne_features.univariate.compute_spect_slope">
-<code class="descclassname">mne_features.univariate.</code><code class="descname">compute_spect_slope</code><span class="sig-paren">(</span><em>sfreq</em>, <em>data</em>, <em>fmin=0.1</em>, <em>fmax=50</em>, <em>with_intercept=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_spect_slope" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mne_features.univariate.</code><code class="sig-name descname">compute_spect_slope</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sfreq</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">fmin</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">fmax</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">with_intercept</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">psd_method</span><span class="o">=</span><span class="default_value">'welch'</span></em>, <em class="sig-param"><span class="n">psd_params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.univariate.compute_spect_slope" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linear regression of the the log-log frequency-curve (per channel).</p>
 <p>Using a linear regression, the function estimates the slope and the
-intercept (if <code class="docutils literal"><span class="pre">with_intercept</span></code> is True) of the Power Spectral Density
+intercept (if <code class="docutils literal notranslate"><span class="pre">with_intercept</span></code> is True) of the Power Spectral Density
 (PSD) in the log-log scale. In addition to this, the Mean Square Error
 (MSE) and R2 coefficient (goodness-of-fit) are returned. By default, the
 [0.1Hz, 50Hz] frequency range is used for the regression.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sfreq</strong> : float</p>
-<blockquote>
-<div><p>Sampling rate of the data.</p>
-</div></blockquote>
-<p><strong>data</strong> : ndarray, shape (n_channels, n_times)</p>
-<p><strong>fmin</strong> : float (default: 0.1)</p>
-<blockquote>
-<div><p>Lower bound of the frequency range considered in the linear regression.</p>
-</div></blockquote>
-<p><strong>fmax</strong> : float (default: 50)</p>
-<blockquote>
-<div><p>Upper bound of the frequency range considered in the linear regression.</p>
-</div></blockquote>
-<p><strong>with_intercept</strong> : bool (default: True)</p>
-<blockquote>
-<div><p>If True, the intercept of the linear regression is included among the
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sfreq</strong><span class="classifier">float</span></dt><dd><p>Sampling rate of the data.</p>
+</dd>
+<dt><strong>data</strong><span class="classifier">ndarray, shape (n_channels, n_times)</span></dt><dd></dd>
+<dt><strong>fmin</strong><span class="classifier">float (default: 0.1)</span></dt><dd><p>Lower bound of the frequency range considered in the linear regression.</p>
+</dd>
+<dt><strong>fmax</strong><span class="classifier">float (default: 50)</span></dt><dd><p>Upper bound of the frequency range considered in the linear regression.</p>
+</dd>
+<dt><strong>with_intercept</strong><span class="classifier">bool (default: True)</span></dt><dd><p>If True, the intercept of the linear regression is included among the
 features returned by the function. If False, only the slope, the MSE
 and the R2 coefficient are returned.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : ndarray, shape (n_channels * 4,)</p>
-<blockquote class="last">
-<div><p>The four characteristics: intercept, slope, MSE, and R2 per channel.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt><strong>psd_method</strong><span class="classifier">str (default: ‘welch’)</span></dt><dd><p>Method used for the estimation of the Power Spectral Density (PSD).
+Valid methods are: <code class="docutils literal notranslate"><span class="pre">'welch'</span></code>, <code class="docutils literal notranslate"><span class="pre">'multitaper'</span></code> or <code class="docutils literal notranslate"><span class="pre">'fft'</span></code>.</p>
+</dd>
+<dt><strong>psd_params</strong><span class="classifier">dict or None (default: None)</span></dt><dd><p>If not None, dict with optional parameters (<cite>welch_n_fft</cite>,
+<cite>welch_n_per_seg</cite>, <cite>welch_n_overlap</cite>) to be passed to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">mne_features.utils.power_spectrum()</span></code>. If None, default parameters
+are used (see doc for <code class="xref py py-func docutils literal notranslate"><span class="pre">mne_features.utils.power_spectrum()</span></code>).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>output</strong><span class="classifier">ndarray, shape (n_channels * 4,)</span></dt><dd><p>The four characteristics: intercept, slope, MSE, and R2 per channel.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
-<p>Alias of the feature function: <strong>spect_slope</strong>. See <a class="reference internal" href="#r117118" id="id1">[R117118]</a>
-and <a class="reference internal" href="#r118118" id="id2">[R118118]</a>.</p>
+<p>Alias of the feature function: <strong>spect_slope</strong>. See <a class="reference internal" href="#r410b35917e79-1" id="id1">[1]</a>
+and <a class="reference internal" href="#r410b35917e79-2" id="id2">[2]</a>.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r117118" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[R117118]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Demanuelle C. et al. (2007). Distinguishing low frequency
+<dl class="citation">
+<dt class="label" id="r410b35917e79-1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Demanuelle C. et al. (2007). Distinguishing low frequency
 oscillations within the 1/f spectral behaviour of electromagnetic
-brain signals. Behavioral and Brain Functions (BBF).</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="r118118" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[R118118]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> Winkler I. et al. (2011). Automatic Classification of Artifactual
+brain signals. Behavioral and Brain Functions (BBF).</p>
+</dd>
+<dt class="label" id="r410b35917e79-2"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Winkler I. et al. (2011). Automatic Classification of Artifactual
 ICA-Components for Artifact Removal in EEG Signals. Behavioral and
-Brain Functions (BBF).</td></tr>
-</tbody>
-</table>
+Brain Functions (BBF).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <div class="clearer"></div></div>
@@ -201,8 +186,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2018, MNE-Features developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.<br/>
+        &copy; Copyright 2012-2020, MNE-Features Developers. Last updated on 2020-07-23.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.1.<br/>
     </p>
   </div>
 </footer>

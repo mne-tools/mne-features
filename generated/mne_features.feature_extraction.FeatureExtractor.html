@@ -1,31 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mne_features.feature_extraction.FeatureExtractor &#8212; mne_features 0.1.dev0 documentation</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mne_features.feature_extraction.FeatureExtractor &#8212; mne_features 0.1 documentation</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.1.dev0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -35,9 +25,12 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
 
-  </head>
-  <body>
+  </head><body>
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -50,7 +43,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           mne_features</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -58,6 +51,7 @@
             
                 <li><a href="../auto_examples/index.html">Examples</a></li>
                 <li><a href="../api.html">API</a></li>
+                <li><a href="../whats_new.html">What's new</a></li>
                 <li><a href="https://github.com/mne-tools/mne_features">GitHub</a></li>
             
             
@@ -71,6 +65,7 @@
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">What’s new?</a></li>
 </ul>
 </ul>
 </li>
@@ -84,7 +79,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">mne_features.feature_extraction</span></code>.FeatureExtractor</a></li>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_features.feature_extraction</span></code>.FeatureExtractor</a></li>
 </ul>
 </ul>
 </li>
@@ -94,11 +89,7 @@
             
             
             
-              <li class="hidden-sm">
-<div id="sourcelink">
-  <a href="../_sources/generated/mne_features.feature_extraction.FeatureExtractor.rst.txt"
-     rel="nofollow">Source</a>
-</div></li>
+              <li class="hidden-sm"></li>
             
           </ul>
 
@@ -119,74 +110,64 @@
 <div class="container content-container">
   
   <div class="section" id="mne-features-feature-extraction-featureextractor">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">mne_features.feature_extraction</span></code>.FeatureExtractor<a class="headerlink" href="#mne-features-feature-extraction-featureextractor" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_features.feature_extraction</span></code>.FeatureExtractor<a class="headerlink" href="#mne-features-feature-extraction-featureextractor" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
 <dt id="mne_features.feature_extraction.FeatureExtractor">
-<em class="property">class </em><code class="descclassname">mne_features.feature_extraction.</code><code class="descname">FeatureExtractor</code><span class="sig-paren">(</span><em>sfreq=256.0</em>, <em>selected_funcs=None</em>, <em>params=None</em>, <em>n_jobs=1</em>, <em>memory=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.FeatureExtractor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mne_features.feature_extraction.</code><code class="sig-name descname">FeatureExtractor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">256.0</span></em>, <em class="sig-param"><span class="n">selected_funcs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">memory</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.FeatureExtractor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature extraction from epoched EEG data.</p>
-<p>The method <code class="docutils literal"><span class="pre">fit_transform</span></code> implemented in this class can be used to
+<p>The method <code class="docutils literal notranslate"><span class="pre">fit_transform</span></code> implemented in this class can be used to
 extract univariate or bivariate features from epoched data
-(see example below). The method <code class="docutils literal"><span class="pre">fit</span></code> does not have any effect and is
+(see example below). The method <code class="docutils literal notranslate"><span class="pre">fit</span></code> does not have any effect and is
 implemented for compatibility with Scikit-learn’s API. As a result, the
-class <code class="docutils literal"><span class="pre">FeatureExtractor</span></code> can be used as a step in a Pipeline (see
-<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.19.1)"><code class="xref py py-class docutils literal"><span class="pre">Pipeline</span></code></a> and MNE-features examples). The class
-also accepts a <code class="docutils literal"><span class="pre">memory</span></code> parameter which allows for caching the result of
+class <code class="docutils literal notranslate"><span class="pre">FeatureExtractor</span></code> can be used as a step in a Pipeline (see
+<a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a> and MNE-features examples). The class
+also accepts a <code class="docutils literal notranslate"><span class="pre">memory</span></code> parameter which allows for caching the result of
 feature extraction. Therefore, if caching is used, calling
-<code class="docutils literal"><span class="pre">fit_transform</span></code> twice on the same data will not trigger a second call
-to <a class="reference internal" href="mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="mne_features.feature_extraction.extract_features"><code class="xref py py-func docutils literal"><span class="pre">extract_features()</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sfreq</strong> : float (default: 256.)</p>
-<blockquote>
-<div><p>Sampling rate of the data.</p>
-</div></blockquote>
-<p><strong>selected_funcs</strong> : list of str or tuples</p>
-<blockquote>
-<div><p>The elements of <code class="docutils literal"><span class="pre">selected_features</span></code> are either strings or tuples of
-the form <code class="docutils literal"><span class="pre">(str,</span> <span class="pre">callable)</span></code>. If an element is of type <code class="docutils literal"><span class="pre">str</span></code>, it is
+<code class="docutils literal notranslate"><span class="pre">fit_transform</span></code> twice on the same data will not trigger a second call
+to <a class="reference internal" href="mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="mne_features.feature_extraction.extract_features"><code class="xref py py-func docutils literal notranslate"><span class="pre">extract_features()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sfreq</strong><span class="classifier">float (default: 256.)</span></dt><dd><p>Sampling rate of the data.</p>
+</dd>
+<dt><strong>selected_funcs</strong><span class="classifier">list of str or tuples</span></dt><dd><p>The elements of <code class="docutils literal notranslate"><span class="pre">selected_features</span></code> are either strings or tuples of
+the form <code class="docutils literal notranslate"><span class="pre">(str,</span> <span class="pre">callable)</span></code>. If an element is of type <code class="docutils literal notranslate"><span class="pre">str</span></code>, it is
 the alias of a feature function. The aliases are built from the
-feature functions’ names by removing <code class="docutils literal"><span class="pre">compute_</span></code>. For instance, the
-alias of the feature function <code class="xref py py-func docutils literal"><span class="pre">compute_ptp_amp()</span></code> is <code class="docutils literal"><span class="pre">ptp_amp</span></code>.
+feature functions’ names by removing <code class="docutils literal notranslate"><span class="pre">compute_</span></code>. For instance, the
+alias of the feature function <code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ptp_amp()</span></code> is <code class="docutils literal notranslate"><span class="pre">ptp_amp</span></code>.
 (See the documentation of mne-features). If an element is of type
-<code class="docutils literal"><span class="pre">tuple</span></code>, the first element of the tuple should be a string
+<code class="docutils literal notranslate"><span class="pre">tuple</span></code>, the first element of the tuple should be a string
 (name/alias given to a user-defined feature function) and the second
 element should be a  callable (a user-defined feature function which
-accepts Numpy arrays with shape <code class="docutils literal"><span class="pre">(n_channels,</span> <span class="pre">n_times)</span></code>). The
+accepts Numpy arrays with shape <code class="docutils literal notranslate"><span class="pre">(n_channels,</span> <span class="pre">n_times)</span></code>). The
 names/aliases given to user-defined feature functions should not
 intersect the aliases used by mne-features. If the name given to a
 user-defined feature function is already used as an alias in
 mne-features, an error will be raised.</p>
-</div></blockquote>
-<p><strong>params</strong> : dict or None (default: None)</p>
-<blockquote>
-<div><p>If not None, dict of optional parameters to be passed to
-<a class="reference internal" href="mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="mne_features.feature_extraction.extract_features"><code class="xref py py-func docutils literal"><span class="pre">extract_features()</span></code></a>. Each key of the <code class="docutils literal"><span class="pre">funcs_params</span></code> dict should
-be of the form: <code class="docutils literal"><span class="pre">[alias_feature_function]__[optional_param]</span></code>
-(for example: <code class="docutils literal"><span class="pre">higuchi_fd__kmax</span></code>).</p>
-</div></blockquote>
-<p><strong>n_jobs</strong> : int (default: 1)</p>
-<blockquote>
-<div><p>Number of CPU cores used when parallelizing the feature extraction.
+</dd>
+<dt><strong>params</strong><span class="classifier">dict or None (default: None)</span></dt><dd><p>If not None, dict of optional parameters to be passed to
+<a class="reference internal" href="mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="mne_features.feature_extraction.extract_features"><code class="xref py py-func docutils literal notranslate"><span class="pre">extract_features()</span></code></a>. Each key of the <code class="docutils literal notranslate"><span class="pre">funcs_params</span></code> dict should
+be of the form: <code class="docutils literal notranslate"><span class="pre">[alias_feature_function]__[optional_param]</span></code>
+(for example: <code class="docutils literal notranslate"><span class="pre">higuchi_fd__kmax</span></code>).</p>
+</dd>
+<dt><strong>n_jobs</strong><span class="classifier">int (default: 1)</span></dt><dd><p>Number of CPU cores used when parallelizing the feature extraction.
 If given a value of -1, all cores are used.</p>
-</div></blockquote>
-<p><strong>memory</strong> : str or None (default: None)</p>
-<blockquote class="last">
-<div><p>If None, no caching is performed. If a string is given, the string
+</dd>
+<dt><strong>memory</strong><span class="classifier">str or None (default: None)</span></dt><dd><p>If None, no caching is performed. If a string is given, the string
 should be the path to the caching directory. Caching is particularly
 advantageous when feature extraction is time consuming.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="mne_features.feature_extraction.extract_features"><code class="xref py py-func docutils literal"><span class="pre">extract_features()</span></code></a></p>
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="mne_features.feature_extraction.extract_features.html#mne_features.feature_extraction.extract_features" title="mne_features.feature_extraction.extract_features"><code class="xref py py-func docutils literal notranslate"><span class="pre">extract_features()</span></code></a></dt><dd></dd>
+</dl>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n_epochs</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">,</span> <span class="n">n_times</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">32</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">,</span> <span class="n">n_times</span><span class="p">)</span>
@@ -196,36 +177,36 @@ advantageous when feature extraction is time consuming.</p>
 <span class="go">(5, 6)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="mne_features.feature_extraction.FeatureExtractor.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>sfreq=256.0</em>, <em>selected_funcs=None</em>, <em>params=None</em>, <em>n_jobs=1</em>, <em>memory=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">256.0</span></em>, <em class="sig-param"><span class="n">selected_funcs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">memory</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a FeatureExtractor object.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="mne_features.feature_extraction.FeatureExtractor.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>([sfreq,&nbsp;selected_funcs,&nbsp;params,&nbsp;…])</td>
-<td>Instantiate a FeatureExtractor object.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="mne_features.feature_extraction.FeatureExtractor.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(self[, sfreq, selected_funcs, …])</p></td>
+<td><p>Instantiate a FeatureExtractor object.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code>(X[,&nbsp;y])</td>
-<td>Do not have any effect.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code>(self, X[, y])</p></td>
+<td><p>Do not have any effect.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
-<td>Fit to data, then transform it.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(self, X[, y])</p></td>
+<td><p>Fit to data, then transform it.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">get_params</span></code>([deep])</td>
-<td>Get the parameters of the transformer.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
+<td><p>Get the parameters of the transformer.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">set_params</span></code>(**params)</td>
-<td>Set the parameters of the transformer.</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, **params)</p></td>
+<td><p>Set the parameters of the transformer.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">transform</span></code>(X[,&nbsp;y])</td>
-<td>Extract features from the array X.</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code>(self, X)</p></td>
+<td><p>Extract features from the array X.</p></td>
 </tr>
 </tbody>
 </table>
@@ -248,8 +229,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2018, MNE-Features developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.<br/>
+        &copy; Copyright 2012-2020, MNE-Features Developers. Last updated on 2020-07-23.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.1.<br/>
     </p>
   </div>
 </footer>

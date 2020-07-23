@@ -1,5 +1,5 @@
-mne\_features\.bivariate\.compute\_max\_cross\_corr
-===================================================
+mne\_features.bivariate.compute\_max\_cross\_corr
+=================================================
 
 .. currentmodule:: mne_features.bivariate
 

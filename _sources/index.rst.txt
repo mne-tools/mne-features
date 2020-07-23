@@ -25,10 +25,11 @@ Cite
 
 Link to `PDF <https://hal.archives-ouvertes.fr/hal-01724272/>`_
 
-API
----
+More
+----
 
 .. toctree::
     :maxdepth: 1
 
     api.rst
+    whats_new.rst

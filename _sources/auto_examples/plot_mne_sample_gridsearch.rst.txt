@@ -1,10 +1,12 @@
-.. note::
-    :class: sphx-glr-download-link-note
+.. only:: html
 
-    Click :ref:`here <sphx_glr_download_auto_examples_plot_mne_sample_gridsearch.py>` to download the full example code
-.. rst-class:: sphx-glr-example-title
+    .. note::
+        :class: sphx-glr-download-link-note
 
-.. _sphx_glr_auto_examples_plot_mne_sample_gridsearch.py:
+        Click :ref:`here <sphx_glr_download_auto_examples_plot_mne_sample_gridsearch.py>`     to download the full example code
+    .. rst-class:: sphx-glr-example-title
+
+    .. _sphx_glr_auto_examples_plot_mne_sample_gridsearch.py:
 
 
 ==========================================================================
@@ -33,9 +35,7 @@ Proc. IEEE ICASSP Conf. 2018
     of auditory vs. visual stimuli).
 
 
-
-
-.. code-block:: python
+.. code-block:: default
 
 
     # Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
@@ -62,11 +62,11 @@ Proc. IEEE ICASSP Conf. 2018
 
 
 
+
 Let us import the data using MNE-Python and epoch it:
 
 
-
-.. code-block:: python
+.. code-block:: default
 
 
     data_path = sample.data_path()
@@ -93,48 +93,35 @@ Let us import the data using MNE-Python and epoch it:
 
 
 
-.. rst-class:: sphx-glr-script-out
 
- Out::
-
-    Opening raw data file /home/users/jbschiratti/mne_data/MNE-sample-data/MEG/sample/sample_audvis_filt-0-40_raw.fif...
-        Read a total of 4 projection items:
-            PCA-v1 (1 x 102)  idle
-            PCA-v2 (1 x 102)  idle
-            PCA-v3 (1 x 102)  idle
-            Average EEG reference (1 x 60)  idle
-        Range : 6450 ... 48149 =     42.956 ...   320.665 secs
-    Ready.
-    Current compensation grade : 0
-    Reading 0 ... 41699  =      0.000 ...   277.709 secs...
-    Setting up high-pass filter at 0.5 Hz
-    l_trans_bandwidth chosen to be 0.5 Hz
-    Filter length of 991 samples (6.600 sec) selected
-    145 matching events found
-    No baseline correction applied
-    Not setting metadata
-    4 projection items activated
-    Loading data for 145 events and 106 original time points ...
-    0 bad epochs dropped
 
 
 Prepare for the classification task:
 
 
-
-.. code-block:: python
+.. code-block:: default
 
 
     pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                              selected_funcs=['app_entropy',
                                                              'mean'])),
                      ('scaler', StandardScaler()),
-                     ('clf', LogisticRegression(random_state=42))])
+                     ('clf', LogisticRegression(random_state=42, solver='lbfgs'))])
     skf = StratifiedKFold(n_splits=3, random_state=42)
     y = labels
 
 
 
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    /Users/alex/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_split.py:297: FutureWarning: Setting a random_state has no effect since shuffle is False. This will raise an error in 0.24. You should leave random_state to its default (None), or set shuffle=True.
+      FutureWarning
 
 
 
@@ -143,8 +130,7 @@ Cross-validation accuracy score with default parameters (emb = 2, by default
 for `compute_app_entropy`):
 
 
-
-.. code-block:: python
+.. code-block:: default
 
 
     scores = cross_val_score(pipe, data, y, cv=skf)
@@ -157,9 +143,13 @@ for `compute_app_entropy`):
 
 .. rst-class:: sphx-glr-script-out
 
- Out::
+ Out:
 
-    Cross-validation accuracy score (with default parameters) = 0.828 (+/- 0.01071)
+ .. code-block:: none
+
+    Cross-validation accuracy score (with default parameters) = 0.834 (+/- 0.00160)
+
+
 
 
 Optimization of features extraction optional parameters:
@@ -168,8 +158,7 @@ Here, only the embedding dimension parameter of
 GridSearchCV.
 
 
-
-.. code-block:: python
+.. code-block:: default
 
 
     params_grid = {'fe__app_entropy__emb': np.arange(2, 5)}
@@ -188,16 +177,21 @@ GridSearchCV.
 
 .. rst-class:: sphx-glr-script-out
 
- Out::
+ Out:
 
+ .. code-block:: none
+
+    /Users/alex/miniconda3/lib/python3.7/site-packages/sklearn/model_selection/_split.py:297: FutureWarning: Setting a random_state has no effect since shuffle is False. This will raise an error in 0.24. You should leave random_state to its default (None), or set shuffle=True.
+      FutureWarning
     {'fe__app_entropy__emb': 3}
+
+
 
 
 Scores with all parameter values:
 
 
-
-.. code-block:: python
+.. code-block:: default
 
     scores = pd.DataFrame(gs.cv_results_)
     print(scores[['params', 'mean_test_score', 'mean_train_score']])
@@ -208,19 +202,22 @@ Scores with all parameter values:
 
 .. rst-class:: sphx-glr-script-out
 
- Out::
+ Out:
 
-    params  mean_test_score  mean_train_score
-    0  {u'fe__app_entropy__emb': 2}         0.820690               1.0
-    1  {u'fe__app_entropy__emb': 3}         0.875862               1.0
-    2  {u'fe__app_entropy__emb': 4}         0.855172               1.0
+ .. code-block:: none
+
+                            params  mean_test_score  mean_train_score
+    0  {'fe__app_entropy__emb': 2}         0.820681               1.0
+    1  {'fe__app_entropy__emb': 3}         0.862062               1.0
+    2  {'fe__app_entropy__emb': 4}         0.848078               1.0
+
+
 
 
 Cross-validation accuracy score with optimized parameters:
 
 
-
-.. code-block:: python
+.. code-block:: default
 
 
     gs_best = gs.best_estimator_
@@ -234,12 +231,19 @@ Cross-validation accuracy score with optimized parameters:
 
 .. rst-class:: sphx-glr-script-out
 
- Out::
+ Out:
+
+ .. code-block:: none
 
     Cross-validation accuracy score (with optimized parameters) = 0.890 (+/- 0.01036)
 
 
-**Total running time of the script:** ( 3 minutes  0.399 seconds)
+
+
+
+.. rst-class:: sphx-glr-timing
+
+   **Total running time of the script:** ( 3 minutes  55.760 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_mne_sample_gridsearch.py:
@@ -252,13 +256,13 @@ Cross-validation accuracy score with optimized parameters:
 
 
 
-  .. container:: sphx-glr-download
+  .. container:: sphx-glr-download sphx-glr-download-python
 
      :download:`Download Python source code: plot_mne_sample_gridsearch.py <plot_mne_sample_gridsearch.py>`
 
 
 
-  .. container:: sphx-glr-download
+  .. container:: sphx-glr-download sphx-glr-download-jupyter
 
      :download:`Download Jupyter notebook: plot_mne_sample_gridsearch.ipynb <plot_mne_sample_gridsearch.ipynb>`
 
@@ -267,4 +271,4 @@ Cross-validation accuracy score with optimized parameters:
 
  .. rst-class:: sphx-glr-signature
 
-    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.readthedocs.io>`_
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

@@ -62,7 +62,7 @@ data = epochs.get_data()
 # Prepare for the classification task:
 
 pipe = Pipeline([('scaler', StandardScaler()),
-                 ('lr', LogisticRegression(random_state=42))])
+                 ('lr', LogisticRegression(random_state=42, solver='lbfgs'))])
 y = labels
 
 ###############################################################################

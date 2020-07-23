@@ -1,10 +1,12 @@
-.. note::
-    :class: sphx-glr-download-link-note
+.. only:: html
 
-    Click :ref:`here <sphx_glr_download_auto_examples_plot_psd_slope_estimation.py>` to download the full example code
-.. rst-class:: sphx-glr-example-title
+    .. note::
+        :class: sphx-glr-download-link-note
 
-.. _sphx_glr_auto_examples_plot_psd_slope_estimation.py:
+        Click :ref:`here <sphx_glr_download_auto_examples_plot_psd_slope_estimation.py>`     to download the full example code
+    .. rst-class:: sphx-glr-example-title
+
+    .. _sphx_glr_auto_examples_plot_psd_slope_estimation.py:
 
 
 ===================================================================
@@ -14,7 +16,7 @@ Estimation of the slope and intercept of the Power Spectral Density
 This example aims at showing how the utility function `power_spectrum` and 
 the feature function :func:`mne_features.univariate.compute_spect_slope` can 
 be used to estimate the slope and the intercept of the Power Spectral 
-Density (PSD, computed using the FFT of the signal).
+Density (PSD, computed - by default - using Welch method).
 
 The code for this example is based on the method proposed in:
 
@@ -31,9 +33,7 @@ Proc. IEEE ICASSP Conf. 2018
     of the PSD.
 
 
-
-
-.. code-block:: python
+.. code-block:: default
 
 
     # Author: Jean-Baptiste Schiratti <jean.baptiste.schiratti@gmail.com>
@@ -56,11 +56,11 @@ Proc. IEEE ICASSP Conf. 2018
 
 
 
+
 Let us import the data using MNE-Python and epoch it:
 
 
-
-.. code-block:: python
+.. code-block:: default
 
 
     data_path = sample.data_path()
@@ -79,21 +79,13 @@ Let us import the data using MNE-Python and epoch it:
 
 .. rst-class:: sphx-glr-script-out
 
- Out::
+ Out:
 
-    Opening raw data file /home/users/jbschiratti/mne_data/MNE-sample-data/MEG/sample/sample_audvis_filt-0-40_raw.fif...
-        Read a total of 4 projection items:
-            PCA-v1 (1 x 102)  idle
-            PCA-v2 (1 x 102)  idle
-            PCA-v3 (1 x 102)  idle
-            Average EEG reference (1 x 60)  idle
-        Range : 6450 ... 48149 =     42.956 ...   320.665 secs
-    Ready.
-    Current compensation grade : 0
-    Reading 0 ... 41699  =      0.000 ...   277.709 secs...
-    Setting up high-pass filter at 0.5 Hz
-    l_trans_bandwidth chosen to be 0.5 Hz
-    Filter length of 991 samples (6.600 sec) selected
+ .. code-block:: none
+
+
+    <Raw | sample_audvis_filt-0-40_raw.fif, 376 x 41700 (277.7 s), ~123.3 MB, data loaded>
+
 
 
 Estimate the slope (and the intercept) of the PSD. We use here a single
@@ -101,20 +93,18 @@ MEG channel during the full recording to estimate the slope and the
 intercept.
 
 
+.. code-block:: default
 
-.. code-block:: python
 
-
-    data, _ = raw[0, :2048]
-    # data = epochs.get_data()[0, 1, :].reshape((1, -1))
+    data, _ = raw[1, :2048]
     sfreq = raw.info['sfreq']
 
-    # Compute the (one-sided) PSD using FFT. The ``mask`` variable allows to
-    # select only the part of the PSD which corresponds to frequencies between
+    # Compute the (one-sided) PSD using Welch method. The ``mask`` variable allows
+    # to select only the part of the PSD which corresponds to frequencies between
     # 0.1Hz and 40Hz (the data used in this example is already low-pass filtered
     # at 40Hz).
     psd, freqs = power_spectrum(sfreq, data)
-    mask = np.logical_and(0.1 <= freqs, freqs <= 40)
+    mask = np.logical_and(1 <= freqs, freqs <= 40)
     psd, freqs = psd[0, mask], freqs[mask]
 
     # Estimate the slope (and the intercept) of the PSD. The function
@@ -125,15 +115,15 @@ intercept.
     # by ``compute_spect_slope`` because, in the feature function, the linear
     # regression fit is done in the log10-log10 scale.
     intercept, slope, _, _ = compute_spect_slope(sfreq, data, fmin=1., fmax=40.)
-    print('The estimated slope (respectively intercept) is: %1.2f (resp. %1.3e)' %
-          (slope, intercept))
+    print('The estimated slope is a = %1.2f and the estimated intercept is '
+          'b = %1.3e' % (slope, intercept))
 
-    # Plot the PSD together with the ``b / (f ** a)`` curve (estimated decay of
-    # the PSD with frequency).
+    # Plot the PSD together with the ``b + a * f`` straight line (estimated decay
+    # of the PSD with frequency in the log10-log10 scale).
     plt.figure()
     plt.semilogx(freqs, np.log10(psd), '-b', lw=2, label='PSD')
     plt.semilogx(freqs, intercept + slope * np.log10(freqs),
-                 '-r', lw=2, label='b / (f ** a)')
+                 '-r', lw=2, label='b + a * f')
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('PSD (dB)')
     plt.xlim([1, 40])
@@ -143,17 +133,25 @@ intercept.
 
 
 .. image:: /auto_examples/images/sphx_glr_plot_psd_slope_estimation_001.png
+    :alt: plot psd slope estimation
     :class: sphx-glr-single-img
 
 
 .. rst-class:: sphx-glr-script-out
 
- Out::
+ Out:
 
-    The estimated slope (respectively intercept) is: -0.98 (resp. -2.460e+01)
+ .. code-block:: none
+
+    The estimated slope is a = -1.07 and the estimated intercept is b = -2.357e+01
 
 
-**Total running time of the script:** ( 0 minutes  0.831 seconds)
+
+
+
+.. rst-class:: sphx-glr-timing
+
+   **Total running time of the script:** ( 0 minutes  0.894 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_psd_slope_estimation.py:
@@ -166,13 +164,13 @@ intercept.
 
 
 
-  .. container:: sphx-glr-download
+  .. container:: sphx-glr-download sphx-glr-download-python
 
      :download:`Download Python source code: plot_psd_slope_estimation.py <plot_psd_slope_estimation.py>`
 
 
 
-  .. container:: sphx-glr-download
+  .. container:: sphx-glr-download sphx-glr-download-jupyter
 
      :download:`Download Jupyter notebook: plot_psd_slope_estimation.ipynb <plot_psd_slope_estimation.ipynb>`
 
@@ -181,4 +179,4 @@ intercept.
 
  .. rst-class:: sphx-glr-signature
 
-    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.readthedocs.io>`_
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_
