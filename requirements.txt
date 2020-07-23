@@ -1,0 +1,10 @@
+numpy
+matplotlib
+scipy
+scikit-learn
+pandas
+numba
+mne
+PyWavelets
+tqdm
+download

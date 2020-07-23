@@ -9,7 +9,10 @@ from inspect import getargs
 import numpy as np
 import pandas as pd
 from sklearn.base import TransformerMixin, BaseEstimator
-from sklearn.externals import joblib
+try:
+    from sklearn.externals import joblib
+except (ImportError, ModuleNotFoundError):
+    import joblib
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
 

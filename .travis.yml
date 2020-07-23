@@ -2,6 +2,7 @@ language: python
 
 env:
   - USE_NUMBA=ON PYTHON_VERSION=3.6
+  - USE_NUMBA=ON PYTHON_VERSION=3.8
   - USE_NUMBA=OFF PYTHON_VERSION=3.6
 
 before_install:
@@ -13,19 +14,23 @@ before_install:
 install:
     - conda create -n testenv --yes pip python=${PYTHON_VERSION}
     - source activate testenv
-    - conda install --yes --quiet numpy=1.11 matplotlib=1.5 scipy=0.19 scikit-learn pandas
     - |
-      if [[ "${USE_NUMBA}" == "ON" ]]; then
-        conda install --yes --quiet numba
-      fi
-    - conda install --yes --quiet nose coverage
-    - pip install flake8 check-manifest
-    - pip install mne PyWavelets coverage coveralls tqdm
-    - pip install "git+https://github.com/choldgraf/download"
-    - python setup.py develop --no-deps
+      if [[ "${PYTHON_VERSION}" == "3.6" ]]; then
+        pip install numpy==1.17.0 matplotlib scipy==1.3.0 scikit-learn==0.21.0 pandas==0.25.0;
+        pip install mne==0.18.2 PyWavelets==1.0.3 tqdm download;
+      fi;
+    - |
+      if [[ "${PYTHON_VERSION}" == "3.8" ]]; then
+        pip install -r requirements.txt;
+      fi;
+    - |
+      if [[ ( "${USE_NUMBA}" == "ON" ) && ( "${PYTHON_VERSION}" == "3.6" ) ]]; then
+        pip install numba==0.46.0 llvmlite==0.30.0;
+      fi;
+    - pip install pytest coverage flake8 check-manifest pytest-sugar
 script:
     - make
-    - flake8 --count mne_features --ignore=E121,E123,E126,E226,E24,E704,W503,W504
+    - flake8 --count mne_features
 after_success:
   - |
     if [[ "${USE_NUMBA}" == "OFF" ]]; then
