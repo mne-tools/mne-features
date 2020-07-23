@@ -16,7 +16,7 @@ if version is None:
     raise RuntimeError('Could not determine version')
 
 
-DISTNAME = 'python-mne_features'
+DISTNAME = 'mne-features'
 DESCRIPTION = descr
 MAINTAINER = 'Jean-Baptiste Schiratti'
 MAINTAINER_EMAIL = 'jean.baptiste.schiratti@gmail.com'
