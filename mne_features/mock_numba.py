@@ -4,12 +4,10 @@
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
-from warnings import warn
-
 try:
     import numba as nb
-except ImportError as e:
-    warn('{}. Your code will be slower.'.format(e))
+except ImportError as err:
+    print('{}. Your code will be slower.'.format(err))
 
     class Bunch(dict):
         """Dictionnary-like object that exposes its keys as attributes."""
