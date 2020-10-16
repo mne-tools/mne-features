@@ -204,25 +204,25 @@ def test_pow_freq_bands():
 
 
 def test_generic_features_names():
-    n_chans = 2
-    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    n_chans = 2  # keep only 2 channels for the sake of simplicity
+    _data = data[:, :n_chans, :]
     selected_funcs = (
         ['mean', 'variance', 'std', 'ptp_amp', 'skewness', 'kurtosis',
-         'hurst_exp', 'app_entropy', 'samp_entropy', 'decorr_time',
+         'x²', 'app_entropy', 'samp_entropy', 'decorr_time',
          'hjorth_mobility_spect', 'hjorth_complexity_spect', 'hjorth_mobility',
          'hjorth_complexity', 'higuchi_fd', 'katz_fd', 'zero_crossings',
          'line_length', 'spect_entropy', 'svd_entropy', 'svd_fisher_info']
     )
 
     col_names = [(func, 'ch%s' % ch)
-                 for func in selected_funcs for ch in range(n_chans) ]
+                 for func in selected_funcs for ch in range(n_chans)]
     df = extract_features(_data, sfreq, selected_funcs, return_as_df=True)
     assert df.columns.to_list() == col_names
 
 
 def test_feature_names_spect_edge_freq():
-    n_chans = 2
-    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    n_chans = 2  # keep only 2 channels for the sake of simplicity
+    _data = data[:, :n_chans, :]
     selected_funcs = ['spect_edge_freq']
 
     _edges = [None, [.5], [.5, .9]]
@@ -240,8 +240,8 @@ def test_feature_names_spect_edge_freq():
 
 
 def test_feature_names_spect_slope():
-    n_chans = 2
-    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    n_chans = 2  # keep only 2 channels for the sake of simplicity
+    _data = data[:, :n_chans, :]
     selected_funcs = ['spect_slope']
 
     stats = ['intercept', 'slope', 'MSE', 'R2']
@@ -253,8 +253,8 @@ def test_feature_names_spect_slope():
 
 
 def test_feature_names_wavelet_coef_energy(wavelet_name='db4'):
-    n_chans = 2
-    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    n_chans = 2  # keep only 2 channels for the sake of simplicity
+    _data = data[:, :n_chans, :]
     selected_funcs = ['wavelet_coef_energy']
 
     # number of coefficients of the DWT
@@ -272,8 +272,8 @@ def test_feature_names_wavelet_coef_energy(wavelet_name='db4'):
 
 
 def test_feature_names_teager_kaiser_energy(wavelet_name='db4'):
-    n_chans = 2
-    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    n_chans = 2  # keep only 2 channels for the sake of simplicity
+    _data = data[:, :n_chans, :]
     selected_funcs = ['teager_kaiser_energy']
 
     # number of coefficients of the DWT
