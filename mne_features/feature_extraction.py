@@ -179,7 +179,7 @@ def _format_as_dataframe(X, feature_names):
         return pd.DataFrame(data=X, columns=columns)
 
 
-def _apply_extractor(extractor, X, return_as_df):
+def _apply_extractor(extractor, X, ch_names, return_as_df):
     """Utility function to apply features extractor to ndarray X.
 
     Parameters
@@ -188,6 +188,8 @@ def _apply_extractor(extractor, X, return_as_df):
     :class:`~sklearn.pipeline.Pipeline`.
 
     X : ndarray, shape (n_channels, n_times)
+
+    ch_names : list of str or None
 
     return_as_df : bool
 
@@ -202,6 +204,12 @@ def _apply_extractor(extractor, X, return_as_df):
     feature_names = None
     if return_as_df:
         feature_names = extractor.get_feature_names()
+        if ch_names is not None:  # rename channels
+            mapping = {'ch%s' % i: ch_name
+                       for i, ch_name in enumerate(ch_names)}
+            for pattern, translation in mapping.items():
+                feature_names = [feature_name.replace(pattern, translation)
+                                 for feature_name in feature_names]
     return X, feature_names
 
 
@@ -370,7 +378,7 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 
 
 def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
-                     return_as_df=False):
+                     ch_names=None, return_as_df=False):
     """Extraction of temporal or spectral features from epoched EEG signals.
 
     Parameters
@@ -407,6 +415,9 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
         Number of CPU cores used when parallelizing the feature extraction.
         If given a value of -1, all cores are used.
 
+    ch_names : list of str or None (default: None)
+        If not None, list containing the names of each input channel.
+
     return_as_df : bool (default: False)
         If True, the extracted features will be returned as a Pandas DataFrame.
         The column index is a MultiIndex (see :class:`~pandas.MultiIndex`)
@@ -425,6 +436,9 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     feature_funcs.update(bivariate_funcs)
     sel_funcs = _check_funcs(selected_funcs, feature_funcs)
 
+    if ch_names is not None and len(ch_names) != X.shape[1]:
+        raise ValueError('`ch_names` should be of length {%s}' % X.shape[1])
+
     # Feature extraction
     n_epochs = X.shape[0]
     _tr = [(n, FeatureFunctionTransformer(func=func)) for n, func in sel_funcs]
@@ -432,7 +446,8 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     if funcs_params is not None:
         extractor.set_params(**funcs_params)
     res = joblib.Parallel(n_jobs=n_jobs)(joblib.delayed(_apply_extractor)(
-        extractor, X[j, :, :], return_as_df) for j in range(n_epochs))
+        extractor, X[j, :, :], ch_names, return_as_df) for j in range(n_epochs)
+    )
     feature_names = res[0][1]
     res = list(zip(*res))[0]
     Xnew = np.vstack(res)

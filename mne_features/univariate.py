@@ -34,6 +34,12 @@ def get_univariate_funcs(sfreq):
     return _get_feature_funcs(sfreq, __name__)
 
 
+def _compute_generic_feat_names(data, **kwargs):
+    """Utility function to create generic feature names given input shape."""
+    n_channels = data.shape[0]
+    return ['ch%s' % ch for ch in range(n_channels)]
+
+
 def _unbiased_autocorr(x, lags=50):
     """Unbiased autocorrelation function.
 
@@ -154,6 +160,9 @@ def compute_mean(data):
     return np.mean(data, axis=-1)
 
 
+compute_mean.get_feature_names = _compute_generic_feat_names
+
+
 def compute_variance(data):
     """Variance of the data (per channel).
 
@@ -170,6 +179,9 @@ def compute_variance(data):
     Alias of the feature function: **variance**
     """
     return np.var(data, axis=-1, ddof=1)
+
+
+compute_variance.get_feature_names = _compute_generic_feat_names
 
 
 def compute_std(data):
@@ -190,6 +202,9 @@ def compute_std(data):
     return np.std(data, axis=-1, ddof=1)
 
 
+compute_std.get_feature_names = _compute_generic_feat_names
+
+
 def compute_ptp_amp(data):
     """Peak-to-peak (PTP) amplitude of the data (per channel).
 
@@ -206,6 +221,9 @@ def compute_ptp_amp(data):
     Alias of the feature function: **ptp_amp**
     """
     return np.ptp(data, axis=-1)
+
+
+compute_ptp_amp.get_feature_names = _compute_generic_feat_names
 
 
 def compute_skewness(data):
@@ -227,6 +245,9 @@ def compute_skewness(data):
     return stats.skew(data, axis=ndim - 1)
 
 
+compute_skewness.get_feature_names = _compute_generic_feat_names
+
+
 def compute_kurtosis(data):
     """Kurtosis of the data (per channel).
 
@@ -244,6 +265,9 @@ def compute_kurtosis(data):
     """
     ndim = data.ndim
     return stats.kurtosis(data, axis=ndim - 1, fisher=False)
+
+
+compute_kurtosis.get_feature_names = _compute_generic_feat_names
 
 
 @nb.jit([nb.float64[:, :](nb.float64[:, :]),
@@ -354,6 +378,9 @@ def compute_hurst_exp(data):
     return hurst
 
 
+compute_hurst_exp.get_feature_names = _compute_generic_feat_names
+
+
 def _app_samp_entropy_helper(data, emb, metric='chebyshev',
                              approximate=True):
     """Utility function for `compute_app_entropy`` and `compute_samp_entropy`.
@@ -441,6 +468,9 @@ def compute_app_entropy(data, emb=2, metric='chebyshev'):
     return np.subtract(phi[:, 0], phi[:, 1])
 
 
+compute_app_entropy.get_feature_names = _compute_generic_feat_names
+
+
 def compute_samp_entropy(data, emb=2, metric='chebyshev'):
     """Sample Entropy (SampEn, per channel).
 
@@ -475,6 +505,9 @@ def compute_samp_entropy(data, emb=2, metric='chebyshev'):
         raise ValueError('Sample Entropy is not defined.')
     else:
         return -np.log(np.divide(phi[:, 1], phi[:, 0]))
+
+
+compute_samp_entropy.get_feature_names = _compute_generic_feat_names
 
 
 def compute_decorr_time(sfreq, data):
@@ -513,6 +546,9 @@ def compute_decorr_time(sfreq, data):
             decorr_time = -1
         decorrelation_times[j] = decorr_time
     return decorrelation_times
+
+
+compute_decorr_time.get_feature_names = _compute_generic_feat_names
 
 
 def _freq_bands_helper(sfreq, freq_bands):
@@ -737,6 +773,9 @@ def compute_hjorth_mobility_spect(sfreq, data, normalize=False,
     return mobility
 
 
+compute_hjorth_mobility_spect.get_feature_names = _compute_generic_feat_names
+
+
 def compute_hjorth_complexity_spect(sfreq, data, normalize=False,
                                     psd_method='welch', psd_params=None):
     """Hjorth complexity (per channel).
@@ -791,6 +830,9 @@ def compute_hjorth_complexity_spect(sfreq, data, normalize=False,
     return complexity
 
 
+compute_hjorth_complexity_spect.get_feature_names = _compute_generic_feat_names
+
+
 def compute_hjorth_mobility(data):
     """Hjorth mobility (per channel).
 
@@ -822,6 +864,9 @@ def compute_hjorth_mobility(data):
     return mobility
 
 
+compute_hjorth_mobility.get_feature_names = _compute_generic_feat_names
+
+
 def compute_hjorth_complexity(data):
     """Hjorth complexity (per channel).
 
@@ -851,6 +896,9 @@ def compute_hjorth_complexity(data):
     m_x = compute_hjorth_mobility(data)
     complexity = np.divide(m_dx, m_x)
     return complexity
+
+
+compute_hjorth_complexity.get_feature_names = _compute_generic_feat_names
 
 
 @nb.jit([nb.float64[:](nb.float64[:, :], nb.int64),
@@ -929,6 +977,9 @@ def compute_higuchi_fd(data, kmax=10):
     return _higuchi_fd(data, kmax)
 
 
+compute_higuchi_fd.get_feature_names = _compute_generic_feat_names
+
+
 def compute_katz_fd(data):
     """Katz Fractal Dimension (per channel).
 
@@ -958,6 +1009,9 @@ def compute_katz_fd(data):
     d = np.max(np.abs(aux_d[:, 1:]), axis=-1)
     katz = np.divide(ln, np.add(ln, np.log10(np.divide(d, ll))))
     return katz
+
+
+compute_katz_fd.get_feature_names = _compute_generic_feat_names
 
 
 def compute_zero_crossings(data, threshold=np.finfo(np.float64).eps):
@@ -995,6 +1049,9 @@ def compute_zero_crossings(data, threshold=np.finfo(np.float64).eps):
     return count
 
 
+compute_zero_crossings.get_feature_names = _compute_generic_feat_names
+
+
 def compute_line_length(data):
     """Line length (per channel).
 
@@ -1018,6 +1075,9 @@ def compute_line_length(data):
            Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
     """
     return np.mean(np.abs(np.diff(data, axis=-1)), axis=-1)
+
+
+compute_line_length.get_feature_names = _compute_generic_feat_names
 
 
 def compute_spect_entropy(sfreq, data, psd_method='welch', psd_params=None):
@@ -1064,6 +1124,9 @@ def compute_spect_entropy(sfreq, data, psd_method='welch', psd_params=None):
     return -np.sum(np.multiply(psd_norm, np.log2(psd_norm)), axis=-1)
 
 
+compute_spect_entropy.get_feature_names = _compute_generic_feat_names
+
+
 def compute_svd_entropy(data, tau=2, emb=10):
     """SVD entropy (per channel).
 
@@ -1095,6 +1158,9 @@ def compute_svd_entropy(data, tau=2, emb=10):
     m = np.sum(sv, axis=-1)
     sv_norm = np.divide(sv, m[:, None])
     return -np.sum(np.multiply(sv_norm, np.log2(sv_norm)), axis=-1)
+
+
+compute_svd_entropy.get_feature_names = _compute_generic_feat_names
 
 
 def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
@@ -1182,6 +1248,18 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
     return fit_info.ravel()
 
 
+def _compute_spect_slope_feat_names(data, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_energy_freq_bands`."""
+    n_channels = data.shape[0]
+    stats = ['intercept', 'slope', 'MSE', 'R2']
+    return ['ch%s_%s' % (ch, stat) for ch in range(n_channels)
+            for stat in stats]
+
+
+compute_spect_slope.get_feature_names = _compute_spect_slope_feat_names
+
+
 def compute_svd_fisher_info(data, tau=2, emb=10):
     """SVD Fisher Information (per channel).
 
@@ -1214,6 +1292,9 @@ def compute_svd_fisher_info(data, tau=2, emb=10):
     sv_norm = np.divide(sv, m[:, None])
     aux = np.divide(np.diff(sv_norm, axis=-1) ** 2, sv_norm[:, :-1])
     return np.sum(aux, axis=-1)
+
+
+compute_svd_fisher_info.get_feature_names = _compute_generic_feat_names
 
 
 def compute_energy_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8.,
@@ -1291,8 +1372,8 @@ def _compute_energy_fb_feat_names(data, freq_bands, deriv_filt):
         n_freq_bands = (freq_bands.shape[0] - 1 if freq_bands.ndim == 1
                         else freq_bands.shape[0])
         _band_names = ['band' + str(j) for j in range(n_freq_bands)]
-    return ['ch%s_%s' % (ch, _band_names[i]) for ch in range(n_channels) for
-            i in range(n_freq_bands)]
+    return ['ch%s_%s' % (ch, _band_names[i]) for ch in range(n_channels)
+            for i in range(n_freq_bands)]
 
 
 compute_energy_freq_bands.get_feature_names = _compute_energy_fb_feat_names
@@ -1355,7 +1436,7 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
         else:
             _edge = edge
     n_edge = len(_edge)
-    n_channels, n_times = data.shape
+    n_channels = data.shape[0]
     spect_edge_freq = np.empty((n_channels, n_edge))
     _psd_params = _psd_params_checker(psd_params)
     psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method,
@@ -1371,6 +1452,27 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
             else:
                 spect_edge_freq[j, i] = -1
     return spect_edge_freq.ravel()
+
+
+def _compute_spect_edge_freq_feat_names(data, edge, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_spect_edge_freq`."""
+    n_channels = data.shape[0]
+    if edge is None:
+        _edge = [0.5]
+    else:
+        # Check the values in `edge`
+        if not all([0 <= p <= 1 for p in edge]):
+            raise ValueError('The values in ``edge``` must be floats between '
+                             '0 and 1. Got {} instead.'.format(edge))
+        else:
+            _edge = edge
+    n_edges = len(_edge)
+    return ['ch%s_%s' % (ch, i) for ch in range(n_channels)
+            for i in range(n_edges)]
+
+
+compute_spect_edge_freq.get_feature_names = _compute_spect_edge_freq_feat_names
 
 
 def compute_wavelet_coef_energy(data, wavelet_name='db4'):
@@ -1402,7 +1504,7 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    n_channels, n_times = data.shape
+    n_channels = data.shape[0]
     coefs = _wavelet_coefs(data, wavelet_name)
     levdec = len(coefs) - 1
     wavelet_energy = np.zeros((n_channels, levdec))
@@ -1410,6 +1512,20 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
         for level in range(levdec):
             wavelet_energy[j, level] = np.sum(coefs[levdec - level][j, :] ** 2)
     return wavelet_energy.ravel()
+
+
+def _compute_wavelet_coef_energy_feat_names(data, wavelet_name, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_wavelet_coef_energy`."""
+    n_channels = data.shape[0]
+    coefs = _wavelet_coefs(data, wavelet_name)
+    levdec = len(coefs) - 1
+    return ['ch%s_%s' % (ch, i) for ch in range(n_channels)
+            for i in range(levdec)]
+
+
+compute_wavelet_coef_energy.get_feature_names = \
+    _compute_wavelet_coef_energy_feat_names
 
 
 @nb.jit([nb.float64[:, :](nb.float64[:, :]),
@@ -1461,7 +1577,7 @@ def compute_teager_kaiser_energy(data, wavelet_name='db4'):
            wavelet transform and Teager-Kaiser energy operator. In Calcutta
            Conference (CALCON). 2017 IEEE (pp. 164-167).
     """
-    n_channels, n_times = data.shape
+    n_channels = data.shape[0]
     coefs = _wavelet_coefs(data, wavelet_name)
     levdec = len(coefs) - 1
     tke = np.empty((n_channels, levdec + 1, 2))
@@ -1470,3 +1586,17 @@ def compute_teager_kaiser_energy(data, wavelet_name='db4'):
         tke[:, level, 0] = np.mean(tk_energy, axis=-1)
         tke[:, level, 1] = np.std(tk_energy, ddof=1, axis=-1)
     return tke.ravel()
+
+
+def _compute_teager_kaiser_energy_feat_names(data, wavelet_name, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_teager_kaiser_energy`."""
+    n_channels = data.shape[0]
+    coefs = _wavelet_coefs(data, wavelet_name)
+    levdec = len(coefs) - 1
+    return ['ch%s_%s_%s' % (ch, i, stat) for ch in range(n_channels)
+            for i in range(levdec + 1) for stat in ['mean', 'std']]
+
+
+compute_teager_kaiser_energy.get_feature_names = \
+    _compute_teager_kaiser_energy_feat_names

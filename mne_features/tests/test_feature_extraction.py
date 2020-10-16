@@ -157,6 +157,21 @@ def test_user_defined_feature_function():
         extract_features(data, sfreq, ['mean', top_feature])
 
 
+def test_channel_naming():
+    ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
+    selected_funcs = ['app_entropy']
+    df = extract_features(
+        data, sfreq, selected_funcs, ch_names=ch_names, return_as_df=True)
+    expected_col_names = [('app_entropy', ch_name) for ch_name in ch_names]
+    assert df.columns.values.tolist() == expected_col_names
+
+    ch_names.append('CHANNEL%s' % (n_channels + 1))
+    with assert_raises(ValueError):
+        # incorrect number of channel names
+        df = extract_features(
+            data, sfreq, selected_funcs, ch_names=ch_names, return_as_df=True)
+
+
 if __name__ == '__main__':
 
     test_shape_output()
@@ -169,3 +184,4 @@ if __name__ == '__main__':
     test_gridsearch_feature_extractor()
     test_memory_feature_extractor()
     test_user_defined_feature_function()
+    test_channel_naming()

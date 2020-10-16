@@ -7,6 +7,7 @@ from math import sqrt, log, cos
 
 import numpy as np
 from numpy.testing import assert_equal, assert_almost_equal, assert_raises
+import pywt
 
 from mne_features.feature_extraction import extract_features
 from mne_features.univariate import (_slope_lstsq, _accumulate_std,
@@ -200,6 +201,93 @@ def test_pow_freq_bands():
     with assert_raises(ValueError):
         # Invalid `ratios` parameter
         compute_pow_freq_bands(sfreq, data_sin, ratios=['alpha', 'beta'])
+
+
+def test_generic_features_names():
+    n_chans = 2
+    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    selected_funcs = (
+        ['mean', 'variance', 'std', 'ptp_amp', 'skewness', 'kurtosis',
+         'hurst_exp', 'app_entropy', 'samp_entropy', 'decorr_time',
+         'hjorth_mobility_spect', 'hjorth_complexity_spect', 'hjorth_mobility',
+         'hjorth_complexity', 'higuchi_fd', 'katz_fd', 'zero_crossings',
+         'line_length', 'spect_entropy', 'svd_entropy', 'svd_fisher_info']
+    )
+
+    col_names = [(func, 'ch%s' % ch)
+                 for func in selected_funcs for ch in range(n_chans) ]
+    df = extract_features(_data, sfreq, selected_funcs, return_as_df=True)
+    assert df.columns.to_list() == col_names
+
+
+def test_feature_names_spect_edge_freq():
+    n_chans = 2
+    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    selected_funcs = ['spect_edge_freq']
+
+    _edges = [None, [.5], [.5, .9]]
+
+    for edge in _edges:
+        if edge is None:
+            edge = [.5]
+        col_names = ['ch%s_%s' % (ch, i) for ch in range(n_chans) for
+                     i in range(len(edge))]
+        df = extract_features(
+            _data, sfreq, selected_funcs,
+            funcs_params={'spect_edge_freq__edge': edge},
+            return_as_df=True)
+        assert_equal(df.columns.get_level_values(1).values, col_names)
+
+
+def test_feature_names_spect_slope():
+    n_chans = 2
+    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    selected_funcs = ['spect_slope']
+
+    stats = ['intercept', 'slope', 'MSE', 'R2']
+
+    col_names = ['ch%s_%s' % (ch, stat) for ch in range(n_chans) for
+                 stat in stats]
+    df = extract_features(_data, sfreq, selected_funcs, return_as_df=True)
+    assert_equal(df.columns.get_level_values(1).values, col_names)
+
+
+def test_feature_names_wavelet_coef_energy(wavelet_name='db4'):
+    n_chans = 2
+    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    selected_funcs = ['wavelet_coef_energy']
+
+    # number of coefficients of the DWT
+    wavelet = pywt.Wavelet(wavelet_name)
+    levdec = min(pywt.dwt_max_level(_data.shape[-1], wavelet.dec_len), 6)
+
+    col_names = ['ch%s_%s' % (ch, i) for ch in range(n_chans) for
+                 i in range(levdec)]
+
+    df = extract_features(
+            _data, sfreq, selected_funcs,
+            funcs_params={'wavelet_coef_energy__wavelet_name': wavelet_name},
+            return_as_df=True)
+    assert_equal(df.columns.get_level_values(1).values, col_names)
+
+
+def test_feature_names_teager_kaiser_energy(wavelet_name='db4'):
+    n_chans = 2
+    _data = data[:, :n_chans, :]  # keep only 2 channels for the sake of simplicity
+    selected_funcs = ['teager_kaiser_energy']
+
+    # number of coefficients of the DWT
+    wavelet = pywt.Wavelet(wavelet_name)
+    levdec = min(pywt.dwt_max_level(_data.shape[-1], wavelet.dec_len), 6)
+
+    col_names = ['ch%s_%s_%s' % (ch, i, stat) for ch in range(n_chans)
+                 for i in range(levdec + 1) for stat in ['mean', 'std']]
+
+    df = extract_features(
+            _data, sfreq, selected_funcs,
+            funcs_params={'teager_kaiser_energy__wavelet_name': wavelet_name},
+            return_as_df=True)
+    assert_equal(df.columns.get_level_values(1).values, col_names)
 
 
 def test_feature_names_pow_freq_bands():
@@ -481,3 +569,8 @@ if __name__ == '__main__':
     test_svd_fisher_info()
     test_shape_output_wavelet_coef_energy()
     test_shape_output_teager_kaiser_energy()
+    test_generic_features_names()
+    test_feature_names_spect_edge_freq()
+    test_feature_names_spect_slope()
+    test_feature_names_wavelet_coef_energy()
+    test_feature_names_teager_kaiser_energy()
