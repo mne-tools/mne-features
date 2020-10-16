@@ -254,6 +254,30 @@ def _filt(sfreq, data, filter_freqs, verbose=False):
                            fir_design='firwin', verbose=_verbose)
 
 
+def _get_feature_func_names(module_name):
+    """Inspection for names of feature functions.
+
+    Inspects a given module and returns a list of the names of the feature
+    functions in this module. If the module does not contain any feature
+    function, an empty list is returned.
+
+    Parameters
+    ----------
+    module_name : str
+        Name of the module to inspect.
+
+    Returns
+    -------
+    feature_func_names : list
+    """
+    feature_func_names = []
+    res = getmembers(sys.modules[module_name], isfunction)
+    for name, _ in res:
+        if name.startswith('compute_'):
+            feature_func_names.append(name.split('compute_')[-1])
+    return feature_func_names
+
+
 def _get_feature_funcs(sfreq, module_name):
     """Inspection for feature functions.
 
@@ -336,3 +360,23 @@ def _wavelet_coefs(data, wavelet_name='db4'):
     levdec = min(pywt.dwt_max_level(data.shape[-1], wavelet.dec_len), 6)
     coefs = pywt.wavedec(data, wavelet=wavelet, level=levdec)
     return coefs
+
+
+def _get_func_name(func):
+    """Return the name of input function.
+
+    Parameters
+    ----------
+    func : callable
+        Input function.
+
+    Returns
+    -------
+    func_name : str
+        Name of the input function.
+
+    """
+    if isinstance(func, partial):
+        return func.func.__name__
+    else:
+        return func.__name__

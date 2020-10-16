@@ -17,8 +17,8 @@ from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
 
 from .bivariate import get_bivariate_funcs
-from .univariate import get_univariate_funcs
-from .utils import _get_python_func
+from .univariate import get_univariate_funcs, get_univariate_func_names
+from .utils import _get_func_name, _get_python_func
 
 
 class FeatureFunctionTransformer(FunctionTransformer):
@@ -69,6 +69,12 @@ class FeatureFunctionTransformer(FunctionTransformer):
         """
         X_out = super(FeatureFunctionTransformer, self).transform(X)
         self.output_shape_ = X_out.shape[0]
+        if not hasattr(self, 'feature_names_'):
+            func_name = _get_func_name(self.func).replace('compute_', '')
+            if (func_name in get_univariate_func_names() and
+                    self.output_shape_ == X.shape[0]):
+                self.feature_names_ = ['ch%s' % ch
+                                       for ch in range(self.output_shape_)]
         return X_out
 
     def fit(self, X, y=None):
