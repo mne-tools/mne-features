@@ -208,7 +208,7 @@ def test_generic_features_names():
     _data = data[:, :n_chans, :]
     selected_funcs = (
         ['mean', 'variance', 'std', 'ptp_amp', 'skewness', 'kurtosis',
-         'x²', 'app_entropy', 'samp_entropy', 'decorr_time',
+         'hurst_exp', 'app_entropy', 'samp_entropy', 'decorr_time',
          'hjorth_mobility_spect', 'hjorth_complexity_spect', 'hjorth_mobility',
          'hjorth_complexity', 'higuchi_fd', 'katz_fd', 'zero_crossings',
          'line_length', 'spect_entropy', 'svd_entropy', 'svd_fisher_info']
