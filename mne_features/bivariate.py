@@ -15,7 +15,7 @@ from sklearn.preprocessing import scale
 
 from .mock_numba import nb
 from .utils import (_idxiter, power_spectrum, _embed, _get_feature_funcs,
-                    _psd_params_checker)
+                    _get_feature_func_names, _psd_params_checker)
 
 
 def get_bivariate_funcs(sfreq):
@@ -31,6 +31,16 @@ def get_bivariate_funcs(sfreq):
     bivariate_funcs : dict
     """
     return _get_feature_funcs(sfreq, __name__)
+
+
+def get_bivariate_func_names():
+    """List of names of bivariate feature functions.
+
+    Returns
+    -------
+    bivariate_func_names : list
+    """
+    return _get_feature_func_names(__name__)
 
 
 @nb.jit([nb.float64[:](nb.float64, nb.float64[:, :], nb.optional(nb.boolean)),

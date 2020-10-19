@@ -16,7 +16,8 @@ from sklearn.metrics import mean_squared_error, explained_variance_score
 
 from .mock_numba import nb
 from .utils import (power_spectrum, _embed, _filt, _get_feature_funcs,
-                    _wavelet_coefs, _idxiter, _psd_params_checker)
+                    _get_feature_func_names, _wavelet_coefs, _idxiter,
+                    _psd_params_checker)
 
 
 def get_univariate_funcs(sfreq):
@@ -32,6 +33,16 @@ def get_univariate_funcs(sfreq):
     univariate_funcs : dict
     """
     return _get_feature_funcs(sfreq, __name__)
+
+
+def get_univariate_func_names():
+    """List of names of univariate feature functions.
+
+    Returns
+    -------
+    univariate_func_names : list
+    """
+    return _get_feature_func_names(__name__)
 
 
 def _unbiased_autocorr(x, lags=50):
@@ -501,7 +512,7 @@ def compute_decorr_time(sfreq, data):
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    n_channels, n_times = data.shape
+    n_channels = data.shape[0]
     decorrelation_times = np.empty((n_channels,))
     for j in range(n_channels):
         _acf = _unbiased_autocorr(data[j, :])
@@ -1182,6 +1193,18 @@ def compute_spect_slope(sfreq, data, fmin=0.1, fmax=50,
     return fit_info.ravel()
 
 
+def _compute_spect_slope_feat_names(data, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_energy_freq_bands`."""
+    n_channels = data.shape[0]
+    stats = ['intercept', 'slope', 'MSE', 'R2']
+    return ['ch%s_%s' % (ch, stat) for ch in range(n_channels)
+            for stat in stats]
+
+
+compute_spect_slope.get_feature_names = _compute_spect_slope_feat_names
+
+
 def compute_svd_fisher_info(data, tau=2, emb=10):
     """SVD Fisher Information (per channel).
 
@@ -1291,8 +1314,8 @@ def _compute_energy_fb_feat_names(data, freq_bands, deriv_filt):
         n_freq_bands = (freq_bands.shape[0] - 1 if freq_bands.ndim == 1
                         else freq_bands.shape[0])
         _band_names = ['band' + str(j) for j in range(n_freq_bands)]
-    return ['ch%s_%s' % (ch, _band_names[i]) for ch in range(n_channels) for
-            i in range(n_freq_bands)]
+    return ['ch%s_%s' % (ch, _band_names[i]) for ch in range(n_channels)
+            for i in range(n_freq_bands)]
 
 
 compute_energy_freq_bands.get_feature_names = _compute_energy_fb_feat_names
@@ -1355,7 +1378,7 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
         else:
             _edge = edge
     n_edge = len(_edge)
-    n_channels, n_times = data.shape
+    n_channels = data.shape[0]
     spect_edge_freq = np.empty((n_channels, n_edge))
     _psd_params = _psd_params_checker(psd_params)
     psd, freqs = power_spectrum(sfreq, data, psd_method=psd_method,
@@ -1371,6 +1394,27 @@ def compute_spect_edge_freq(sfreq, data, ref_freq=None, edge=None,
             else:
                 spect_edge_freq[j, i] = -1
     return spect_edge_freq.ravel()
+
+
+def _compute_spect_edge_freq_feat_names(data, edge, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_spect_edge_freq`."""
+    n_channels = data.shape[0]
+    if edge is None:
+        _edge = [0.5]
+    else:
+        # Check the values in `edge`
+        if not all([0 <= p <= 1 for p in edge]):
+            raise ValueError('The values in ``edge``` must be floats between '
+                             '0 and 1. Got {} instead.'.format(edge))
+        else:
+            _edge = edge
+    n_edges = len(_edge)
+    return ['ch%s_%s' % (ch, i) for ch in range(n_channels)
+            for i in range(n_edges)]
+
+
+compute_spect_edge_freq.get_feature_names = _compute_spect_edge_freq_feat_names
 
 
 def compute_wavelet_coef_energy(data, wavelet_name='db4'):
@@ -1402,7 +1446,7 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
            studies on the prediction of epileptic seizures. Journal of
            Neuroscience Methods, 200(2), 257-271.
     """
-    n_channels, n_times = data.shape
+    n_channels = data.shape[0]
     coefs = _wavelet_coefs(data, wavelet_name)
     levdec = len(coefs) - 1
     wavelet_energy = np.zeros((n_channels, levdec))
@@ -1410,6 +1454,20 @@ def compute_wavelet_coef_energy(data, wavelet_name='db4'):
         for level in range(levdec):
             wavelet_energy[j, level] = np.sum(coefs[levdec - level][j, :] ** 2)
     return wavelet_energy.ravel()
+
+
+def _compute_wavelet_coef_energy_feat_names(data, wavelet_name, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_wavelet_coef_energy`."""
+    n_channels = data.shape[0]
+    coefs = _wavelet_coefs(data, wavelet_name)
+    levdec = len(coefs) - 1
+    return ['ch%s_%s' % (ch, i) for ch in range(n_channels)
+            for i in range(levdec)]
+
+
+compute_wavelet_coef_energy.get_feature_names = \
+    _compute_wavelet_coef_energy_feat_names
 
 
 @nb.jit([nb.float64[:, :](nb.float64[:, :]),
@@ -1461,7 +1519,7 @@ def compute_teager_kaiser_energy(data, wavelet_name='db4'):
            wavelet transform and Teager-Kaiser energy operator. In Calcutta
            Conference (CALCON). 2017 IEEE (pp. 164-167).
     """
-    n_channels, n_times = data.shape
+    n_channels = data.shape[0]
     coefs = _wavelet_coefs(data, wavelet_name)
     levdec = len(coefs) - 1
     tke = np.empty((n_channels, levdec + 1, 2))
@@ -1470,3 +1528,17 @@ def compute_teager_kaiser_energy(data, wavelet_name='db4'):
         tke[:, level, 0] = np.mean(tk_energy, axis=-1)
         tke[:, level, 1] = np.std(tk_energy, ddof=1, axis=-1)
     return tke.ravel()
+
+
+def _compute_teager_kaiser_energy_feat_names(data, wavelet_name, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_teager_kaiser_energy`."""
+    n_channels = data.shape[0]
+    coefs = _wavelet_coefs(data, wavelet_name)
+    levdec = len(coefs) - 1
+    return ['ch%s_%s_%s' % (ch, i, stat) for ch in range(n_channels)
+            for i in range(levdec + 1) for stat in ['mean', 'std']]
+
+
+compute_teager_kaiser_energy.get_feature_names = \
+    _compute_teager_kaiser_energy_feat_names
