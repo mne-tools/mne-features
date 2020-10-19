@@ -165,7 +165,7 @@ def test_channel_naming():
     expected_col_names = [('app_entropy', ch_name) for ch_name in ch_names]
     assert df.columns.values.tolist() == expected_col_names
 
-    ch_names.append('CHANNEL%s' % (n_channels + 1))
+    ch_names.append('CHANNEL%s' % n_channels)
     with assert_raises(ValueError):
         # incorrect number of channel names
         df = extract_features(
