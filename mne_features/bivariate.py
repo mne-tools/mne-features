@@ -314,6 +314,20 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
         return coefs
 
 
+def _compute_eig_feat_names(data, with_eigenvalues, include_diag, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.bivariate.compute_time_corr` and
+    :func:`mne_features.bivariate.compute_spect_corr`."""
+    feat_names = [f'ch{i}-ch{j}' for _, i, j, in _idxiter(
+                  data.shape[0], include_diag=include_diag)]
+    if with_eigenvalues:
+        feat_names.extend([f'eig{i}' for i in range(data.shape[0])])
+    return feat_names
+
+
+compute_time_corr.get_feature_names = _compute_eig_feat_names
+
+
 def compute_spect_corr(sfreq, data, with_eigenvalues=True,
                        include_diag=False, psd_method='welch',
                        psd_params=None):
@@ -377,3 +391,6 @@ def compute_spect_corr(sfreq, data, with_eigenvalues=True,
         return np.r_[coefs, w]
     else:
         return coefs
+
+
+compute_spect_corr.get_feature_names = _compute_eig_feat_names

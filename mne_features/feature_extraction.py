@@ -4,6 +4,7 @@
 #         Alexandre Gramfort <alexandre.gramfort@inria.fr>
 # License: BSD 3 clause
 
+import re
 from inspect import getargs
 
 import numpy as np
@@ -16,9 +17,9 @@ except (ImportError, ModuleNotFoundError):
 from sklearn.pipeline import FeatureUnion
 from sklearn.preprocessing import FunctionTransformer
 
-from .bivariate import get_bivariate_funcs
+from .bivariate import get_bivariate_funcs, get_bivariate_func_names
 from .univariate import get_univariate_funcs, get_univariate_func_names
-from .utils import _get_func_name, _get_python_func
+from .utils import _get_func_name, _get_python_func, _idxiter
 
 
 class FeatureFunctionTransformer(FunctionTransformer):
@@ -75,6 +76,15 @@ class FeatureFunctionTransformer(FunctionTransformer):
                     self.output_shape_ == X.shape[0]):
                 self.feature_names_ = ['ch%s' % ch
                                        for ch in range(self.output_shape_)]
+            elif func_name in get_bivariate_func_names():
+                if self.output_shape_ == X.shape[0] * (X.shape[0] - 1) // 2:
+                    include_diag = False
+                elif self.output_shape_ == X.shape[0] * (X.shape[0] + 1) // 2:
+                    include_diag = True
+                self.feature_names_ = [
+                    f'ch{i}-ch{j}' for _, i, j, in _idxiter(
+                        X.shape[0], include_diag=include_diag)]
+
         return X_out
 
     def fit(self, X, y=None):
@@ -214,8 +224,11 @@ def _apply_extractor(extractor, X, ch_names, return_as_df):
             mapping = {'ch%s' % i: ch_name
                        for i, ch_name in enumerate(ch_names)}
             for pattern, translation in mapping.items():
-                feature_names = [feature_name.replace(pattern, translation)
-                                 for feature_name in feature_names]
+                feature_names = [
+                    re.sub(pattern=rf'{pattern}(?=_)|{pattern}\b',
+                           string=feature_name, repl=translation)
+                           for feature_name in feature_names]
+
     return X, feature_names
 
 
