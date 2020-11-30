@@ -5,6 +5,7 @@
 """Univariate feature functions."""
 
 from math import sqrt, log, floor, gamma
+from collections.abc import Iterable
 
 import numpy as np
 from scipy import stats
@@ -255,6 +256,62 @@ def compute_kurtosis(data):
     """
     ndim = data.ndim
     return stats.kurtosis(data, axis=ndim - 1, fisher=False)
+
+
+def compute_rms(data):
+    """Root-mean squared value of the data (per channel).
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: *rms*
+    """
+    return np.sqrt(np.mean(np.power(data, 2), axis=-1))
+
+
+def compute_prct(data, q=75):
+    """Percentile of the data (per channel).
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    q : int or list
+        Percentile or sequence of percentiles to compute, which must be between
+        0 and 100 inclusive.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels * len(q),)
+
+    Notes
+    -----
+    Alias of the feature function: *prct*
+    """
+    return np.ravel(np.percentile(data, q, axis=-1))
+
+
+def _compute_prct_feat_names(data, q, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_prct`."""
+    n_channels = data.shape[0]
+    n_prcts = len(q) if isinstance(q, Iterable) else 1
+
+    if n_prcts == 1:
+        return ['ch%s' % ch for ch in range(n_channels)]
+    else:
+        return ['ch%s_%s' % (ch, i) for ch in range(n_channels)
+                for i in range(n_prcts)]
+
+
+compute_prct.get_feature_names = _compute_prct_feat_names
 
 
 @nb.jit([nb.float64[:, :](nb.float64[:, :]),
