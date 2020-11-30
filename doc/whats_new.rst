@@ -17,6 +17,7 @@ Enhancements
 ~~~~~~~~~~~~
 
 - Extended feature naming to all univariate functions. If no specific function is implemented for a given univariate function and that the output has the same shape as the input on the feature dimension, then a generic list of feature names is passed. Possibility to rename these feature by passing ``ch_names`` to :func:`mne_features.extract_features`. By `Paul ROUJANSKY`_ in `#60 <https://github.com/mne-tools/mne-features/pull/60>`_.
+- Added ``log`` and ``ratios_triu`` to :func:`mne_features.univariate.compute_pow_freq_bands` to allow computing log-power and log-ratios of power and controlling whether all possible band ratios should be computed.  By `Hubert Banville`_ in `#62 <https://github.com/mne-tools/mne-features/pull/62>`_.
 
 Bug
 ~~~
@@ -29,3 +30,4 @@ API
 .. _Jean-Baptiste Schiratti: https://github.com/jbschiratti
 .. _Alex Gramfort: http://alexandre.gramfort.net
 .. _Paul Roujansky: https://github.com/paulroujansky
+.. _Hubert Banville: https: https://hubertjb.github.io/
