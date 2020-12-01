@@ -218,16 +218,18 @@ def test_pow_freq_bands_ratios():
     fb = np.array([[4., 8.], [30., 70.]])
     expected_pow = np.array([0.005, 0.00125]) / 0.00625
     expected_ratios = np.array([4., 0.25])
-    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb,
-                                               ratios='all', psd_method='fft'),
-                        np.r_[expected_pow, expected_ratios])
-    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb,
-                                               ratios='only', psd_method='fft'),
-                        expected_ratios)
-    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb,
-                                               ratios='only', ratios_triu=True,
-                                               psd_method='fft'),
-                        expected_ratios[[0]])
+    assert_almost_equal(
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, ratios='all', psd_method='fft'),
+        np.r_[expected_pow, expected_ratios])
+    assert_almost_equal(
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, ratios='only', psd_method='fft'),
+        expected_ratios)
+    assert_almost_equal(
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, ratios='only', ratios_triu=True,
+            psd_method='fft'), expected_ratios[[0]])
 
     with assert_raises(ValueError):
         # Invalid `ratios` parameter
@@ -242,13 +244,13 @@ def test_pow_freq_bands_log_ratios():
     expected_pow = np.log10(np.array([0.005, 0.00125]))
     expected_ratios = np.log10(np.array([4., 0.25]))
     assert_almost_equal(
-        compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb, normalize=False,
-                               ratios='all', psd_method='fft', log=True),
-                        np.r_[expected_pow, expected_ratios])
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, normalize=False, ratios='all',
+            psd_method='fft', log=True), np.r_[expected_pow, expected_ratios])
     assert_almost_equal(
-        compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb, normalize=False,
-                               ratios='only', psd_method='fft', log=True),
-                        expected_ratios)
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, normalize=False, ratios='only',
+            psd_method='fft', log=True), expected_ratios)
 
 
 def test_generic_features_names():
