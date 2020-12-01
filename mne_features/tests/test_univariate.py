@@ -112,7 +112,7 @@ def test_rms():
 def test_quantile():
     expected = np.array([0., 1.])
     assert_almost_equal(compute_quantile(data1, q=0.75), expected)
-    # Multiple percentiles
+    # Multiple quantiles
     expected = np.array([-1, -0.25, 0., 1.])
     assert_almost_equal(compute_quantile(data1, q=[0.25, 0.75]), expected)
 
