@@ -5,6 +5,7 @@
 
 from tempfile import mkdtemp
 
+import pytest
 import numpy as np
 from numpy.testing import assert_equal, assert_raises, assert_almost_equal
 from sklearn.model_selection import GridSearchCV
@@ -18,6 +19,8 @@ from mne_features.feature_extraction import (extract_features,
                                              FeatureExtractor)
 from mne_features.mock_numba import nb
 from mne_features.univariate import compute_svd_fisher_info
+from mne_features.utils import _idxiter
+
 
 rng = np.random.RandomState(42)
 sfreq = 256.
@@ -159,6 +162,7 @@ def test_user_defined_feature_function():
 
 def test_channel_naming():
     ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
+    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
     selected_funcs = ['app_entropy']
     df = extract_features(
         data, sfreq, selected_funcs, ch_names=ch_names, return_as_df=True)
@@ -170,6 +174,64 @@ def test_channel_naming():
         # incorrect number of channel names
         df = extract_features(
             data, sfreq, selected_funcs, ch_names=ch_names, return_as_df=True)
+
+
+def test_channel_naming_pow_freq_bands():
+    ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
+    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
+    selected_funcs = ['pow_freq_bands']
+    func_params = {
+        'pow_freq_bands__freq_bands': np.array([[0, 2], [10, 20]]),
+        'pow_freq_bands__ratios': 'only'
+    }
+    df = extract_features(
+        data, sfreq, selected_funcs, func_params, ch_names=ch_names,
+        return_as_df=True)
+
+    expected_col_names = [
+        ('pow_freq_bands', f'{ch_name}_band{i}/band{j}')
+        for ch_name in ch_names for _, i, j in _idxiter(2, triu=False)]
+    assert df.columns.values.tolist() == expected_col_names
+
+
+@pytest.mark.parametrize('selected_func', ['max_cross_corr', 'phase_lock_val',
+                                           'nonlin_interdep'])
+@pytest.mark.parametrize('include_diag', [True, False])
+def test_channel_naming_bivariate(selected_func, include_diag):
+    ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
+    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
+    func_params = {selected_func + '__include_diag': include_diag}
+    df = extract_features(
+        data, sfreq, [selected_func], func_params, ch_names=ch_names,
+        return_as_df=True)
+    expected_col_names = [
+        (selected_func, ch_names[i] + '-' + ch_names[j])
+        for s, i, j in _idxiter(n_channels, include_diag=include_diag)]
+
+    assert df.columns.values.tolist() == expected_col_names
+
+
+@pytest.mark.parametrize('selected_func', ['time_corr', 'spect_corr'])
+@pytest.mark.parametrize('include_diag', [True, False])
+@pytest.mark.parametrize('with_eig', [True, False])
+def test_channel_naming_bivariate_eig(selected_func, include_diag, with_eig):
+    ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
+    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
+    func_params = {
+        selected_func + '__include_diag': include_diag,
+        selected_func + '__with_eigenvalues': with_eig
+    }
+    df = extract_features(
+        data, sfreq, [selected_func], func_params, ch_names=ch_names,
+        return_as_df=True)
+    expected_col_names = [
+        (selected_func, ch_names[i] + '-' + ch_names[j])
+        for s, i, j in _idxiter(n_channels, include_diag=include_diag)]
+    if with_eig:
+        expected_col_names.extend(
+            [(selected_func, f'eig{i}') for i in range(n_channels)])
+
+    assert df.columns.values.tolist() == expected_col_names
 
 
 if __name__ == '__main__':
@@ -185,3 +247,5 @@ if __name__ == '__main__':
     test_memory_feature_extractor()
     test_user_defined_feature_function()
     test_channel_naming()
+    test_channel_naming_pow_freq_bands()
+    test_channel_naming_bivariate()
