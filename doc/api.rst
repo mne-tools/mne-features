@@ -41,7 +41,7 @@ Functions
    compute_skewness
    compute_kurtosis
    compute_rms
-   compute_prct
+   compute_quantile
    compute_hurst_exp
    compute_app_entropy
    compute_samp_entropy

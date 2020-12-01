@@ -16,7 +16,7 @@ from mne_features.univariate import (_slope_lstsq, _accumulate_std,
                                      compute_mean, compute_variance,
                                      compute_std, compute_ptp_amp,
                                      compute_skewness, compute_kurtosis,
-                                     compute_rms, compute_prct,
+                                     compute_rms, compute_quantile,
                                      compute_hurst_exp, compute_app_entropy,
                                      compute_samp_entropy, compute_decorr_time,
                                      compute_pow_freq_bands,
@@ -109,12 +109,12 @@ def test_rms():
     assert_almost_equal(compute_rms(data1), expected)
 
 
-def test_prct():
+def test_quantile():
     expected = np.array([0., 1.])
-    assert_almost_equal(compute_prct(data1, q=75), expected)
+    assert_almost_equal(compute_quantile(data1, q=0.75), expected)
     # Multiple percentiles
     expected = np.array([-1, -0.25, 0., 1.])
-    assert_almost_equal(compute_prct(data1, q=[25, 75]), expected)
+    assert_almost_equal(compute_quantile(data1, q=[0.25, 0.75]), expected)
 
 
 def test_line_length():
@@ -272,7 +272,7 @@ def test_generic_features_names():
     _data = data[:, :n_chans, :]
     selected_funcs = (
         ['mean', 'variance', 'std', 'ptp_amp', 'skewness', 'kurtosis', 'rms',
-         'prct', 'hurst_exp', 'app_entropy', 'samp_entropy', 'decorr_time',
+         'quantile', 'hurst_exp', 'app_entropy', 'samp_entropy', 'decorr_time',
          'hjorth_mobility_spect', 'hjorth_complexity_spect', 'hjorth_mobility',
          'hjorth_complexity', 'higuchi_fd', 'katz_fd', 'zero_crossings',
          'line_length', 'spect_entropy', 'svd_entropy', 'svd_fisher_info']
@@ -284,16 +284,16 @@ def test_generic_features_names():
     assert df.columns.to_list() == col_names
 
 
-def test_feature_names_prct():
+def test_feature_names_quantile():
     n_chans = 2  # keep only 2 channels for the sake of simplicity
     _data = data[:, :n_chans, :]
-    selected_funcs = ['prct']
+    selected_funcs = ['quantile']
 
     q = [0.25, 0.75]
     col_names = ['ch%s_%s' % (ch, i) for ch in range(n_chans)
                  for i in range(len(q))]
     df = extract_features(
-        _data, sfreq, selected_funcs, funcs_params={'prct__q': q},
+        _data, sfreq, selected_funcs, funcs_params={'quantile__q': q},
         return_as_df=True)
     assert_equal(df.columns.get_level_values(1).values, col_names)
 
@@ -634,7 +634,7 @@ if __name__ == '__main__':
     test_kurtosis()
     test_ptp_amp()
     test_rms()
-    test_prct()
+    test_quantile()
     test_line_length()
     test_zero_crossings()
     test_hurst_exp()

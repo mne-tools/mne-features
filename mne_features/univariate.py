@@ -276,16 +276,16 @@ def compute_rms(data):
     return np.sqrt(np.mean(np.power(data, 2), axis=-1))
 
 
-def compute_prct(data, q=75):
-    """Percentile of the data (per channel).
+def compute_quantile(data, q=0.75):
+    """Quantile of the data (per channel).
 
     Parameters
     ----------
     data : ndarray, shape (n_channels, n_times)
 
-    q : int or list
-        Percentile or sequence of percentiles to compute, which must be between
-        0 and 100 inclusive.
+    q : float or list
+        Quantile or sequence of quantiles to compute, which must be between 0
+        and 1 inclusive.
 
     Returns
     -------
@@ -293,25 +293,25 @@ def compute_prct(data, q=75):
 
     Notes
     -----
-    Alias of the feature function: *prct*
+    Alias of the feature function: *quantile*
     """
-    return np.ravel(np.percentile(data, q, axis=-1))
+    return np.ravel(np.quantile(data, q, axis=-1))
 
 
-def _compute_prct_feat_names(data, q, **kwargs):
+def _compute_quantile_feat_names(data, q, **kwargs):
     """Utility function to create feature names compatible with the output of
-    :func:`mne_features.univariate.compute_prct`."""
+    :func:`mne_features.univariate.compute_quantile`."""
     n_channels = data.shape[0]
-    n_prcts = len(q) if isinstance(q, Iterable) else 1
+    n_quantiles = len(q) if isinstance(q, Iterable) else 1
 
-    if n_prcts == 1:
+    if n_quantiles == 1:
         return ['ch%s' % ch for ch in range(n_channels)]
     else:
         return ['ch%s_%s' % (ch, i) for ch in range(n_channels)
-                for i in range(n_prcts)]
+                for i in range(n_quantiles)]
 
 
-compute_prct.get_feature_names = _compute_prct_feat_names
+compute_quantile.get_feature_names = _compute_quantile_feat_names
 
 
 @nb.jit([nb.float64[:, :](nb.float64[:, :]),
