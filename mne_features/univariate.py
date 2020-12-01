@@ -5,6 +5,7 @@
 """Univariate feature functions."""
 
 from math import sqrt, log, floor, gamma
+from collections.abc import Iterable
 
 import numpy as np
 from scipy import stats
@@ -255,6 +256,62 @@ def compute_kurtosis(data):
     """
     ndim = data.ndim
     return stats.kurtosis(data, axis=ndim - 1, fisher=False)
+
+
+def compute_rms(data):
+    """Root-mean squared value of the data (per channel).
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels,)
+
+    Notes
+    -----
+    Alias of the feature function: *rms*
+    """
+    return np.sqrt(np.mean(np.power(data, 2), axis=-1))
+
+
+def compute_quantile(data, q=0.75):
+    """Quantile of the data (per channel).
+
+    Parameters
+    ----------
+    data : ndarray, shape (n_channels, n_times)
+
+    q : float or list
+        Quantile or sequence of quantiles to compute, which must be between 0
+        and 1 inclusive.
+
+    Returns
+    -------
+    output : ndarray, shape (n_channels * len(q),)
+
+    Notes
+    -----
+    Alias of the feature function: *quantile*
+    """
+    return np.ravel(np.quantile(data, q, axis=-1))
+
+
+def _compute_quantile_feat_names(data, q, **kwargs):
+    """Utility function to create feature names compatible with the output of
+    :func:`mne_features.univariate.compute_quantile`."""
+    n_channels = data.shape[0]
+    n_quantiles = len(q) if isinstance(q, Iterable) else 1
+
+    if n_quantiles == 1:
+        return ['ch%s' % ch for ch in range(n_channels)]
+    else:
+        return ['ch%s_%s' % (ch, i) for ch in range(n_channels)
+                for i in range(n_quantiles)]
+
+
+compute_quantile.get_feature_names = _compute_quantile_feat_names
 
 
 @nb.jit([nb.float64[:, :](nb.float64[:, :]),
