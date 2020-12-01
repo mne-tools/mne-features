@@ -567,8 +567,8 @@ def _freq_bands_helper(sfreq, freq_bands):
 
 def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
                                                              30., 100.]),
-                           normalize=True, ratios=None, psd_method='welch',
-                           psd_params=None):
+                           normalize=True, ratios=None, ratios_triu=False,
+                           psd_method='welch', log=False, psd_params=None):
     """Power Spectrum (computed by frequency bands).
 
     Parameters
@@ -602,15 +602,29 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
         If not None, the possible values for the parameter ``ratios`` are:
         ``all`` or ``only``. If ``all``, the function will return the power
         (computed in the given frequency bands) as well as the ratios between
-        power in different frequency bands. All the possible pairs of distinct
-        frequency bands are considered (if n_freq_bands are given,
-        n_freq_bands * (n_freq_bands - 1) are computed). If ``only``, the
-        function returns only the ratios of power in bands. If None, no
-        ratio is computed.
+        power in different frequency bands. Depending on the value of
+        ``ratios_triu``, either all possible pairs of distinct frequency bands
+        are considered, or only the upper triangle of the matrix of pairs.
+        If ``only``, the function returns only the ratios of power in bands. If
+        None, no ratio is computed.
+
+    ratios_triu : bool (default: False)
+        If False, include all possible pairs when computing ratios
+        (e.g., alpha/beta and beta/alpha) yielding
+        n_freq_bands * (n_freq_bands - 1) ratios.
+        If True, only include the (upper) triangle of the square matrix,
+        yielding n_freq_bands * (n_freq_bans - 1) / 2 ratios. Ignored if
+        ``ratios`` is None.
 
     psd_method : str (default: 'welch')
         Method used for the estimation of the Power Spectral Density (PSD).
         Valid methods are: ``'welch'``, ``'multitaper'`` or ``'fft'``.
+
+    log : bool (default: False)
+        If True, the average power in each frequency band is transformed with a
+        base-10 logaritm. Ratios (computed if ``ratios`` is specified) will be
+        computed as log-ratios, i.e., the ratio of bands A and B will be
+        `log(pow_band_A / pow_band_B) = log_pow_band_A - log_pow_band_B`.
 
     psd_params : dict or None (default: None)
         If not None, dict with optional parameters (`welch_n_fft`,
@@ -647,6 +661,10 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
         mask = np.logical_and(freqs >= fb[j, 0], freqs <= fb[j, 1])
         psd_band = psd[:, mask]
         pow_freq_bands[:, j] = np.sum(psd_band, axis=-1)
+
+    if log:
+        pow_freq_bands = np.log10(pow_freq_bands)
+
     if normalize:
         pow_freq_bands = np.divide(pow_freq_bands,
                                    np.sum(psd, axis=-1)[:, None])
@@ -657,9 +675,15 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
                          'is not valid. Valid values are: `all` or `only`.'
                          % str(ratios))
     else:
-        band_ratios = np.empty((n_channels, n_freq_bands * (n_freq_bands - 1)))
-        for pos, i, j in _idxiter(n_freq_bands, triu=False):
-            band_ratios[:, pos] = (pow_freq_bands[:, i] / pow_freq_bands[:, j])
+        n_ratios = n_freq_bands * (n_freq_bands - 1) // (1 + int(ratios_triu))
+        band_ratios = np.empty((n_channels, n_ratios))
+        for pos, i, j in _idxiter(n_freq_bands, triu=ratios_triu):
+            if log:
+                band_ratios[:, pos] = \
+                    pow_freq_bands[:, i] - pow_freq_bands[:, j]
+            else:
+                band_ratios[:, pos] = \
+                    pow_freq_bands[:, i] / pow_freq_bands[:, j]
         if ratios == 'all':
             return np.r_[pow_freq_bands.ravel(), band_ratios.ravel()]
         else:
@@ -667,7 +691,8 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
 
 
 def _compute_pow_freq_bands_feat_names(data, freq_bands, normalize, ratios,
-                                       psd_method, psd_params):
+                                       ratios_triu, psd_method, log,
+                                       psd_params):
     """Utility function to create feature names compatible with the output
     of :func:`compute_pow_freq_bands`."""
     n_channels = data.shape[0]
@@ -675,12 +700,13 @@ def _compute_pow_freq_bands_feat_names(data, freq_bands, normalize, ratios,
         n_freq_bands = len(freq_bands)
         _band_names = [str(n) for n in freq_bands]
     else:
+        freq_bands = np.array(freq_bands)  # Cast in case it's a list of lists
         n_freq_bands = (freq_bands.shape[0] - 1 if freq_bands.ndim == 1
                         else freq_bands.shape[0])
         _band_names = ['band' + str(j) for j in range(n_freq_bands)]
     ratios_names = ['ch%s_%s/%s' % (ch, _band_names[i], _band_names[j])
                     for ch in range(n_channels) for _, i, j in
-                    _idxiter(n_freq_bands, triu=False)]
+                    _idxiter(n_freq_bands, triu=ratios_triu)]
     pow_names = ['ch%s_%s' % (ch, _band_names[i]) for ch in
                  range(n_channels) for i in range(n_freq_bands)]
     if ratios is None:

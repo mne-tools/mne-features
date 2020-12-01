@@ -181,26 +181,76 @@ def test_freq_bands_helper():
         _freq_bands_helper(256., fb2.T)
 
 
-def test_pow_freq_bands():
+def test_pow_freq_bands_norm():
     expected = np.array([0, 0.005, 0, 0, 0.00125]) / 0.00625
-    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin,
-                                               psd_method='fft'), expected)
+    assert_almost_equal(
+        compute_pow_freq_bands(sfreq, data_sin, normalize=True,
+                               psd_method='fft'), expected)
+
+
+def test_pow_freq_bands_no_norm():
+    expected = np.array([0, 0.005, 0, 0, 0.00125])
+    assert_almost_equal(
+        compute_pow_freq_bands(sfreq, data_sin, normalize=False,
+                               psd_method='fft'), expected)
+
+
+def test_pow_freq_bands_norm_log():
+    expected = np.array([-5317.19500282, -368.16479931, -5247.13240494,
+                         -5146.55896452, -464.49439792])
+    assert_almost_equal(
+        compute_pow_freq_bands(sfreq, data_sin, normalize=True, log=True,
+                               psd_method='fft'), expected)
+
+
+def test_pow_freq_bands_no_norm_log():
+    expected = np.array([-33.23246877, -2.30103, -32.79457753, -32.16599353,
+                         -2.90308999])
+    assert_almost_equal(
+        compute_pow_freq_bands(sfreq, data_sin, normalize=False, log=True,
+                               psd_method='fft'), expected)
+
+
+def test_pow_freq_bands_ratios():
     # Ratios of power in bands:
     # For data_sin, only the usual theta (4Hz - 8Hz) and low gamma
     # (30Hz - 70Hz) bands contain non-zero power.
     fb = np.array([[4., 8.], [30., 70.]])
     expected_pow = np.array([0.005, 0.00125]) / 0.00625
     expected_ratios = np.array([4., 0.25])
-    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb,
-                                               ratios='all', psd_method='fft'),
-                        np.r_[expected_pow, expected_ratios])
-    assert_almost_equal(compute_pow_freq_bands(sfreq, data_sin, freq_bands=fb,
-                                               ratios='only',
-                                               psd_method='fft'),
-                        expected_ratios)
+    assert_almost_equal(
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, ratios='all', psd_method='fft'),
+        np.r_[expected_pow, expected_ratios])
+    assert_almost_equal(
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, ratios='only', psd_method='fft'),
+        expected_ratios)
+    assert_almost_equal(
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, ratios='only', ratios_triu=True,
+            psd_method='fft'), expected_ratios[[0]])
+
     with assert_raises(ValueError):
         # Invalid `ratios` parameter
         compute_pow_freq_bands(sfreq, data_sin, ratios=['alpha', 'beta'])
+
+
+def test_pow_freq_bands_log_ratios():
+    # Log ratios of power in bands:
+    # For data_sin, only the usual theta (4Hz - 8Hz) and low gamma
+    # (30Hz - 70Hz) bands contain non-zero power.
+    fb = np.array([[4., 8.], [30., 70.]])
+    expected_pow = np.log10(np.array([0.005, 0.00125]))
+    expected_ratios = np.log10(np.array([4., 0.25]))
+    assert_almost_equal(
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, normalize=False, ratios='all',
+            psd_method='fft', log=True), np.r_[expected_pow, expected_ratios])
+    assert_almost_equal(
+        compute_pow_freq_bands(
+            sfreq, data_sin, freq_bands=fb, normalize=False, ratios='only',
+            psd_method='fft', log=True), expected_ratios)
 
 
 def test_generic_features_names():
@@ -331,6 +381,16 @@ def test_feature_names_pow_freq_bands():
                           'pow_freq_bands__freq_bands': fb},
             return_as_df=True)
         assert_equal(df.columns.get_level_values(1).values, pow_names)
+
+        # With `ratios = 'only'` and `ratios_triu = True`:
+        df_only = extract_features(
+            _data, sfreq, selected_funcs,
+            funcs_params={'pow_freq_bands__ratios': 'only',
+                          'pow_freq_bands__ratios_triu': True,
+                          'pow_freq_bands__freq_bands': fb},
+            return_as_df=True)
+        assert_equal(df_only.columns.get_level_values(1).values,
+                     ratios_names[::2])
 
 
 def test_hjorth_mobility_spect():
@@ -552,7 +612,12 @@ if __name__ == '__main__':
     test_samp_entropy()
     test_decorr_time()
     test_freq_bands_helper()
-    test_pow_freq_bands()
+    test_pow_freq_bands_norm()
+    test_pow_freq_bands_no_norm()
+    test_pow_freq_bands_norm_log()
+    test_pow_freq_bands_no_norm_log()
+    test_pow_freq_bands_ratios()
+    test_pow_freq_bands_log_ratios()
     test_feature_names_pow_freq_bands()
     test_hjorth_mobility_spect()
     test_hjorth_complexity_spect()
