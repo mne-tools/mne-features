@@ -227,7 +227,7 @@ def _apply_extractor(extractor, X, ch_names, return_as_df):
                 feature_names = [
                     re.sub(pattern=rf'{pattern}(?=_)|{pattern}\b',
                            string=feature_name, repl=translation)
-                           for feature_name in feature_names]
+                    for feature_name in feature_names]
 
     return X, feature_names
 

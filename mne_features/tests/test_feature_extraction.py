@@ -213,7 +213,7 @@ def test_channel_naming_bivariate(selected_func, include_diag):
 
 @pytest.mark.parametrize('selected_func', ['time_corr', 'spect_corr'])
 @pytest.mark.parametrize('include_diag', [True, False])
-@pytest.mark.parametrize('with_eig', [True,False])
+@pytest.mark.parametrize('with_eig', [True, False])
 def test_channel_naming_bivariate_eig(selected_func, include_diag, with_eig):
     ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
     ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
