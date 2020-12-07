@@ -224,9 +224,9 @@ def _apply_extractor(extractor, X, ch_names, return_as_df):
             mapping = {'ch%s' % i: ch_name
                        for i, ch_name in enumerate(ch_names)}
             for pattern, translation in mapping.items():
+                r = re.compile(rf'{pattern}(?=_)|{pattern}\b')
                 feature_names = [
-                    re.sub(pattern=rf'{pattern}(?=_)|{pattern}\b',
-                           string=feature_name, repl=translation)
+                    r.sub(string=feature_name, repl=translation)
                     for feature_name in feature_names]
 
     return X, feature_names
