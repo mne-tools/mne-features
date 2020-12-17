@@ -113,7 +113,7 @@ def test_quantile():
     expected = np.array([0., 1.])
     assert_almost_equal(compute_quantile(data1, q=0.75), expected)
     # Multiple quantiles
-    expected = np.array([-1, -0.25, 0., 1.])
+    expected = np.array([-1, 0, -0.25, 1.])
     assert_almost_equal(compute_quantile(data1, q=[0.25, 0.75]), expected)
 
 
