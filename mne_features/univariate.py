@@ -295,7 +295,7 @@ def compute_quantile(data, q=0.75):
     -----
     Alias of the feature function: *quantile*
     """
-    return np.ravel(np.quantile(data, q, axis=-1))
+    return np.ravel(np.quantile(data, q, axis=-1), order='F')
 
 
 def _compute_quantile_feat_names(data, q, **kwargs):
