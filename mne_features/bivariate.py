@@ -266,7 +266,7 @@ def compute_nonlin_interdep(data, tau=2, emb=10, nn=5, include_diag=False):
     return nlinterdep
 
 
-def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
+def compute_time_corr(data, with_eigenvalues=False, include_diag=True):
     """Correlation Coefficients (computed in the time domain).
 
     Parameters
