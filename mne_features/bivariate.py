@@ -274,11 +274,11 @@ def compute_time_corr(data, with_eigenvalues=True, include_diag=False):
     data : ndarray, shape (n_channels, n_times)
         The signals.
 
-    with_eigenvalues : bool (default: False)
+    with_eigenvalues : bool (default: True)
         If True, the function also returns the eigenvalues of the correlation
         matrix.
 
-    include_diag : bool (default: True)
+    include_diag : bool (default: False)
         If False, features corresponding to pairs of identical electrodes
         are not computed. In other words, features are not computed from pairs
         of electrodes of the form ``(ch[i], ch[i])``.
