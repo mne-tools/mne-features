@@ -23,7 +23,7 @@ jobs:
       shell: bash -el {0}
       run: |
         conda info
-        conda remove numba
+        pip uninstall --yes --quiet numba
     - shell: bash -el {0}
       run: pip install pytest coverage flake8 check-manifest pytest-sugar
       name: install test utilities
