@@ -100,7 +100,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
         -------
         self
         """
-        self._check_input(X)
+        self._check_input(X, reset=True)
         _feature_func = _get_python_func(self.func)
         if hasattr(_feature_func, 'get_feature_names'):
             _params = self.get_params()
