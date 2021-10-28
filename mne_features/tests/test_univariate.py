@@ -210,15 +210,15 @@ def test_pow_freq_bands_no_norm():
 
 
 def test_pow_freq_bands_norm_log():
-    expected = np.array([-5320.1025275, -368.16479931, -5247.9651752,
-                         -5146.6924257, -464.49439792])
+    expected = np.array([-5317.19500282, -368.16479931, -5247.13240494,
+                         -5146.55896452, -464.49439792])
     assert_almost_equal(
         compute_pow_freq_bands(sfreq, data_sin, normalize=True, log=True,
                                psd_method='fft'), expected)
 
 
 def test_pow_freq_bands_no_norm_log():
-    expected = np.array([-33.2506408, -2.30103, -32.7997823, -32.1668277,
+    expected = np.array([-33.23246877, -2.30103, -32.79457753, -32.16599353,
                          -2.90308999])
     assert_almost_equal(
         compute_pow_freq_bands(sfreq, data_sin, normalize=False, log=True,
