@@ -1,0 +1,40 @@
+name: Testing MNE-Features on Ubuntu 20.04
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-20.04
+    env:
+      PYTHON_VERSION: '3.8'
+      CONDA_ENV: 'environment.yml'
+    strategy:
+      matrix:
+        python-version: [ "3.8" ]
+        numba: [ "on", "off" ]
+    name: python-${{ matrix.python-version }}-numba-$${{ matrix.numba }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: 'mne-features'
+        python-version: ${{ env.PYTHON_VERSION }}
+        environment-file: ${{ env.CONDA_ENV }}
+    - if: ${{ matrix.numba == 'off' }}
+      shell: bash -el {0}
+      run: |
+        conda info
+        conda remove numba
+    - shell: bash -el {0}
+      run: pip install pytest coverage flake8 check-manifest pytest-sugar
+      name: install test utilities
+    - shell: bash -el {0}
+      run: |
+        make
+        flake8 --count mne_features
+      name: install and run tests
+    - shell: bash -el {0}
+      run: bash <(curl -s https://codecov.io/bash)
+      name: after success
+
+
+

@@ -1,0 +1,15 @@
+name: mne-features
+channels:
+- conda-forge
+dependencies:
+- python>=3.8
+- pip
+- numpy
+- scipy
+- matplotlib
+- numba
+- pandas
+- scikit-learn
+- PyWavelets
+- tqdm
+- download

@@ -1,0 +1,11 @@
+# Comment on first issue:
+newIssueWelcomeComment: >
+  Hello! 👋 Thanks for opening your first issue here!
+
+# Comment on first PR:
+newPRWelcomeComment: >
+  Hello! 👋 Thanks for opening your first pull request here!
+
+# Comment on first PR merged:
+firstPRMergeComment: >
+  🎉 Congrats on merging your first pull request! 🥳
