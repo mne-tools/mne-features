@@ -36,3 +36,4 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
+junit-results.xml

@@ -10,10 +10,7 @@ import numpy as np
 from numpy.testing import assert_equal, assert_raises, assert_almost_equal
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-try:
-    from sklearn.utils._mocking import CheckingClassifier
-except (ImportError, ModuleNotFoundError):
-    from sklearn.utils.mocking import CheckingClassifier
+from sklearn.utils._mocking import CheckingClassifier
 from mne_features.feature_extraction import (extract_features,
                                              FeatureFunctionTransformer,
                                              FeatureExtractor)
