@@ -34,7 +34,7 @@ jobs:
       run: pip install --upgrade pytest pytest-cov flake8 check-manifest pytest-sugar
       name: Install test utilities
     - shell: bash -el {0}
-      run: pip install -e .
+      run: python setup.py develop --no-deps
       name: Install MNE-Features
     - shell: bash -el {0}
       run: |
