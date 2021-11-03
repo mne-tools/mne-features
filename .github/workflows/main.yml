@@ -17,7 +17,7 @@ jobs:
       matrix:
         python-version: [ "3.8" ]
         numba: [ "on", "off" ]
-    name: python-${{ matrix.python-version }}-numba-$${{ matrix.numba }}
+    name: python-${{ matrix.python-version }}-numba-${{ matrix.numba }}
     steps:
     - uses: actions/checkout@v2
     - uses: conda-incubator/setup-miniconda@v2
@@ -25,19 +25,26 @@ jobs:
         activate-environment: 'mne-features'
         python-version: ${{ env.PYTHON_VERSION }}
         environment-file: ${{ env.CONDA_ENV }}
+      name: Install Miniconda and create environment
     - if: ${{ matrix.numba == 'off' }}
       shell: bash -el {0}
-      run: |
-        conda info
-        pip uninstall --yes --quiet numba
+      run: pip uninstall --yes --quiet numba
+      name: Uninstall numba
     - shell: bash -el {0}
-      run: pip install pytest coverage flake8 check-manifest pytest-sugar
-      name: install test utilities
+      run: pip install --upgrade pytest pytest-cov flake8 check-manifest pytest-sugar
+      name: Install test utilities
+    - shell: bash -el {0}
+      run: python setup.py develop --no-deps
+      name: Install MNE-Features
     - shell: bash -el {0}
       run: |
-        make
         flake8 --count mne_features
-      name: install and run tests
+        pytest --cov=mne_features --cov-report=xml --verbose mne_features/tests
+      name: Run tests (with coverage)
     - shell: bash -el {0}
-      run: bash <(curl -s https://codecov.io/bash)
-      name: after success
+      run: check-manifest --ignore doc,mne_features/*/tests
+      name: Check manifest
+    - name: Upload coverage stats
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.xml

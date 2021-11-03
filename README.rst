@@ -1,10 +1,10 @@
 MNE-Features
 =========================================
 
-|Travis|_ |Codecov|_
+|GitHub Actions|_ |Codecov|_
 
-.. |Travis| image:: https://api.travis-ci.org/mne-tools/mne-features.svg?branch=master
-.. _Travis: https://travis-ci.org/mne-tools/mne-features
+.. |GitHub Actions| image:: https://github.com/mne-tools/mne-features/actions/workflows/main.yml/badge.svg
+.. _GitHub Actions: https://github.com/mne-tools/mne-features/actions/workflows/main.yml
 
 .. |Codecov| image:: http://codecov.io/github/mne-tools/mne-features/coverage.svg?branch=master
 .. _Codecov: http://codecov.io/github/mne-tools/mne-features?branch=master
