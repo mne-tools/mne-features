@@ -5,10 +5,10 @@ What's new?
 
 .. currentmodule:: mne_features
 
-.. _current:
+.. _0.2:
 
-Current
--------
+0.2
+---
 
 Changelog
 ~~~~~~~~~
