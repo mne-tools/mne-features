@@ -5,6 +5,29 @@ What's new?
 
 .. currentmodule:: mne_features
 
+.. _current:
+
+Current
+-------
+
+Changelog
+~~~~~~~~~
+
+Enhancements
+~~~~~~~~~~~~
+
+- 
+
+Bug
+~~~
+
+- 
+
+API
+~~~
+
+- 
+
 .. _0.2:
 
 0.2
