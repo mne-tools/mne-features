@@ -72,7 +72,7 @@ y = labels
 
 selected_funcs = {'mean', 'ptp_amp', 'std'}
 X_new = extract_features(data, raw.info['sfreq'], selected_funcs)
-kf = KFold(n_splits=3, random_state=42)
+kf = KFold(n_splits=3, shuffle=True, random_state=42)
 scores = cross_val_score(pipe, X_new, y, scoring='accuracy', cv=kf)
 
 ###############################################################################
