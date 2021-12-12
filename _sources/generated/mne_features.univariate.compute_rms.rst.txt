@@ -1,0 +1,10 @@
+﻿:mod:`mne_features.univariate`.compute_rms
+=================================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_rms
+
+.. raw:: html
+
+    <div class="clearer"></div>

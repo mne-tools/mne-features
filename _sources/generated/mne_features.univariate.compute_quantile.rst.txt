@@ -1,0 +1,10 @@
+﻿:mod:`mne_features.univariate`.compute_quantile
+======================================================
+
+.. currentmodule:: mne_features.univariate
+
+.. autofunction:: compute_quantile
+
+.. raw:: html
+
+    <div class="clearer"></div>

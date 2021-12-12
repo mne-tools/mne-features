@@ -4,18 +4,18 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mne_features.feature_extraction.FeatureExtractor &#8212; mne_features 0.1 documentation</title>
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mne_features.feature_extraction.FeatureExtractor &#8212; mne_features 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -43,7 +43,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           mne_features</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -112,15 +112,15 @@
   <div class="section" id="mne-features-feature-extraction-featureextractor">
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_features.feature_extraction</span></code>.FeatureExtractor<a class="headerlink" href="#mne-features-feature-extraction-featureextractor" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="mne_features.feature_extraction.FeatureExtractor">
-<em class="property">class </em><code class="sig-prename descclassname">mne_features.feature_extraction.</code><code class="sig-name descname">FeatureExtractor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">256.0</span></em>, <em class="sig-param"><span class="n">selected_funcs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">memory</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.FeatureExtractor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_features.feature_extraction.FeatureExtractor">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mne_features.feature_extraction.</span></span><span class="sig-name descname"><span class="pre">FeatureExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_funcs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.FeatureExtractor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature extraction from epoched EEG data.</p>
 <p>The method <code class="docutils literal notranslate"><span class="pre">fit_transform</span></code> implemented in this class can be used to
 extract univariate or bivariate features from epoched data
 (see example below). The method <code class="docutils literal notranslate"><span class="pre">fit</span></code> does not have any effect and is
 implemented for compatibility with Scikit-learn’s API. As a result, the
 class <code class="docutils literal notranslate"><span class="pre">FeatureExtractor</span></code> can be used as a step in a Pipeline (see
-<a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a> and MNE-features examples). The class
+<a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a> and MNE-features examples). The class
 also accepts a <code class="docutils literal notranslate"><span class="pre">memory</span></code> parameter which allows for caching the result of
 feature extraction. Therefore, if caching is used, calling
 <code class="docutils literal notranslate"><span class="pre">fit_transform</span></code> twice on the same data will not trigger a second call
@@ -178,8 +178,8 @@ advantageous when feature extraction is time consuming.</p>
 </pre></div>
 </div>
 <dl class="py method">
-<dt id="mne_features.feature_extraction.FeatureExtractor.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">256.0</span></em>, <em class="sig-param"><span class="n">selected_funcs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">memory</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_features.feature_extraction.FeatureExtractor.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_funcs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiate a FeatureExtractor object.</p>
 </dd></dl>
 
@@ -190,22 +190,22 @@ advantageous when feature extraction is time consuming.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="mne_features.feature_extraction.FeatureExtractor.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(self[, sfreq, selected_funcs, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_features.feature_extraction.FeatureExtractor.__init__" title="mne_features.feature_extraction.FeatureExtractor.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([sfreq, selected_funcs, params, …])</p></td>
 <td><p>Instantiate a FeatureExtractor object.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code>(self, X[, y])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code>(X[, y])</p></td>
 <td><p>Do not have any effect.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(self, X[, y])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[, y])</p></td>
 <td><p>Fit to data, then transform it.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
 <td><p>Get the parameters of the transformer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, **params)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
 <td><p>Set the parameters of the transformer.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code>(self, X)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code>(X)</p></td>
 <td><p>Extract features from the array X.</p></td>
 </tr>
 </tbody>
@@ -229,8 +229,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2012-2020, MNE-Features Developers. Last updated on 2020-07-23.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.1.<br/>
+        &copy; Copyright 2012-2021, MNE-Features Developers. Last updated on 2021-12-12.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

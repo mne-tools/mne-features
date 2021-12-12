@@ -4,18 +4,18 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What’s new? &#8212; mne_features 0.1 documentation</title>
-    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What’s new? &#8212; mne_features 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-dataframe.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/gallery-rendered-html.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="shortcut icon" href="_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -42,7 +42,7 @@
         </button>
         <a class="navbar-brand" href="index.html">
           mne_features</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -81,8 +81,16 @@
 <li><a class="reference internal" href="#">What’s new?</a><ul>
 <li><a class="reference internal" href="#current">Current</a><ul>
 <li><a class="reference internal" href="#changelog">Changelog</a></li>
+<li><a class="reference internal" href="#enhancements">Enhancements</a></li>
 <li><a class="reference internal" href="#bug">Bug</a></li>
 <li><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">0.2</a><ul>
+<li><a class="reference internal" href="#id4">Changelog</a></li>
+<li><a class="reference internal" href="#id5">Enhancements</a></li>
+<li><a class="reference internal" href="#id10">Bug</a></li>
+<li><a class="reference internal" href="#id14">API</a></li>
 </ul>
 </li>
 </ul>
@@ -123,14 +131,49 @@
 <div class="section" id="changelog">
 <h3>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h3>
 </div>
+<div class="section" id="enhancements">
+<h3>Enhancements<a class="headerlink" href="#enhancements" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li></li>
+</ul>
+</div>
 <div class="section" id="bug">
 <h3>Bug<a class="headerlink" href="#bug" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>Fixed the behavior of the <cite>edge</cite> parameter in <a class="reference internal" href="generated/mne_features.univariate.compute_spect_edge_freq.html#mne_features.univariate.compute_spect_edge_freq" title="mne_features.univariate.compute_spect_edge_freq"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_features.univariate.compute_spect_edge_freq()</span></code></a>. Valid values for this parameter are now <cite>None</cite> or a list of float between <cite>0</cite> and <cite>1</cite> (percentages). By <a class="reference external" href="https://github.com/jbschiratti">Jean-Baptiste SCHIRATTI</a> in <a class="reference external" href="https://github.com/mne-tools/mne-features/pull/52">#52</a>.</p></li>
+<li></li>
 </ul>
 </div>
 <div class="section" id="api">
 <h3>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<span id="id3"></span><h2>0.2<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h3>Changelog<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id5">
+<h3>Enhancements<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Extended feature naming to all univariate functions. If no specific function is implemented for a given univariate function and that the output has the same shape as the input on the feature dimension, then a generic list of feature names is passed. Possibility to rename these feature by passing <code class="docutils literal notranslate"><span class="pre">ch_names</span></code> to <code class="xref py py-func docutils literal notranslate"><span class="pre">mne_features.extract_features()</span></code>. By <a class="reference external" href="https://github.com/paulroujansky">Paul ROUJANSKY</a> in <a class="reference external" href="https://github.com/mne-tools/mne-features/pull/60">#60</a>.</p></li>
+<li><p>Added root mean square (RMS) and percentile univariate feature extraction functions. By <a class="reference external" href="https:https://hubertjb.github.io/">Hubert Banville</a> in <a class="reference external" href="https://github.com/mne-tools/mne-features/pull/61">#61</a>.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">ratios_triu</span></code> to <a class="reference internal" href="generated/mne_features.univariate.compute_pow_freq_bands.html#mne_features.univariate.compute_pow_freq_bands" title="mne_features.univariate.compute_pow_freq_bands"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_features.univariate.compute_pow_freq_bands()</span></code></a> to allow computing log-power and log-ratios of power and controlling whether all possible band ratios should be computed.  By <a class="reference external" href="https:https://hubertjb.github.io/">Hubert Banville</a> in <a class="reference external" href="https://github.com/mne-tools/mne-features/pull/62">#62</a>.</p></li>
+<li><p>Extended feature naming to all bivariate functions, with the same option to pass <code class="docutils literal notranslate"><span class="pre">ch_names</span></code>  to <code class="xref py py-func docutils literal notranslate"><span class="pre">mne_features.extract_features()</span></code> as for univariate functions. By <a class="reference external" href="https:https://hubertjb.github.io/">Hubert Banville</a> in <a class="reference external" href="https://github.com/mne-tools/mne-features/pull/63">#63</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h3>Bug<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fixed the behavior of the <cite>edge</cite> parameter in <a class="reference internal" href="generated/mne_features.univariate.compute_spect_edge_freq.html#mne_features.univariate.compute_spect_edge_freq" title="mne_features.univariate.compute_spect_edge_freq"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_features.univariate.compute_spect_edge_freq()</span></code></a>. Valid values for this parameter are now <cite>None</cite> or a list of float between <cite>0</cite> and <cite>1</cite> (percentages). By <a class="reference external" href="https://github.com/jbschiratti">Jean-Baptiste SCHIRATTI</a> in <a class="reference external" href="https://github.com/mne-tools/mne-features/pull/52">#52</a>.</p></li>
+<li><p>Fixed channel name replacement with overlapping channel names (e.g., Cz and FCz) which affected <code class="xref py py-func docutils literal notranslate"><span class="pre">mne_features.extract_features()</span></code> with <cite>return_as_df=True</cite> and when <cite>ch_names</cite> are provided. By <a class="reference external" href="https:https://hubertjb.github.io/">Hubert Banville</a> in <a class="reference external" href="https://github.com/mne-tools/mne-features/pull/63">#63</a>.</p></li>
+<li><p>Fixed <code class="xref py py-class docutils literal notranslate"><span class="pre">feature_extraction.FeatureFunctionTransformer</span></code>’s <cite>check_input</cite> method following sickit-learn 1.0 release: passing <cite>reset=True</cite>. By <a class="reference external" href="https://github.com/paulroujansky">Paul ROUJANSKY</a> in <a class="reference external" href="https://github.com/mne-tools/mne-features/pull/70">#70</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h3>API<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 </div>
 </div>
 </div>
@@ -150,8 +193,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2012-2020, MNE-Features Developers. Last updated on 2020-07-23.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.1.<br/>
+        &copy; Copyright 2012-2021, MNE-Features Developers. Last updated on 2021-12-12.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

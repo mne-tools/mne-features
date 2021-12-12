@@ -4,18 +4,18 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mne_features.feature_extraction.extract_features &#8212; mne_features 0.1 documentation</title>
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mne_features.feature_extraction.extract_features &#8212; mne_features 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/mne_features_logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -43,7 +43,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           mne_features</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -112,8 +112,8 @@
   <div class="section" id="mne-features-feature-extraction-extract-features">
 <h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_features.feature_extraction</span></code>.extract_features<a class="headerlink" href="#mne-features-feature-extraction-extract-features" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_features.feature_extraction.extract_features">
-<code class="sig-prename descclassname">mne_features.feature_extraction.</code><code class="sig-name descname">extract_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">sfreq</span></em>, <em class="sig-param"><span class="n">selected_funcs</span></em>, <em class="sig-param"><span class="n">funcs_params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">return_as_df</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.extract_features" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_features.feature_extraction.extract_features">
+<span class="sig-prename descclassname"><span class="pre">mne_features.feature_extraction.</span></span><span class="sig-name descname"><span class="pre">extract_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfreq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_funcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funcs_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ch_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_as_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_features.feature_extraction.extract_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extraction of temporal or spectral features from epoched EEG signals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -145,8 +145,10 @@ functions. Each key of the <code class="docutils literal notranslate"><span clas
 <dt><strong>n_jobs</strong><span class="classifier">int (default: 1)</span></dt><dd><p>Number of CPU cores used when parallelizing the feature extraction.
 If given a value of -1, all cores are used.</p>
 </dd>
+<dt><strong>ch_names</strong><span class="classifier">list of str or None (default: None)</span></dt><dd><p>If not None, list containing the names of each input channel.</p>
+</dd>
 <dt><strong>return_as_df</strong><span class="classifier">bool (default: False)</span></dt><dd><p>If True, the extracted features will be returned as a Pandas DataFrame.
-The column index is a MultiIndex (see <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.html#pandas.MultiIndex" title="(in pandas v1.0.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiIndex</span></code></a>)
+The column index is a MultiIndex (see <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.MultiIndex.html#pandas.MultiIndex" title="(in pandas v1.3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiIndex</span></code></a>)
 which contains the alias of each feature function which was used.
 If False, the features are returned as a 2d Numpy array.</p>
 </dd>
@@ -177,8 +179,8 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
       
     </p>
     <p>
-        &copy; Copyright 2012-2020, MNE-Features Developers. Last updated on 2020-07-23.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.1.<br/>
+        &copy; Copyright 2012-2021, MNE-Features Developers. Last updated on 2021-12-12.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

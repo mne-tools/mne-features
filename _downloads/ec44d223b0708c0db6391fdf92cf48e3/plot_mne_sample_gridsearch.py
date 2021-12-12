@@ -75,7 +75,7 @@ pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                                          'mean'])),
                  ('scaler', StandardScaler()),
                  ('clf', LogisticRegression(random_state=42, solver='lbfgs'))])
-skf = StratifiedKFold(n_splits=3, random_state=42)
+skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
 y = labels
 
 ###############################################################################
@@ -94,8 +94,9 @@ print('Cross-validation accuracy score (with default parameters) = %1.3f '
 
 params_grid = {'fe__app_entropy__emb': np.arange(2, 5)}
 
+cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=42)
 gs = GridSearchCV(estimator=pipe, param_grid=params_grid,
-                  cv=StratifiedKFold(n_splits=2, random_state=42), n_jobs=1,
+                  cv=cv, n_jobs=1,
                   return_train_score=True)
 gs.fit(data, y)
 
