@@ -94,7 +94,7 @@ pipe = Pipeline([('fe', FeatureExtractor(sfreq=sfreq,
                  ('clf', RandomForestClassifier(n_estimators=100,
                                                 max_depth=4,
                                                 random_state=42))])
-skf = StratifiedKFold(n_splits=3, random_state=42)
+skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
 
 ###############################################################################
 # Print the cross-validation accuracy score:

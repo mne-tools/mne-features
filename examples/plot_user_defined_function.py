@@ -97,7 +97,7 @@ pipe = Pipeline([('fe', FeatureExtractor(sfreq=raw.info['sfreq'],
                                          selected_funcs=selected_funcs)),
                  ('scaler', StandardScaler()),
                  ('clf', LogisticRegression(random_state=42, solver='lbfgs'))])
-skf = StratifiedKFold(n_splits=3, random_state=42)
+skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
 y = labels
 
 ###############################################################################
