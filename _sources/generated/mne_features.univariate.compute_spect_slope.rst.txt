@@ -1,4 +1,4 @@
-:mod:`mne_features.univariate`.compute_spect_slope
+﻿:mod:`mne_features.univariate`.compute_spect_slope
 =========================================================
 
 .. currentmodule:: mne_features.univariate

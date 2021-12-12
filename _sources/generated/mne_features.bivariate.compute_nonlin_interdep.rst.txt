@@ -1,4 +1,4 @@
-mne\_features.bivariate.compute\_nonlin\_interdep
+﻿mne\_features.bivariate.compute\_nonlin\_interdep
 =================================================
 
 .. currentmodule:: mne_features.bivariate

@@ -1,4 +1,4 @@
-mne\_features.bivariate.compute\_phase\_lock\_val
+﻿mne\_features.bivariate.compute\_phase\_lock\_val
 =================================================
 
 .. currentmodule:: mne_features.bivariate

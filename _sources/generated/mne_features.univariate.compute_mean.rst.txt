@@ -1,4 +1,4 @@
-:mod:`mne_features.univariate`.compute_mean
+﻿:mod:`mne_features.univariate`.compute_mean
 ==================================================
 
 .. currentmodule:: mne_features.univariate

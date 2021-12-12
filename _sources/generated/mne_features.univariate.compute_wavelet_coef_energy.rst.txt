@@ -1,4 +1,4 @@
-:mod:`mne_features.univariate`.compute_wavelet_coef_energy
+﻿:mod:`mne_features.univariate`.compute_wavelet_coef_energy
 =================================================================
 
 .. currentmodule:: mne_features.univariate

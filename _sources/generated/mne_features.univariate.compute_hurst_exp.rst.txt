@@ -1,4 +1,4 @@
-:mod:`mne_features.univariate`.compute_hurst_exp
+﻿:mod:`mne_features.univariate`.compute_hurst_exp
 =======================================================
 
 .. currentmodule:: mne_features.univariate

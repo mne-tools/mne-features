@@ -1,4 +1,4 @@
-:mod:`mne_features.univariate`.compute_hjorth_complexity
+﻿:mod:`mne_features.univariate`.compute_hjorth_complexity
 ===============================================================
 
 .. currentmodule:: mne_features.univariate

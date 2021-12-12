@@ -1,4 +1,4 @@
-:mod:`mne_features.feature_extraction`.extract_features
+﻿:mod:`mne_features.feature_extraction`.extract_features
 ==============================================================
 
 .. currentmodule:: mne_features.feature_extraction

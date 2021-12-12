@@ -1,4 +1,4 @@
-:mod:`mne_features.univariate`.compute_kurtosis
+﻿:mod:`mne_features.univariate`.compute_kurtosis
 ======================================================
 
 .. currentmodule:: mne_features.univariate

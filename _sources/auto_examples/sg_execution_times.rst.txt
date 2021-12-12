@@ -5,16 +5,16 @@
 
 Computation times
 =================
-**03:51.498** total execution time for **auto_examples** files:
+**03:46.140** total execution time for **auto_examples** files:
 
 +-------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_mne_sample_gridsearch.py` (``plot_mne_sample_gridsearch.py``) | 03:51.498 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_mne_sample_gridsearch.py` (``plot_mne_sample_gridsearch.py``) | 03:41.450 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_mne_sample_features.py` (``plot_mne_sample_features.py``)     | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_seizure_example.py` (``plot_seizure_example.py``)             | 00:01.883 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_psd_slope_estimation.py` (``plot_psd_slope_estimation.py``)   | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_user_defined_function.py` (``plot_user_defined_function.py``) | 00:01.032 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_seizure_example.py` (``plot_seizure_example.py``)             | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_mne_sample_features.py` (``plot_mne_sample_features.py``)     | 00:00.935 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_user_defined_function.py` (``plot_user_defined_function.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_psd_slope_estimation.py` (``plot_psd_slope_estimation.py``)   | 00:00.839 | 0.0 MB |
 +-------------------------------------------------------------------------------------------------+-----------+--------+
