@@ -719,12 +719,13 @@ def compute_pow_freq_bands(sfreq, data, freq_bands=np.array([0.5, 4., 8., 13.,
         psd_band = psd[:, mask]
         pow_freq_bands[:, j] = np.sum(psd_band, axis=-1)
 
-    if log:
-        pow_freq_bands = np.log10(pow_freq_bands)
-
     if normalize:
         pow_freq_bands = np.divide(pow_freq_bands,
                                    np.sum(psd, axis=-1)[:, None])
+
+    if log:
+        pow_freq_bands = 10 * np.log10(pow_freq_bands)
+
     if ratios is None:
         return pow_freq_bands.ravel()
     elif ratios not in ['all', 'only']:
