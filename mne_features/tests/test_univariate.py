@@ -200,7 +200,8 @@ def test_freq_bands_helper():
 
 
 def test_pow_freq_bands_norm():
-    expected = np.array([0, power_sin1, 0, 0, power_sin2]) / (power_sin1 + power_sin2)
+    expected = np.array([0, power_sin1, 0, 0, power_sin2]
+                        ) / (power_sin1 + power_sin2)
     assert_almost_equal(
         compute_pow_freq_bands(sfreq, data_sin, normalize=True,
                                psd_method='fft'), expected)
@@ -215,15 +216,18 @@ def test_pow_freq_bands_no_norm():
 
 def test_pow_freq_bands_norm_log():
     _power_sum = power_sin1 + power_sin2
-    expected = np.array([-np.Inf, 10 * np.log10(power_sin1 / _power_sum), -np.Inf, -np.Inf,
+    expected = np.array([-np.Inf, 10 * np.log10(power_sin1 / _power_sum),
+                         -np.Inf, -np.Inf,
                          10 * np.log10(power_sin2 / _power_sum)])
-    result = compute_pow_freq_bands(sfreq, data_sin, normalize=True, log=True, psd_method='fft')
+    result = compute_pow_freq_bands(
+        sfreq, data_sin, normalize=True, log=True, psd_method='fft')
     result[result < -250] = -np.Inf
     assert_almost_equal(result, expected)
 
 
 def test_pow_freq_bands_no_norm_log():
-    expected = np.array([-np.Inf, 10 * np.log10(power_sin1), -np.Inf, -np.Inf, 10 * np.log10(power_sin2)])
+    expected = np.array([-np.Inf, 10 * np.log10(power_sin1), -
+                        np.Inf, -np.Inf, 10 * np.log10(power_sin2)])
     result = compute_pow_freq_bands(sfreq, data_sin, normalize=False, log=True,
                                     psd_method='fft')
     result[result < -250] = -np.Inf
@@ -235,7 +239,8 @@ def test_pow_freq_bands_ratios():
     # For data_sin, only the usual theta (4Hz - 8Hz) and low gamma
     # (30Hz - 70Hz) bands contain non-zero power.
     fb = np.array([[4., 8.], [30., 70.]])
-    expected_pow = np.array([power_sin1, power_sin2]) / (power_sin1 + power_sin2)
+    expected_pow = np.array([power_sin1, power_sin2]) / \
+        (power_sin1 + power_sin2)
     expected_ratios = np.array([power_sin1/power_sin2, power_sin2/power_sin1])
     assert_almost_equal(
         compute_pow_freq_bands(
@@ -261,7 +266,8 @@ def test_pow_freq_bands_log_ratios():
     # (30Hz - 70Hz) bands contain non-zero power.
     fb = np.array([[4., 8.], [30., 70.]])
     expected_pow = 10 * np.log10(np.array([power_sin1, power_sin2]))
-    expected_ratios = 10 * np.log10(np.array([power_sin1/power_sin2, power_sin2/power_sin1]))
+    expected_ratios = 10 * \
+        np.log10(np.array([power_sin1/power_sin2, power_sin2/power_sin1]))
     assert_almost_equal(
         compute_pow_freq_bands(
             sfreq, data_sin, freq_bands=fb, normalize=False, ratios='all',
@@ -585,7 +591,7 @@ def test_spect_slope():
 def test_spect_entropy():
     power_sum = power_sin1 + power_sin2
     expected = -(power_sin1 / power_sum) * log(power_sin1 / power_sum, 2.) - \
-               (power_sin2 / power_sum) * log(power_sin2 / power_sum, 2.)
+        (power_sin2 / power_sum) * log(power_sin2 / power_sum, 2.)
     assert_almost_equal(compute_spect_entropy(sfreq, data_sin,
                                               psd_method='fft'), expected)
 
