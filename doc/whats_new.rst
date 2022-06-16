@@ -51,7 +51,7 @@ Bug
 - Fixed the behavior of the `edge` parameter in :func:`mne_features.univariate.compute_spect_edge_freq`. Valid values for this parameter are now `None` or a list of float between `0` and `1` (percentages). By `Jean-Baptiste SCHIRATTI`_ in `#52 <https://github.com/mne-tools/mne-features/pull/52>`_.
 - Fixed channel name replacement with overlapping channel names (e.g., Cz and FCz) which affected :func:`mne_features.extract_features` with `return_as_df=True` and when `ch_names` are provided. By `Hubert Banville`_ in `#63 <https://github.com/mne-tools/mne-features/pull/63>`_.
 - Fixed :class:`feature_extraction.FeatureFunctionTransformer`'s `check_input` method following sickit-learn 1.0 release: passing `reset=True`. By `Paul ROUJANSKY`_ in `#70 <https://github.com/mne-tools/mne-features/pull/70>`_.
-- Fixed the value of normalized `log-power` values in :func:`mne_features.univariate.compute_pow_freq_bands`. Normizatio by total power is done before taking the log of the power value.  By `Thomas Fillon`_ in `#80 <https://github.com/mne-tools/mne-features/pull/80>`_.
+- Fixed the value of normalized `log-power` values in :func:`mne_features.univariate.compute_pow_freq_bands`. Normalization by total power is now done before taking the log of the power value.  By `Thomas Fillon`_ in `#80 <https://github.com/mne-tools/mne-features/pull/80>`_.
 
 API
 ~~~
