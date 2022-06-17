@@ -42,7 +42,11 @@ data1 = np.array([[0., 0., 2., -2., 0., -1., -1., 0.],
                   [1., 1., -1., -1., 0., 1., 1., 0.]])
 data2 = rng.standard_normal((20, int(sfreq)))
 _tp = 2 * np.pi * np.arange(int(sfreq)) / sfreq
-_data_sin = 0.1 * np.sin(5 * _tp) + 0.05 * np.sin(33 * _tp)
+a1, a2 = 0.1, 0.05  # amplitude
+f1, f2 = 5, 33  # frequencies in Hz
+_data_sin = a1 * np.sin(f1 * _tp) + a2 * np.sin(f2 * _tp)
+power_sin1 = a1 ** 2 / 2
+power_sin2 = a2 ** 2 / 2
 data_sin = _data_sin[None, :]
 data = rng.standard_normal((10, 20, int(sfreq)))
 n_epochs, n_channels = data.shape[:2]
@@ -196,33 +200,38 @@ def test_freq_bands_helper():
 
 
 def test_pow_freq_bands_norm():
-    expected = np.array([0, 0.005, 0, 0, 0.00125]) / 0.00625
+    expected = np.array([0, power_sin1, 0, 0, power_sin2]
+                        ) / (power_sin1 + power_sin2)
     assert_almost_equal(
         compute_pow_freq_bands(sfreq, data_sin, normalize=True,
                                psd_method='fft'), expected)
 
 
 def test_pow_freq_bands_no_norm():
-    expected = np.array([0, 0.005, 0, 0, 0.00125])
+    expected = np.array([0, power_sin1, 0, 0, power_sin2])
     assert_almost_equal(
         compute_pow_freq_bands(sfreq, data_sin, normalize=False,
                                psd_method='fft'), expected)
 
 
 def test_pow_freq_bands_norm_log():
-    expected = np.array([-5317.19500282, -368.16479931, -5247.13240494,
-                         -5146.55896452, -464.49439792])
-    assert_almost_equal(
-        compute_pow_freq_bands(sfreq, data_sin, normalize=True, log=True,
-                               psd_method='fft'), expected)
+    _power_sum = power_sin1 + power_sin2
+    expected = np.array([-np.Inf, 10 * np.log10(power_sin1 / _power_sum),
+                         -np.Inf, -np.Inf,
+                         10 * np.log10(power_sin2 / _power_sum)])
+    result = compute_pow_freq_bands(
+        sfreq, data_sin, normalize=True, log=True, psd_method='fft')
+    result[result < -250] = -np.Inf
+    assert_almost_equal(result, expected)
 
 
 def test_pow_freq_bands_no_norm_log():
-    expected = np.array([-33.23246877, -2.30103, -32.79457753, -32.16599353,
-                         -2.90308999])
-    assert_almost_equal(
-        compute_pow_freq_bands(sfreq, data_sin, normalize=False, log=True,
-                               psd_method='fft'), expected)
+    expected = np.array([-np.Inf, 10 * np.log10(power_sin1), -
+                        np.Inf, -np.Inf, 10 * np.log10(power_sin2)])
+    result = compute_pow_freq_bands(sfreq, data_sin, normalize=False, log=True,
+                                    psd_method='fft')
+    result[result < -250] = -np.Inf
+    assert_almost_equal(result, expected)
 
 
 def test_pow_freq_bands_ratios():
@@ -230,8 +239,9 @@ def test_pow_freq_bands_ratios():
     # For data_sin, only the usual theta (4Hz - 8Hz) and low gamma
     # (30Hz - 70Hz) bands contain non-zero power.
     fb = np.array([[4., 8.], [30., 70.]])
-    expected_pow = np.array([0.005, 0.00125]) / 0.00625
-    expected_ratios = np.array([4., 0.25])
+    expected_pow = np.array([power_sin1, power_sin2]) / \
+        (power_sin1 + power_sin2)
+    expected_ratios = np.array([power_sin1/power_sin2, power_sin2/power_sin1])
     assert_almost_equal(
         compute_pow_freq_bands(
             sfreq, data_sin, freq_bands=fb, ratios='all', psd_method='fft'),
@@ -255,8 +265,9 @@ def test_pow_freq_bands_log_ratios():
     # For data_sin, only the usual theta (4Hz - 8Hz) and low gamma
     # (30Hz - 70Hz) bands contain non-zero power.
     fb = np.array([[4., 8.], [30., 70.]])
-    expected_pow = np.log10(np.array([0.005, 0.00125]))
-    expected_ratios = np.log10(np.array([4., 0.25]))
+    expected_pow = 10 * np.log10(np.array([power_sin1, power_sin2]))
+    expected_ratios = 10 * \
+        np.log10(np.array([power_sin1/power_sin2, power_sin2/power_sin1]))
     assert_almost_equal(
         compute_pow_freq_bands(
             sfreq, data_sin, freq_bands=fb, normalize=False, ratios='all',
@@ -343,9 +354,9 @@ def test_feature_names_wavelet_coef_energy(wavelet_name='db4'):
                  i in range(levdec)]
 
     df = extract_features(
-            _data, sfreq, selected_funcs,
-            funcs_params={'wavelet_coef_energy__wavelet_name': wavelet_name},
-            return_as_df=True)
+        _data, sfreq, selected_funcs,
+        funcs_params={'wavelet_coef_energy__wavelet_name': wavelet_name},
+        return_as_df=True)
     assert_equal(df.columns.get_level_values(1).values, col_names)
 
 
@@ -362,9 +373,9 @@ def test_feature_names_teager_kaiser_energy(wavelet_name='db4'):
                  for i in range(levdec + 1) for stat in ['mean', 'std']]
 
     df = extract_features(
-            _data, sfreq, selected_funcs,
-            funcs_params={'teager_kaiser_energy__wavelet_name': wavelet_name},
-            return_as_df=True)
+        _data, sfreq, selected_funcs,
+        funcs_params={'teager_kaiser_energy__wavelet_name': wavelet_name},
+        return_as_df=True)
     assert_equal(df.columns.get_level_values(1).values, col_names)
 
 
@@ -429,14 +440,14 @@ def test_hjorth_mobility_spect():
 
 
 def test_hjorth_complexity_spect():
-    expected = 0.005 * (5 ** 4) + 0.00125 * (33 ** 4)
+    expected = power_sin1 * (f1 ** 4) + power_sin2 * (f2 ** 4)
     assert_almost_equal(compute_hjorth_complexity_spect(sfreq, data_sin,
                                                         psd_method='fft'),
                         expected)
     assert_almost_equal(compute_hjorth_complexity_spect(sfreq, data_sin,
                                                         normalize=True,
                                                         psd_method='fft'),
-                        expected / 0.00625)
+                        expected / (power_sin1+power_sin2))
 
 
 def test_hjorth_mobility():
@@ -516,7 +527,6 @@ def test_feature_names_energy_freq_bands():
     _expected_names = [expected_names1, expected_names2]
 
     for fb, feat_names in zip(_fb, _expected_names):
-
         df = extract_features(
             _data, sfreq, selected_funcs,
             funcs_params={'energy_freq_bands__freq_bands': fb},
@@ -569,7 +579,7 @@ def test_spect_slope():
 
     # obtained by the expression ps[f] = 2 * [ (spect[f]^2) / (n_times^2) ]
     # and plug-in: power(f) = k1/f**theta with noise
-    k1_estimate = 10**(intercept - np.log10(2) + 2 * np.log10(n_times))
+    k1_estimate = 10 ** (intercept - np.log10(2) + 2 * np.log10(n_times))
     theta_estimate = - slope
 
     np.testing.assert_almost_equal(k1, k1_estimate, decimal=1)
@@ -579,8 +589,9 @@ def test_spect_slope():
 
 
 def test_spect_entropy():
-    expected = -(0.005 / 0.00625) * log(0.005 / 0.00625, 2.) - \
-        (0.00125 / 0.00625) * log(0.00125 / 0.00625, 2.)
+    power_sum = power_sin1 + power_sin2
+    expected = -(power_sin1 / power_sum) * log(power_sin1 / power_sum, 2.) - \
+        (power_sin2 / power_sum) * log(power_sin2 / power_sum, 2.)
     assert_almost_equal(compute_spect_entropy(sfreq, data_sin,
                                               psd_method='fft'), expected)
 
@@ -618,11 +629,10 @@ def test_shape_output_wavelet_coef_energy():
 
 def test_shape_output_teager_kaiser_energy():
     feat = compute_teager_kaiser_energy(data[0, :, :])
-    assert_equal(feat.shape, (n_channels * 7 * 2, ))
+    assert_equal(feat.shape, (n_channels * 7 * 2,))
 
 
 if __name__ == '__main__':
-
     test_slope_lstsq()
     test_accumulate_max()
     test_accumulate_min()
