@@ -50,8 +50,8 @@ print(__doc__)
 
 
 def download_bonn_ieeg(path, verbose=False):
-    base_url = 'http://epileptologie-bonn.de/cms/upload/workgroup/lehnertz/'
-    urls = [('setC', 'N.zip'), ('setD', 'F.zip'), ('setE', 'S.zip')]
+    base_url = 'https://www.ukbonn.de/site/assets/files/'
+    urls = [('setC', '21871/n.zip'), ('setD', '21870/f.zip'), ('setE', '21875/s.zip')]
     paths = list()
     for set_name, url_suffix in urls:
         _path = download(op.join(base_url, url_suffix),
@@ -71,9 +71,9 @@ data_segments = list()
 labels = list()
 sfreq = 173.61
 for path in paths:
-    fnames = [s for s in os.listdir(path) if s.lower().endswith('.txt')]
+    fnames = [s for s in os.listdir(path + '/' + os.listdir(path)[0]) if s.lower().endswith('.txt')]
     for fname in fnames:
-        _data = pd.read_csv(op.join(path, fname), sep='\n', header=None)
+        _data = pd.read_csv(op.join(path + '/' + os.listdir(path)[0], fname), header=None)
         data_segments.append(_data.values.T[None, ...])
     if 'setE' in path:
         labels.append(np.ones((len(fnames),)))
