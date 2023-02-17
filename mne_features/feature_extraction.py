@@ -115,7 +115,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
             return self.feature_names_
         else:
             return np.arange(self.output_shape_).astype(str)
-        
+
     def get_feature_names_out(self, input_features=None):
         """Mapping of the feature indices to feature names."""
         return self.get_feature_names()
