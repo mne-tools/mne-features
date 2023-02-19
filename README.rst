@@ -15,11 +15,15 @@ The documentation of the MNE-Features module is available at: `documentation <ht
 Installation
 ------------
 
-To install the package, the simplest way is to use pip to get the latest release::
+To install the package, the simplest way is to use ``pip`` to get the latest release::
 
   $ pip install mne-features
 
-or to get the latest version of the code::
+Or if you prefer ``conda`` into a new, dedicated environment::
+
+  $ conda create --name=mne-features --channel=conda-forge --override-channels mne-features
+
+Or to get the latest version of the code::
 
   $ pip install git+https://github.com/mne-tools/mne-features.git#egg=mne_features
 
