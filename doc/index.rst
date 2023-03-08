@@ -10,9 +10,9 @@ Via ``pip``, the Python package manager::
 
 	$ pip install mne-features
 
-or via ``conda`` into a new, dedicated environment::
+or via ``conda``::
 
-	$ conda create --name=mne-features --channel=conda-forge --override-channels mne-features
+	$ conda install --channel=conda-forge mne-features
 
 
 Bug reports

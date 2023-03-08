@@ -19,9 +19,9 @@ To install the package, the simplest way is to use ``pip`` to get the latest rel
 
   $ pip install mne-features
 
-Or if you prefer ``conda`` into a new, dedicated environment::
+Or if you prefer ``conda``::
 
-  $ conda create --name=mne-features --channel=conda-forge --override-channels mne-features
+  $ conda install --channel=conda-forge mne-features
 
 Or to get the latest version of the code::
 
