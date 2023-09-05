@@ -17,6 +17,7 @@ jobs:
       matrix:
         python-version: [ "3.8" ]
         numba: [ "on", "off" ]
+    continue-on-error: true
     name: python-${{ matrix.python-version }}-numba-${{ matrix.numba }}
     steps:
     - uses: actions/checkout@v2

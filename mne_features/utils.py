@@ -18,7 +18,7 @@ from mne.time_frequency import psd_array_welch, psd_array_multitaper
 from .mock_numba import nb
 
 
-@nb.jit()
+@nb.jit(nopython=True)
 def _idxiter(n, triu=True, include_diag=False):
     """Enumeration of the upper-triangular part of a squre matrix.
 

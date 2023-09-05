@@ -447,6 +447,10 @@ def _app_samp_entropy_helper(data, emb, metric='chebyshev',
     output : ndarray, shape (n_channels, 2)
     """
     _all_metrics = KDTree.valid_metrics
+    try:  # new sklearn this is a method not a list
+        _all_metrics = KDTree.valid_metrics()
+    except TypeError:  # pragma: no-cover
+        pass
     if metric not in _all_metrics:
         raise ValueError('The given metric (%s) is not valid. The valid '
                          'metric names are: %s' % (metric, _all_metrics))

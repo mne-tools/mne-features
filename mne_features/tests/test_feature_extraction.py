@@ -134,7 +134,7 @@ def test_memory_feature_extractor():
 
 def test_user_defined_feature_function():
     # User-defined feature function
-    @nb.jit()
+    @nb.jit(nopython=True)
     def top_feature(arr, gamma=3.14):
         return np.sum(np.power(gamma * arr, 3) - np.power(arr / gamma, 2),
                       axis=-1)
