@@ -16,7 +16,7 @@
 # Dev branch marker is: 'X.Y.devN' where N is an integer.
 #
 
-__version__ = '0.2'
+__version__ = '0.3'
 
 from . import univariate, bivariate, feature_extraction
 from .univariate import get_univariate_funcs
