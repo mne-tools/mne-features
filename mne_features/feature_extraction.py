@@ -328,6 +328,14 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         intersect the aliases used by mne-features. If the name given to a
         user-defined feature function is already used as an alias in
         mne-features, an error will be raised.
+        
+    ch_names : list of str or None (default: None)
+        Channel names. Only used if ``return_as_df`` is True. If not None,
+        channel names will be used to rename the columns of the output
+        with the following format: ``[ch_name]__[feature_name]``.
+        
+    return_as_df : bool (default: False)
+        If True, the extracted features will be returned as a Pandas DataFrame.
 
     params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to
@@ -360,18 +368,38 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     :func:`extract_features`
     """
 
-    def __init__(self, sfreq=256., selected_funcs=None, params=None, n_jobs=1,
-                 memory=None):
+    def __init__(self, sfreq=256., ch_names=None, return_as_df=False,
+                 selected_funcs=None, params=None, n_jobs=1,memory=None):
         """Instantiate a FeatureExtractor object."""
         self.sfreq = sfreq
+        self.ch_names = ch_names
+        self.feature_names = None
+        self.return_as_df = return_as_df
         self.selected_funcs = selected_funcs
         self.params = params
         self.n_jobs = n_jobs
         self.memory = memory
 
     def fit(self, X, y=None):
-        """Do not have any effect."""
+        """Get the feature names"""
+        # trick to get the feature names
+        df = extract_features(
+            X[:1],
+            sfreq=self.sfreq,
+            selected_funcs=self.selected_funcs,
+            funcs_params=self.params,
+            n_jobs=self.n_jobs,
+            ch_names=self.ch_names,
+            return_as_df=True,
+        )
+        self.feature_names = [
+            f"{df.columns[i][1]}__{df.columns[i][0]}" for i in range(df.shape[1])
+        ]
         return self
+
+    def get_feature_names_out(self):
+        """Get the feature names"""
+        return self.feature_names
 
     def transform(self, X):
         """Extract features from the array X.
@@ -387,8 +415,16 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         """
         mem = joblib.Memory(location=self.memory)
         _extractor = mem.cache(extract_features)
-        return _extractor(X, self.sfreq, self.selected_funcs,
-                          funcs_params=self.params, n_jobs=self.n_jobs)
+        res = _extractor(
+            X,
+            self.sfreq,
+            self.selected_funcs,
+            funcs_params=self.params,
+            n_jobs=self.n_jobs,
+        )
+        if self.return_as_df is True:
+            res = pd.DataFrame(res, columns=self.feature_names)
+        return res
 
     def get_params(self, deep=True):
         """Get the parameters of the transformer."""
