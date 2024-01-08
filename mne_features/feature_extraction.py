@@ -299,9 +299,10 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 
     The method ``fit_transform`` implemented in this class can be used to
     extract univariate or bivariate features from epoched data
-    (see example below). The method ``fit`` does not have any effect and is
-    implemented for compatibility with Scikit-learn's API. As a result, the
-    class ``FeatureExtractor`` can be used as a step in a Pipeline (see
+    (see example below). The method ``fit`` is implemented for compatibility 
+    with Scikit-learn's API and extract the feature names with format 
+    ``<ch_name>__<func_params>__<feature>``. As a result, the class
+    ``FeatureExtractor`` can be used as a step in a Pipeline (see
     :class:`~sklearn.pipeline.Pipeline` and MNE-features examples). The class
     also accepts a ``memory`` parameter which allows for caching the result of
     feature extraction. Therefore, if caching is used, calling
@@ -330,9 +331,8 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         mne-features, an error will be raised.
 
     ch_names : list of str or None (default: None)
-        Channel names. Only used to get proper ``feature_names``. If not None,
-        channel names will be used to rename the feature names with the
-        following format: ``<ch_name>__<feature_name>``.
+        Channel names. Only used to get proper channels in ``feature_names``.
+        If None, channel names will be of the form ``ch0``, ``ch1``, etc.
 
     params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to
