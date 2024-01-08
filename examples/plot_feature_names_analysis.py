@@ -108,3 +108,14 @@ print(
     + f"{100*np.sum(pipe.named_steps['clf'].feature_importances_[best_10_id]):.2f}% "
     + "of the prediction."
 )
+
+###############################################################################
+# Print the channel with most contribution.
+
+feat_as_ch = np.array(
+    [f.split("__")[0] for f in pipe.named_steps["clf"].feature_names_in_])
+ch_names = epochs.info["ch_names"]
+d = {ch: np.sum(
+    pipe.named_steps["clf"].feature_importances_[feat_as_ch == ch]) for ch in ch_names}
+best_ch = max(d, key=d.get)
+print(f"Channel {best_ch} contributes the most with {100*d[best_ch]:.2f}%.")
