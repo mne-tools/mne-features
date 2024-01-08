@@ -166,6 +166,20 @@ def test_channel_naming():
     expected_col_names = [('app_entropy', ch_name) for ch_name in ch_names]
     assert df.columns.values.tolist() == expected_col_names
 
+    fe = FeatureExtractor(
+        sfreq, ch_names=ch_names, selected_funcs=selected_funcs
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [f"{ch_name}__app_entropy" for ch_name in ch_names]
+    assert df.columns.values.tolist() == expected_col_names
+
+    fe = FeatureExtractor(
+        sfreq, selected_funcs=selected_funcs
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [f"ch{i}__app_entropy" for i in range(n_channels)]
+    assert df.columns.values.tolist() == expected_col_names
+
     ch_names.append('CHANNEL%s' % n_channels)
     with assert_raises(ValueError):
         # incorrect number of channel names
@@ -190,6 +204,15 @@ def test_channel_naming_pow_freq_bands():
         for ch_name in ch_names for _, i, j in _idxiter(2, triu=False)]
     assert df.columns.values.tolist() == expected_col_names
 
+    fe = FeatureExtractor(
+        sfreq, ch_names, selected_funcs, func_params
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [
+        f"{ch_name}__band{i}/band{j}__pow_freq_bands"
+        for ch_name in ch_names for _, i, j in _idxiter(2, triu=False)]
+    assert df.columns.values.tolist() == expected_col_names
+
 
 @pytest.mark.parametrize('selected_func', ['max_cross_corr', 'phase_lock_val',
                                            'nonlin_interdep'])
@@ -203,8 +226,17 @@ def test_channel_naming_bivariate(selected_func, include_diag):
         return_as_df=True)
     expected_col_names = [
         (selected_func, ch_names[i] + '-' + ch_names[j])
-        for s, i, j in _idxiter(n_channels, include_diag=include_diag)]
+        for _, i, j in _idxiter(n_channels, include_diag=include_diag)]
 
+    assert df.columns.values.tolist() == expected_col_names
+
+    fe = FeatureExtractor(
+        sfreq, ch_names, [selected_func], func_params
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [
+        f"{ch_names[i]}-{ch_names[j]}__{selected_func}"
+        for _, i, j in _idxiter(n_channels, include_diag=include_diag)]
     assert df.columns.values.tolist() == expected_col_names
 
 
@@ -223,11 +255,23 @@ def test_channel_naming_bivariate_eig(selected_func, include_diag, with_eig):
         return_as_df=True)
     expected_col_names = [
         (selected_func, ch_names[i] + '-' + ch_names[j])
-        for s, i, j in _idxiter(n_channels, include_diag=include_diag)]
+        for _, i, j in _idxiter(n_channels, include_diag=include_diag)]
     if with_eig:
         expected_col_names.extend(
             [(selected_func, f'eig{i}') for i in range(n_channels)])
 
+    assert df.columns.values.tolist() == expected_col_names
+
+    fe = FeatureExtractor(
+        sfreq, ch_names, [selected_func], func_params
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [
+        f"{ch_names[i]}-{ch_names[j]}__{selected_func}"
+        for _, i, j in _idxiter(n_channels, include_diag=include_diag)]
+    if with_eig:
+        expected_col_names.extend(
+            [f"eig{i}__{selected_func}" for i in range(n_channels)])
     assert df.columns.values.tolist() == expected_col_names
 
 
