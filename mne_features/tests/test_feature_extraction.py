@@ -186,7 +186,7 @@ def test_channel_naming_pow_freq_bands():
         return_as_df=True)
 
     expected_col_names = [
-        ('pow_freq_bands', f'{ch_name}_band{i}/band{j}')
+        ('pow_freq_bands', f'{ch_name}__band{i}/band{j}')
         for ch_name in ch_names for _, i, j in _idxiter(2, triu=False)]
     assert df.columns.values.tolist() == expected_col_names
 

@@ -194,7 +194,7 @@ def _format_as_dataframe(X, feature_names):
                          '`X.shape[1]` (`n_features`).')
     else:
         _names = [n.split('__')[0] for n in feature_names]
-        _idx = [n.split('__')[1] for n in feature_names]
+        _idx = [n[len(n.split('__')[0])+2:] for n in feature_names]
         columns = pd.MultiIndex.from_arrays([_names, _idx])
         return pd.DataFrame(data=X, columns=columns)
 
