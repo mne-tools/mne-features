@@ -80,10 +80,9 @@ pipe = Pipeline(
             FeatureExtractor(
                 sfreq=raw.info["sfreq"],
                 ch_names=epochs.info["ch_names"],
-                return_as_df=True,
                 selected_funcs=selected_funcs,
                 params=params,
-            ),
+            ).set_output(transform="pandas"),
         ),
         ("scaler", StandardScaler().set_output(transform="pandas")),
         ("clf", ExtraTreesClassifier(random_state=42)),
