@@ -299,8 +299,8 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 
     The method ``fit_transform`` implemented in this class can be used to
     extract univariate or bivariate features from epoched data
-    (see example below). The method ``fit`` is implemented for compatibility 
-    with Scikit-learn's API and extract the feature names with format 
+    (see example below). The method ``fit`` is implemented for compatibility
+    with Scikit-learn's API and extracts the feature names with format
     ``<ch_name>__<func_params>__<feature>``. As a result, the class
     ``FeatureExtractor`` can be used as a step in a Pipeline (see
     :class:`~sklearn.pipeline.Pipeline` and MNE-features examples). The class
