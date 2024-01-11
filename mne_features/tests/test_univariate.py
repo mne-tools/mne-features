@@ -301,7 +301,7 @@ def test_feature_names_quantile():
     selected_funcs = ['quantile']
 
     q = [0.25, 0.75]
-    col_names = ['ch%s__%s' % (ch, i) for ch in range(n_chans)
+    col_names = ['ch%s_%s' % (ch, i) for ch in range(n_chans)
                  for i in range(len(q))]
     df = extract_features(
         _data, sfreq, selected_funcs, funcs_params={'quantile__q': q},
@@ -319,7 +319,7 @@ def test_feature_names_spect_edge_freq():
     for edge in _edges:
         if edge is None:
             edge = [.5]
-        col_names = ['ch%s__%s' % (ch, i) for ch in range(n_chans) for
+        col_names = ['ch%s_%s' % (ch, i) for ch in range(n_chans) for
                      i in range(len(edge))]
         df = extract_features(
             _data, sfreq, selected_funcs,
@@ -335,7 +335,7 @@ def test_feature_names_spect_slope():
 
     stats = ['intercept', 'slope', 'MSE', 'R2']
 
-    col_names = ['ch%s__%s' % (ch, stat) for ch in range(n_chans) for
+    col_names = ['ch%s_%s' % (ch, stat) for ch in range(n_chans) for
                  stat in stats]
     df = extract_features(_data, sfreq, selected_funcs, return_as_df=True)
     assert_equal(df.columns.get_level_values(1).values, col_names)
@@ -350,7 +350,7 @@ def test_feature_names_wavelet_coef_energy(wavelet_name='db4'):
     wavelet = pywt.Wavelet(wavelet_name)
     levdec = min(pywt.dwt_max_level(_data.shape[-1], wavelet.dec_len), 6)
 
-    col_names = ['ch%s__%s' % (ch, i) for ch in range(n_chans) for
+    col_names = ['ch%s_%s' % (ch, i) for ch in range(n_chans) for
                  i in range(levdec)]
 
     df = extract_features(
@@ -369,7 +369,7 @@ def test_feature_names_teager_kaiser_energy(wavelet_name='db4'):
     wavelet = pywt.Wavelet(wavelet_name)
     levdec = min(pywt.dwt_max_level(_data.shape[-1], wavelet.dec_len), 6)
 
-    col_names = ['ch%s__%s_%s' % (ch, i, stat) for ch in range(n_chans)
+    col_names = ['ch%s_%s_%s' % (ch, i, stat) for ch in range(n_chans)
                  for i in range(levdec + 1) for stat in ['mean', 'std']]
 
     df = extract_features(
@@ -385,14 +385,14 @@ def test_feature_names_pow_freq_bands():
     fb1 = np.array([[4., 8.], [30., 70.]])
     fb2 = {'theta': [4, 8], 'low-gamma': np.array([30, 70])}
     _fb = [fb1, fb2]
-    ratios_col_names1 = ['ch0__band0/band1', 'ch0__band1/band0',
-                         'ch1__band0/band1', 'ch1__band1/band0']
-    ratios_col_names2 = ['ch0__theta/low-gamma', 'ch0__low-gamma/theta',
-                         'ch1__theta/low-gamma', 'ch1__low-gamma/theta']
+    ratios_col_names1 = ['ch0_band0/band1', 'ch0_band1/band0',
+                         'ch1_band0/band1', 'ch1_band1/band0']
+    ratios_col_names2 = ['ch0_theta/low-gamma', 'ch0_low-gamma/theta',
+                         'ch1_theta/low-gamma', 'ch1_low-gamma/theta']
     _ratios_names = [ratios_col_names1, ratios_col_names2]
-    pow_col_names1 = ['ch0__band0', 'ch0__band1', 'ch1__band0', 'ch1__band1']
-    pow_col_names2 = ['ch0__theta', 'ch0__low-gamma',
-                      'ch1__theta', 'ch1__low-gamma']
+    pow_col_names1 = ['ch0_band0', 'ch0_band1', 'ch1_band0', 'ch1_band1']
+    pow_col_names2 = ['ch0_theta', 'ch0_low-gamma',
+                      'ch1_theta', 'ch1_low-gamma']
     _pow_names = [pow_col_names1, pow_col_names2]
 
     for fb, ratios_names, pow_names in zip(_fb, _ratios_names, _pow_names):
@@ -521,9 +521,9 @@ def test_feature_names_energy_freq_bands():
     fb1 = np.array([[4., 8.], [30., 70.]])
     fb2 = {'theta': [4, 8], 'low-gamma': np.array([30, 70])}
     _fb = [fb1, fb2]
-    expected_names1 = ['ch0__band0', 'ch0__band1', 'ch1__band0', 'ch1__band1']
-    expected_names2 = ['ch0__theta', 'ch0__low-gamma',
-                       'ch1__theta', 'ch1__low-gamma']
+    expected_names1 = ['ch0_band0', 'ch0_band1', 'ch1_band0', 'ch1_band1']
+    expected_names2 = ['ch0_theta', 'ch0_low-gamma',
+                       'ch1_theta', 'ch1_low-gamma']
     _expected_names = [expected_names1, expected_names2]
 
     for fb, feat_names in zip(_fb, _expected_names):

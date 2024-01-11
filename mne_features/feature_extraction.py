@@ -193,8 +193,8 @@ def _format_as_dataframe(X, feature_names):
         raise ValueError('The length of `feature_names` should be equal to '
                          '`X.shape[1]` (`n_features`).')
     else:
+        _idx = [n.split('__')[1] for n in feature_names]
         _names = [n.split('__')[0] for n in feature_names]
-        _idx = [n[len(n.split('__')[0])+2:] for n in feature_names]
         columns = pd.MultiIndex.from_arrays([_names, _idx])
         return pd.DataFrame(data=X, columns=columns)
 
@@ -369,8 +369,6 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
                  ch_names=None, n_jobs=1, memory=None):
         """Instantiate a FeatureExtractor object."""
         self.sfreq = sfreq
-        self.ch_names = ch_names
-        self.feature_names = None
         self.selected_funcs = selected_funcs
         self.params = params
         self.ch_names = ch_names
@@ -379,7 +377,27 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         self.feature_names = None
 
     def fit(self, X, y=None):
-        """Get the feature names"""
+        """Get the feature names in format
+        ``<ch_name>__<func_params>__<feature>
+        """
+        # we get the channel names and create fake ones if containing '_'
+        # (used later for parsing)
+        unique_str = 'µ&mne-features&µ'
+        if self.ch_names is None:
+            tmp_ch_names = None
+        else:
+            tmp_ch_names = []
+            for ch_name in self.ch_names:
+                if unique_str in ch_name:
+                    raise ValueError(
+                        f'Channel name {ch_name} contains {unique_str}. '
+                        f'Please use another name.')
+                if '_' in ch_name:
+                    # we replace with a special string that will be replaced
+                    tmp_ch_names.append(ch_name.replace('_', unique_str))
+                else:
+                    tmp_ch_names.append(ch_name)
+
         # trick: use only the first epoch to get the feature names
         df = extract_features(
             X[:1],
@@ -387,12 +405,13 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
             selected_funcs=self.selected_funcs,
             funcs_params=self.params,
             n_jobs=1,
-            ch_names=self.ch_names,
+            ch_names=tmp_ch_names,
             return_as_df=True,
         )
         cols = df.columns
         self.feature_names = [
-            f"{cols[i][1]}__{cols[i][0]}" for i in range(df.shape[1])
+            f"{cols[i][1].replace('_', '__').replace(unique_str, '_')}__"
+            + f"{cols[i][0]}" for i in range(df.shape[1])
         ]
         return self
 
