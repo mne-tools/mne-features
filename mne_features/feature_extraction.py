@@ -330,15 +330,15 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         user-defined feature function is already used as an alias in
         mne-features, an error will be raised.
 
-    ch_names : list of str or None (default: None)
-        Channel names. Only used to get proper channels in ``feature_names``.
-        If None, channel names will be of the form ``ch0``, ``ch1``, etc.
-
     params : dict or None (default: None)
         If not None, dict of optional parameters to be passed to
         :func:`extract_features`. Each key of the ``funcs_params`` dict should
         be of the form: ``[alias_feature_function]__[optional_param]``
         (for example: ``higuchi_fd__kmax``).
+
+    ch_names : list of str or None (default: None)
+        Channel names. Only used to get proper channels in ``feature_names``.
+        If None, channel names will be of the form ``ch0``, ``ch1``, etc.
 
     n_jobs : int (default: 1)
         Number of CPU cores used when parallelizing the feature extraction.
@@ -365,16 +365,18 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     :func:`extract_features`
     """
 
-    def __init__(self, sfreq=256., ch_names=None, selected_funcs=None,
-                 params=None, n_jobs=1, memory=None):
+    def __init__(self, sfreq=256., selected_funcs=None, params=None,
+                 ch_names=None, n_jobs=1, memory=None):
         """Instantiate a FeatureExtractor object."""
         self.sfreq = sfreq
         self.ch_names = ch_names
         self.feature_names = None
         self.selected_funcs = selected_funcs
         self.params = params
+        self.ch_names = ch_names
         self.n_jobs = n_jobs
         self.memory = memory
+        self.feature_names = None
 
     def fit(self, X, y=None):
         """Get the feature names"""
