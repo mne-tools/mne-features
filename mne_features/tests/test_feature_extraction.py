@@ -7,7 +7,10 @@ from tempfile import mkdtemp
 
 import pytest
 import numpy as np
-from numpy.testing import assert_equal, assert_raises, assert_almost_equal
+from numpy.testing import (assert_equal,
+                           assert_raises,
+                           assert_almost_equal,
+                           assert_warns)
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.utils._mocking import CheckingClassifier
@@ -157,23 +160,50 @@ def test_user_defined_feature_function():
         extract_features(data, sfreq, ['mean', top_feature])
 
 
-def test_channel_naming():
+@pytest.mark.parametrize('separator', ['_', '__'])
+def test_channel_naming(separator):
     ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
-    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
+    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP_1']
     selected_funcs = ['app_entropy']
-    df = extract_features(
-        data, sfreq, selected_funcs, ch_names=ch_names, return_as_df=True)
+    with assert_warns(DeprecationWarning):
+        df = extract_features(
+            data, sfreq, selected_funcs, ch_names=ch_names, return_as_df=True)
     expected_col_names = [('app_entropy', ch_name) for ch_name in ch_names]
     assert df.columns.values.tolist() == expected_col_names
+
+    df2 = extract_features(
+            data, sfreq, selected_funcs, ch_names=ch_names, return_as_df=True,
+            separator='_'
+        )
+    assert df.columns.values.tolist() == df2.columns.values.tolist()
 
     ch_names.append('CHANNEL%s' % n_channels)
     with assert_raises(ValueError):
         # incorrect number of channel names
         df = extract_features(
             data, sfreq, selected_funcs, ch_names=ch_names, return_as_df=True)
+    ch_names.pop()
+
+    fe = FeatureExtractor(
+        sfreq, ch_names=ch_names, selected_funcs=selected_funcs,
+        separator=separator
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [f"{ch_name}{separator}app_entropy"
+                          for ch_name in ch_names]
+    assert df.columns.values.tolist() == expected_col_names
+
+    fe = FeatureExtractor(
+        sfreq, selected_funcs=selected_funcs, separator=separator
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [f"ch{i}{separator}app_entropy"
+                          for i in range(n_channels)]
+    assert df.columns.values.tolist() == expected_col_names
 
 
-def test_channel_naming_pow_freq_bands():
+@pytest.mark.parametrize('separator', ['_', '__'])
+def test_channel_naming_pow_freq_bands(separator):
     ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
     ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
     selected_funcs = ['pow_freq_bands']
@@ -181,12 +211,22 @@ def test_channel_naming_pow_freq_bands():
         'pow_freq_bands__freq_bands': np.array([[0, 2], [10, 20]]),
         'pow_freq_bands__ratios': 'only'
     }
-    df = extract_features(
-        data, sfreq, selected_funcs, func_params, ch_names=ch_names,
-        return_as_df=True)
+    with assert_warns(DeprecationWarning):
+        df = extract_features(
+            data, sfreq, selected_funcs, func_params, ch_names=ch_names,
+            return_as_df=True)
 
     expected_col_names = [
         ('pow_freq_bands', f'{ch_name}_band{i}/band{j}')
+        for ch_name in ch_names for _, i, j in _idxiter(2, triu=False)]
+    assert df.columns.values.tolist() == expected_col_names
+
+    fe = FeatureExtractor(
+        sfreq, selected_funcs, func_params, ch_names, separator
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [
+        f"{ch_name}{separator}band{i}/band{j}{separator}pow_freq_bands"
         for ch_name in ch_names for _, i, j in _idxiter(2, triu=False)]
     assert df.columns.values.tolist() == expected_col_names
 
@@ -194,40 +234,66 @@ def test_channel_naming_pow_freq_bands():
 @pytest.mark.parametrize('selected_func', ['max_cross_corr', 'phase_lock_val',
                                            'nonlin_interdep'])
 @pytest.mark.parametrize('include_diag', [True, False])
-def test_channel_naming_bivariate(selected_func, include_diag):
+@pytest.mark.parametrize('separator', ['_', '__'])
+def test_channel_naming_bivariate(selected_func, include_diag, separator):
     ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
-    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
+    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP_1']
     func_params = {selected_func + '__include_diag': include_diag}
-    df = extract_features(
-        data, sfreq, [selected_func], func_params, ch_names=ch_names,
-        return_as_df=True)
+    with assert_warns(DeprecationWarning):
+        df = extract_features(
+            data, sfreq, [selected_func], func_params, ch_names=ch_names,
+            return_as_df=True)
     expected_col_names = [
         (selected_func, ch_names[i] + '-' + ch_names[j])
-        for s, i, j in _idxiter(n_channels, include_diag=include_diag)]
+        for _, i, j in _idxiter(n_channels, include_diag=include_diag)]
 
+    assert df.columns.values.tolist() == expected_col_names
+
+    fe = FeatureExtractor(
+        sfreq, [selected_func], func_params, ch_names, separator
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [
+        f"{ch_names[i]}-{ch_names[j]}{separator}{selected_func}"
+        for _, i, j in _idxiter(n_channels, include_diag=include_diag)]
     assert df.columns.values.tolist() == expected_col_names
 
 
 @pytest.mark.parametrize('selected_func', ['time_corr', 'spect_corr'])
 @pytest.mark.parametrize('include_diag', [True, False])
 @pytest.mark.parametrize('with_eig', [True, False])
-def test_channel_naming_bivariate_eig(selected_func, include_diag, with_eig):
+@pytest.mark.parametrize('separator', ['_', '__'])
+def test_channel_naming_bivariate_eig(selected_func, include_diag,
+                                      with_eig, separator):
     ch_names = ['CHANNEL%s' % i for i in range(n_channels)]
-    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP1']
+    ch_names[:4] = ['Cz', 'FCz', 'P1', 'CP_1']
     func_params = {
         selected_func + '__include_diag': include_diag,
         selected_func + '__with_eigenvalues': with_eig
     }
-    df = extract_features(
-        data, sfreq, [selected_func], func_params, ch_names=ch_names,
-        return_as_df=True)
+    with assert_warns(DeprecationWarning):
+        df = extract_features(
+            data, sfreq, [selected_func], func_params, ch_names=ch_names,
+            return_as_df=True)
     expected_col_names = [
         (selected_func, ch_names[i] + '-' + ch_names[j])
-        for s, i, j in _idxiter(n_channels, include_diag=include_diag)]
+        for _, i, j in _idxiter(n_channels, include_diag=include_diag)]
     if with_eig:
         expected_col_names.extend(
             [(selected_func, f'eig{i}') for i in range(n_channels)])
 
+    assert df.columns.values.tolist() == expected_col_names
+
+    fe = FeatureExtractor(
+        sfreq, [selected_func], func_params, ch_names, separator
+    ).set_output(transform="pandas")
+    df = fe.fit_transform(data)
+    expected_col_names = [
+        f"{ch_names[i]}-{ch_names[j]}{separator}{selected_func}"
+        for _, i, j in _idxiter(n_channels, include_diag=include_diag)]
+    if with_eig:
+        expected_col_names.extend(
+            [f"eig{i}{separator}{selected_func}" for i in range(n_channels)])
     assert df.columns.values.tolist() == expected_col_names
 
 

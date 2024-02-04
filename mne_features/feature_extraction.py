@@ -6,6 +6,7 @@
 
 import re
 from inspect import getargs
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -168,7 +169,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
         return self
 
 
-def _format_as_dataframe(X, feature_names):
+def _format_as_dataframe(X, feature_names, separator):
     """Format to Pandas DataFrame.
 
     Utility function to format extracted features (X) as a Pandas
@@ -184,6 +185,9 @@ def _format_as_dataframe(X, feature_names):
 
     feature_names : list of str
 
+    separator : str
+        Separator between channel names and feature params if any.
+
     Returns
     -------
     output : Pandas DataFrame
@@ -194,7 +198,8 @@ def _format_as_dataframe(X, feature_names):
                          '`X.shape[1]` (`n_features`).')
     else:
         _names = [n.split('__')[0] for n in feature_names]
-        _idx = [n.split('__')[1] for n in feature_names]
+        _idx = [n[len(n.split('__')[0])+2:].replace('__', separator)
+                for n in feature_names]
         columns = pd.MultiIndex.from_arrays([_names, _idx])
         return pd.DataFrame(data=X, columns=columns)
 
@@ -299,9 +304,10 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 
     The method ``fit_transform`` implemented in this class can be used to
     extract univariate or bivariate features from epoched data
-    (see example below). The method ``fit`` does not have any effect and is
-    implemented for compatibility with Scikit-learn's API. As a result, the
-    class ``FeatureExtractor`` can be used as a step in a Pipeline (see
+    (see example below). The method ``fit`` is implemented for compatibility
+    with Scikit-learn's API and extracts the feature names with format
+    ``<ch_name>[separator]<func_params>[separator]<feature>``. As a result,
+    the class ``FeatureExtractor`` can be used as a step in a Pipeline (see
     :class:`~sklearn.pipeline.Pipeline` and MNE-features examples). The class
     also accepts a ``memory`` parameter which allows for caching the result of
     feature extraction. Therefore, if caching is used, calling
@@ -335,6 +341,18 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         be of the form: ``[alias_feature_function]__[optional_param]``
         (for example: ``higuchi_fd__kmax``).
 
+    ch_names : list of str or None (default: None)
+        Channel names. Only used to get proper channels in ``feature_names``.
+        If None, channel names will be of the form ``ch0``, ``ch1``, etc.
+
+    separator : str (default: '')
+        Separator between channel names, feature params (if any) and features.
+        Only used in feature names. If empty, `_` is used, so the output
+        format is `<ch_name>_<func_params>_<feature>`.
+
+        .. versionchanged:: 0.4
+            The default changed from `_` to `__
+
     n_jobs : int (default: 1)
         Number of CPU cores used when parallelizing the feature extraction.
         If given a value of -1, all cores are used.
@@ -360,18 +378,42 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
     :func:`extract_features`
     """
 
-    def __init__(self, sfreq=256., selected_funcs=None, params=None, n_jobs=1,
-                 memory=None):
+    def __init__(self, sfreq=256., selected_funcs=None, params=None,
+                 ch_names=None, separator='', n_jobs=1, memory=None):
         """Instantiate a FeatureExtractor object."""
         self.sfreq = sfreq
         self.selected_funcs = selected_funcs
         self.params = params
+        self.ch_names = ch_names
+        self.separator = separator
         self.n_jobs = n_jobs
         self.memory = memory
+        self.feature_names = None
 
     def fit(self, X, y=None):
-        """Do not have any effect."""
+        """Get the feature names"""
+        # trick: use only the first epoch to get the feature names
+        df = extract_features(
+            X[:1],
+            sfreq=self.sfreq,
+            selected_funcs=self.selected_funcs,
+            funcs_params=self.params,
+            n_jobs=1,
+            ch_names=self.ch_names,
+            return_as_df=True,
+            separator=self.separator
+        )
+        # to be changed in 0.4 to `__`
+        sep = self.separator if self.separator != '' else '_'
+        cols = df.columns
+        self.feature_names = [
+            f"{cols[i][1]}{sep}{cols[i][0]}" for i in range(df.shape[1])
+        ]
         return self
+
+    def get_feature_names_out(self):
+        """Get the feature names"""
+        return self.feature_names
 
     def transform(self, X):
         """Extract features from the array X.
@@ -401,7 +443,7 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
 
 
 def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
-                     ch_names=None, return_as_df=False):
+                     ch_names=None, return_as_df=False, separator=''):
     """Extraction of temporal or spectral features from epoched EEG signals.
 
     Parameters
@@ -447,12 +489,26 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
         which contains the alias of each feature function which was used.
         If False, the features are returned as a 2d Numpy array.
 
+    separator : str (default: '')
+        Separator between channel names and feature params if any. Only used
+        in feature names when ``return_as_df`` is True. If empty, `_` is used.
+        This behavior will change in version 0.4 to `__`.
+
+        .. versionchanged:: 0.4
+            The default changed from `_` to `__`.
+
     Returns
     -------
     array-like, shape (n_epochs, n_features)
     """
     if sfreq <= 0:
         raise ValueError('Sampling rate `sfreq` must be positive.')
+    if separator == '':
+        warnings.warn(
+            'Default separator `_` in feature names will change to `__` in'
+            + 'version 0.4. You can pass separator=`_` to silence this'
+            + 'warning.', DeprecationWarning)
+        separator = '_'
     univariate_funcs = get_univariate_funcs(sfreq)
     bivariate_funcs = get_bivariate_funcs(sfreq)
     feature_funcs = univariate_funcs.copy()
@@ -475,6 +531,6 @@ def extract_features(X, sfreq, selected_funcs, funcs_params=None, n_jobs=1,
     res = list(zip(*res))[0]
     Xnew = np.vstack(res)
     if return_as_df:
-        return _format_as_dataframe(Xnew, feature_names)
+        return _format_as_dataframe(Xnew, feature_names, separator)
     else:
         return Xnew
