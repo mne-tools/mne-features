@@ -61,4 +61,9 @@ if __name__ == "__main__":
           packages=package_tree('mne_features'),
           install_requires=['numpy', 'scipy', 'numba', 'scikit-learn', 'mne',
                             'PyWavelets', 'pandas'],
+          project_urls={
+              'Documentation': 'https://mne-tools.github.io/mne-features/',
+              'Bug Reports': 'https://github.com/mne-tools/mne-features/issues',
+              'Source': 'https://github.com/mne-tools/mne-features',
+          },          
           )
