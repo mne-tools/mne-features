@@ -62,7 +62,7 @@ class FeatureFunctionTransformer(FunctionTransformer):
 
         Returns
         -------
-        X_out : ndarray, shape (n_output_func,)
+        X_out : ndarray, shape (1, n_output_func)
             Usually, ``n_output_func`` will be equal to ``n_channels`` for most
             univariate feature functions and to
             ``(n_channels * (n_channels + 1)) // 2`` for most bivariate feature
@@ -71,6 +71,8 @@ class FeatureFunctionTransformer(FunctionTransformer):
         """
         X_out = super(FeatureFunctionTransformer, self).transform(X)
         self.output_shape_ = X_out.shape[0]
+        if X_out.ndim == 1:
+            X_out = X_out[np.newaxis, :]
         if not hasattr(self, 'feature_names_'):
             func_name = _get_func_name(self.func).replace('compute_', '')
             if (func_name in get_univariate_func_names() and
