@@ -216,21 +216,21 @@ def test_pow_freq_bands_no_norm():
 
 def test_pow_freq_bands_norm_log():
     _power_sum = power_sin1 + power_sin2
-    expected = np.array([-np.Inf, 10 * np.log10(power_sin1 / _power_sum),
-                         -np.Inf, -np.Inf,
+    expected = np.array([-np.inf, 10 * np.log10(power_sin1 / _power_sum),
+                         -np.inf, -np.inf,
                          10 * np.log10(power_sin2 / _power_sum)])
     result = compute_pow_freq_bands(
         sfreq, data_sin, normalize=True, log=True, psd_method='fft')
-    result[result < -250] = -np.Inf
+    result[result < -250] = -np.inf
     assert_almost_equal(result, expected)
 
 
 def test_pow_freq_bands_no_norm_log():
-    expected = np.array([-np.Inf, 10 * np.log10(power_sin1), -
-                        np.Inf, -np.Inf, 10 * np.log10(power_sin2)])
+    expected = np.array([-np.inf, 10 * np.log10(power_sin1), -
+                        np.inf, -np.inf, 10 * np.log10(power_sin2)])
     result = compute_pow_freq_bands(sfreq, data_sin, normalize=False, log=True,
                                     psd_method='fft')
-    result[result < -250] = -np.Inf
+    result[result < -250] = -np.inf
     assert_almost_equal(result, expected)
 
 
