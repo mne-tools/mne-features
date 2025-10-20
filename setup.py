@@ -57,7 +57,7 @@ if __name__ == "__main__":
                        'Programming Language :: Python :: 3',
                        ],
           platforms='any',
-          python_requires='>=3.6',
+          python_requires='>=3.10,<3.14',
           packages=package_tree('mne_features'),
           install_requires=['numpy', 'scipy', 'numba', 'scikit-learn', 'mne',
                             'PyWavelets', 'pandas'],

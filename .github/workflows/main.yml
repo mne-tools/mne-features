@@ -1,4 +1,4 @@
-name: Testing MNE-Features on Ubuntu 20.04
+name: Testing MNE-Features on the latest Ubuntu
 on:
   push:
     branches:
@@ -9,23 +9,35 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
-      PYTHON_VERSION: '3.8'
       CONDA_ENV: 'environment.yml'
     strategy:
       matrix:
-        python-version: [ "3.8" ]
+        python-version: [ "3.10", "3.11", "3.12", "3.13" ]
         numba: [ "on", "off" ]
     continue-on-error: true
     name: python-${{ matrix.python-version }}-numba-${{ matrix.numba }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: actions/checkout@v5
+    # Sometimes setup-miniconda shows CondaHTTPError.
+    # To mitigate, following config is added.
+    # Jobs may still fail with CondaHTTPError. In than case, re-run the failed jobs.
+    # Ref: https://github.com/conda-incubator/setup-miniconda/issues/129
+    - name: Prepare conda config before installation
+      run: |
+        cat <<EOF > .condarc
+        remote_max_retries: 10
+        remote_backoff_factor: 5
+        remote_connect_timeout_secs: 60
+        remote_read_timeout_secs: 120
+        EOF
+    - uses: conda-incubator/setup-miniconda@v3
       with:
         activate-environment: 'mne-features'
-        python-version: ${{ env.PYTHON_VERSION }}
+        python-version: ${{ matrix.python-version }}
         environment-file: ${{ env.CONDA_ENV }}
+        condarc-file: .condarc
       name: Install Miniconda and create environment
     - if: ${{ matrix.numba == 'off' }}
       shell: bash -el {0}
@@ -46,6 +58,6 @@ jobs:
       run: check-manifest --ignore doc,mne_features/*/tests
       name: Check manifest
     - name: Upload coverage stats
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v5
       with:
         file: ./coverage.xml
