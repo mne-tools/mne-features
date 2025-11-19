@@ -1,4 +1,7 @@
-name: Testing MNE-Features on Ubuntu 20.04
+name: Test MNE-Features
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches:
@@ -7,16 +10,19 @@ on:
     branches:
       - '*'
 
+permissions:
+  contents: read
+
 jobs:
   tests:
-    runs-on: ubuntu-20.04
-    env:
-      PYTHON_VERSION: '3.8'
-      CONDA_ENV: 'environment.yml'
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.8" ]
+        python-version: [ "3.13" ]
         numba: [ "on", "off" ]
+    defaults:
+      run:
+        shell: bash -el {0}
     continue-on-error: true
     name: python-${{ matrix.python-version }}-numba-${{ matrix.numba }}
     steps:
@@ -24,28 +30,19 @@ jobs:
     - uses: conda-incubator/setup-miniconda@v2
       with:
         activate-environment: 'mne-features'
-        python-version: ${{ env.PYTHON_VERSION }}
-        environment-file: ${{ env.CONDA_ENV }}
+        python-version: ${{ matrix.python-version }}
+        environment-file: 'environment.yml'
       name: Install Miniconda and create environment
     - if: ${{ matrix.numba == 'off' }}
-      shell: bash -el {0}
       run: pip uninstall --yes --quiet numba
       name: Uninstall numba
-    - shell: bash -el {0}
-      run: pip install --upgrade pytest pytest-cov flake8 check-manifest pytest-sugar
+    - run: pip install --upgrade pytest pytest-cov flake8 check-manifest pytest-sugar
       name: Install test utilities
-    - shell: bash -el {0}
-      run: python setup.py develop --no-deps
-      name: Install MNE-Features
-    - shell: bash -el {0}
-      run: |
-        flake8 --count mne_features
-        pytest --cov=mne_features --cov-report=xml --verbose mne_features/tests
-      name: Run tests (with coverage)
-    - shell: bash -el {0}
-      run: check-manifest --ignore doc,mne_features/*/tests
-      name: Check manifest
-    - name: Upload coverage stats
-      uses: codecov/codecov-action@v1
+    - run: pip install --no-deps -ve .
+    - run: flake8 --count mne_features
+    - run: pytest --cov=mne_features --cov-report=xml --verbose mne_features/tests
+    - run: check-manifest --ignore doc,mne_features/*/tests
+    - uses: codecov/codecov-action@v5
       with:
-        file: ./coverage.xml
+        token: '1873840c-bd0f-4085-b7da-8b57b680d848'
+      if: success() || failure()

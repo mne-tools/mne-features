@@ -13,5 +13,4 @@ dependencies:
 - scikit-learn
 - PyWavelets
 - tqdm
-- pip:
-    - download
+- download
