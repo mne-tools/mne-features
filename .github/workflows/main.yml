@@ -1,4 +1,4 @@
-name: Testing MNE-Features on Ubuntu 20.04
+name: Test MNE-Features
 on:
   push:
     branches:
