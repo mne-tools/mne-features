@@ -27,7 +27,7 @@ jobs:
     name: python-${{ matrix.python-version }}-numba-${{ matrix.numba }}
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: conda-incubator/setup-miniconda@v3
       with:
         activate-environment: 'mne-features'
         python-version: ${{ matrix.python-version }}
