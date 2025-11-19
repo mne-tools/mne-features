@@ -1,4 +1,7 @@
 name: Test MNE-Features
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches:
@@ -6,6 +9,9 @@ on:
   pull_request:
     branches:
       - '*'
+
+permissions:
+  contents: read
 
 jobs:
   tests:
