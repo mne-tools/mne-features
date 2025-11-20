@@ -20,6 +20,13 @@ jobs:
       matrix:
         python-version: [ "3.13" ]
         numba: [ "on", "off" ]
+        include:
+          - python-version: "3.12"
+            numba: "on"
+          - python-version: "3.11"
+            numba: "on"
+          - python-version: "3.10"
+            numba: "on"
     defaults:
       run:
         shell: bash -el {0}
@@ -40,7 +47,7 @@ jobs:
       name: Install test utilities
     - run: pip install --no-deps -ve .
     - run: flake8 --count mne_features
-    - run: pytest --cov=mne_features --cov-report=xml --verbose mne_features/tests
+    - run: pytest --cov=mne_features --cov-report=xml --verbose -m "not slow" mne_features/tests
     - run: check-manifest --ignore doc,mne_features/*/tests
     - uses: codecov/codecov-action@v5
       with:
