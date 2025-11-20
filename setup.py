@@ -21,6 +21,7 @@ MAINTAINER = 'Jean-Baptiste Schiratti'
 MAINTAINER_EMAIL = 'jean.baptiste.schiratti@gmail.com'
 LICENSE = 'BSD (3-clause)'
 DOWNLOAD_URL = 'https://github.com/mne-tools/mne-features.git'
+HOMEPAGE_URL = 'https://github.com/mne-tools/mne-features'
 VERSION = version
 
 
@@ -42,6 +43,7 @@ if __name__ == "__main__":
           license=LICENSE,
           version=VERSION,
           download_url=DOWNLOAD_URL,
+          home_page=HOMEPAGE_URL,
           long_description=open('README.rst').read(),
           long_description_content_type='text/x-rst',
           classifiers=['Intended Audience :: Science/Research',
@@ -57,7 +59,7 @@ if __name__ == "__main__":
                        'Programming Language :: Python :: 3',
                        ],
           platforms='any',
-          python_requires='>=3.6',
+          python_requires='>=3.10',
           packages=package_tree('mne_features'),
           install_requires=['numpy', 'scipy', 'numba', 'scikit-learn', 'mne',
                             'PyWavelets', 'pandas'],
@@ -65,5 +67,5 @@ if __name__ == "__main__":
               'Documentation': 'https://mne-tools.github.io/mne-features/',
               'Bug Reports': 'https://github.com/mne-tools/mne-features/issues',
               'Source': 'https://github.com/mne-tools/mne-features',
-          },          
+          },
           )

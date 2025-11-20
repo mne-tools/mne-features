@@ -20,6 +20,13 @@ jobs:
       matrix:
         python-version: [ "3.13" ]
         numba: [ "on", "off" ]
+        include:
+          - python-version: "3.12"
+            numba: "on"
+          - python-version: "3.11"
+            numba: "on"
+          - python-version: "3.10"
+            numba: "on"
     defaults:
       run:
         shell: bash -el {0}
