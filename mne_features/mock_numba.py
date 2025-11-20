@@ -39,3 +39,6 @@ except ImportError as err:
         return identity
 
     nb.jit = jit
+    HAS_NUMBA = False
+else:
+    HAS_NUMBA = True

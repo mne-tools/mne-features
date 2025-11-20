@@ -17,7 +17,7 @@ from sklearn.utils._mocking import CheckingClassifier
 from mne_features.feature_extraction import (extract_features,
                                              FeatureFunctionTransformer,
                                              FeatureExtractor)
-from mne_features.mock_numba import nb
+from mne_features.mock_numba import nb, HAS_NUMBA
 from mne_features.univariate import compute_svd_fisher_info
 from mne_features.utils import _idxiter
 
@@ -26,6 +26,11 @@ rng = np.random.RandomState(42)
 sfreq = 256.
 data = rng.standard_normal((10, 20, int(sfreq)))
 n_epochs, n_channels = data.shape[:2]
+
+
+SLOW_KWARGS = {}
+if not HAS_NUMBA:
+    SLOW_KWARGS['marks'] = pytest.mark.slow
 
 
 def test_shape_output():
@@ -231,8 +236,11 @@ def test_channel_naming_pow_freq_bands(separator):
     assert df.columns.values.tolist() == expected_col_names
 
 
-@pytest.mark.parametrize('selected_func', ['max_cross_corr', 'phase_lock_val',
-                                           'nonlin_interdep'])
+@pytest.mark.parametrize('selected_func', [
+    pytest.param('max_cross_corr', **SLOW_KWARGS),
+    'phase_lock_val',
+    'nonlin_interdep',
+])
 @pytest.mark.parametrize('include_diag', [True, False])
 @pytest.mark.parametrize('separator', ['_', '__'])
 def test_channel_naming_bivariate(selected_func, include_diag, separator):
